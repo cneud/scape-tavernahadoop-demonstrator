@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="layouts/default.xhtml"
+                xmlns:p="http://primefaces.org/ui">
+    
+    <ui:define name="navigation">
+        
+        <h:form enctype="multipart/form-data" id="uploadform">  
+            <h:messages  />
+            <p:fileUpload fileUploadListener="#{overview.handleFileUpload}"  
+                          mode="advanced"  
+                          update="messages,wftable,:workflowform:wfheading,:workflowform:portslist"
+                          auto="true"  
+                          sizeLimit="1000000"   
+                          allowTypes="/(\.|\/)(t2flow)$/"
+                          label="Upload workflow"
+                          >
+            </p:fileUpload>
+            <p:growl id="messages" showDetail="true" life="6000"/>  
+            <p:dataTable styleClass="workflowtable" style="width:440px" id="wftable" var="workflow" value="#{workflowTable.workflows}" scrollable="true">
+                <p:column headerText="Workflows">  
+                    <p:commandLink actionListener="#{overview.setCurrentWorkflow}" value="#{workflow.filename}" update=":uploadform:messages,wftable,:workflowform:wfheading,:workflowform:portslist">
+                        <f:param name="wfid" value="#{workflow.wfid}" />
+                    </p:commandLink>
+                </p:column>  
+            </p:dataTable>  
+        </h:form> 
+    </ui:define>
+
+    <ui:define name="content">
+        
+        <h:form id="workflowform">  
+            
+            <p:growl id="wfMessages" showDetail="true" life="6000"/>  
+            <fieldset>
+                <legend>
+                    <h:outputText styleClass="strong" id="wfheading" value="Workflow #{overview.selectedWorkfow.filename}" />, 
+                    submitted <h:outputText value="#{overview.selectedWorkfow.createddate}" >
+                        <f:convertDateTime pattern="dd.MM.yyyy HH:mm" timeZone="GMT+1"/>
+                    </h:outputText>
+                </legend>
+                <h:panelGroup id="portslist">
+                    <ui:repeat var="inputport" value="#{overview.selectedWorkfow.workflowInputPorts}">
+                        <label class="inputtexts" for="wfipparam#{inputport.portname}">#{inputport.portname}</label>
+                        <input class="ui-inputtext ui-inputfield ui-widget ui-state-default ui-corner-all" type="text" name="wfipparam#{inputport.portname}" id="#{inputport.portname}" value="#{inputport.defaultvalue}"  size="40" />
+                        <br />
+                    </ui:repeat>
+                </h:panelGroup>
+                <br/>
+                <p:commandButton value="Save values" id="savebtn" process="@form" actionListener="#{overview.savePortValues}" update="wfMessages"/>  
+                <p:commandButton value="Save values &amp; run" id="saveandrunbtn" process="@form" actionListener="#{overview.saveValuesAndRunWorkflow}" update="wfMessages"/>  
+                <p:commandButton value="Run" id="runbtn" process="@form" actionListener="#{overview.runWorkflow}" update="wfMessages"/>  
+            </fieldset>
+        </h:form>
+    </ui:define>
+</ui:composition>

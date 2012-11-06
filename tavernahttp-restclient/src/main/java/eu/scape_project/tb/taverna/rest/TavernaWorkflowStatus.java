@@ -48,5 +48,11 @@ public enum TavernaWorkflowStatus {
         public String toString() {
             return "Finished";
         }
+    },
+    ERROR {
+        @Override
+        public String toString() {
+            return "Error";
+        }
     }
 }

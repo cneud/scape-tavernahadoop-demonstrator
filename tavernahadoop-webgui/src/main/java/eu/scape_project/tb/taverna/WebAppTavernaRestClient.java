@@ -21,31 +21,46 @@ import eu.scape_project.tb.model.dao.WorkflowDao;
 import eu.scape_project.tb.model.entity.Workflow;
 import eu.scape_project.tb.model.entity.WorkflowRun;
 import eu.scape_project.tb.taverna.rest.TavernaServerRestClient;
+import eu.scape_project.tb.taverna.rest.TavernaWorkflowStatus;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
+import java.util.logging.Level;
+import javax.faces.bean.ApplicationScoped;
+import javax.faces.bean.ManagedBean;
+import org.apache.http.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Run taverna workflow. Uses the tavernahttp-restclient module for managing
- * requests to the Taverna Server.
+ * Web application taverna rest client. Uses the tavernahttp-restclient module
+ * for managing requests to the Taverna Server.
  *
  * @author Sven Schlarb https://github.com/shsdev
  * @version 0.1
  */
-public class RunTavernaWorkflow {
+@ManagedBean(name = "tavernarestclient")
+@ApplicationScoped
+public class WebAppTavernaRestClient implements Serializable {
 
-    private static Logger logger = LoggerFactory.getLogger(RunTavernaWorkflow.class.getName());
-    private static Config config;
+    private Logger logger = LoggerFactory.getLogger(WebAppTavernaRestClient.class.getName());
+    private Config config;
+    private String host;
+    private int port;
+    private final String basepath;
+    private final TavernaServerRestClient tavernaRestClient;
 
-    /**
-     * Create new configuration based on the config.properties file.
-     */
-    static {
+    protected WebAppTavernaRestClient() {
         config = new Config();
+        host = config.getProp("taverna.server.host");
+        port = Integer.parseInt(config.getProp("taverna.server.host"));
+        basepath = config.getProp("taverna.server.restapi.basepath");
+        tavernaRestClient = new TavernaServerRestClient(host, port, basepath);
+        tavernaRestClient.setUser(config.getProp("taverna.server.username"));
+        tavernaRestClient.setPassword(config.getProp("taverna.server.password"));
     }
 
     /**
@@ -62,19 +77,13 @@ public class RunTavernaWorkflow {
      * @param kvMap Key value map of workflow input ports
      * @return Success/failure of the workflow run creation
      */
-    public static Boolean run(Workflow workflow, WorkflowRun workflowRun, Map<String, String> kvMap) {
-        Boolean success = new Boolean(false);
-        String host = config.getProp("taverna.server.host");
-        int port = Integer.parseInt(config.getProp("taverna.server.host"));
-        String basepath = config.getProp("taverna.server.restapi.basepath");
-        TavernaServerRestClient tsrc = new TavernaServerRestClient(host, port, basepath);
-        tsrc.setUser(config.getProp("taverna.server.username"));
-        tsrc.setPassword(config.getProp("taverna.server.password"));
+    public Boolean run(Workflow workflow, WorkflowRun workflowRun, Map<String, String> kvMap) {
+        Boolean success = false;
         try {
             // 1. POST WORKFLOW
 
             File workflowFile = new File(config.getProp("taverna.workflow.upload.path") + workflow.getFilename());
-            String uuidRURL = tsrc.submitWorkflow(workflowFile);
+            String uuidRURL = tavernaRestClient.submitWorkflow(workflowFile);
             // Set UUID resource URL
             workflowRun.setUuidBaseResourceUrl(uuidRURL);
             logger.info(workflowRun.getUuidBaseResourceUrl());
@@ -82,7 +91,7 @@ public class RunTavernaWorkflow {
             // 2. PUT INPUT PORTS
             URL resourceUrl = new URL(workflowRun.getUuidBaseResourceUrl());
             for (String key : kvMap.keySet()) {
-                tsrc.setWorkflowInput(resourceUrl, key, kvMap.get(key));
+                tavernaRestClient.setWorkflowInput(resourceUrl, key, kvMap.get(key));
             }
 
             // Add workflow run to workflow
@@ -91,6 +100,8 @@ public class RunTavernaWorkflow {
             // Persist workflow
             WorkflowDao wfdao = new WorkflowDao();
             wfdao.update(workflow);
+            
+            success = true;
 
         } catch (org.apache.http.HttpException ex) {
             logger.error("Error", ex);
@@ -100,5 +111,15 @@ public class RunTavernaWorkflow {
             logger.error("Error", ex);
         }
         return success;
+    }
+
+    public TavernaWorkflowStatus getRunStatus(String uuidBaseResourceUrl) {
+        TavernaWorkflowStatus status = TavernaWorkflowStatus.ERROR;
+        try {
+            return tavernaRestClient.getWorkflowStatus(uuidBaseResourceUrl);
+        } catch (HttpException ex) {
+            logger.error("HTTP Error", ex);
+            return status;
+        }
     }
 }

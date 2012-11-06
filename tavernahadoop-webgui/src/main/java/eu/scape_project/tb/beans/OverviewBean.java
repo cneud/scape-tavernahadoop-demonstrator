@@ -148,7 +148,7 @@ public class OverviewBean implements Serializable {
             return;
         }
         WorkflowRun wr = new WorkflowRun();
-//        wr.run(this.selectedWorkfow);
+        wr.run(this.selectedWorkfow);
         wr.setRunstatus(TavernaWorkflowStatus.INITIALISED);
         wr.setUuidBaseResourceUrl("http://fue-l:8080/tavernaserver/rest/runs/73662556738883kkjh");
         wr.setCreateddate(new Date());

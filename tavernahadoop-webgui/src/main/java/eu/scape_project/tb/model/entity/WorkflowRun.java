@@ -16,13 +16,14 @@
  */
 package eu.scape_project.tb.model.entity;
 
-import eu.scape_project.tb.taverna.RunTavernaWorkflow;
+import eu.scape_project.tb.taverna.WebAppTavernaRestClient;
 import eu.scape_project.tb.taverna.rest.TavernaRestUtil;
 import eu.scape_project.tb.taverna.rest.TavernaWorkflowStatus;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import javax.faces.context.FacesContext;
 import javax.persistence.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +53,7 @@ public class WorkflowRun implements Serializable {
 
     /**
      * Auto-generated id of the Workflow Run entity.
+     *
      * @return Workflow Run id
      */
     @Id
@@ -63,6 +65,7 @@ public class WorkflowRun implements Serializable {
 
     /**
      * Setter for the Workflow Run id
+     *
      * @param wfid Workflow Run id
      */
     public void setWfrid(long wfrid) {
@@ -77,7 +80,7 @@ public class WorkflowRun implements Serializable {
         this.uuid = TavernaRestUtil.getUUIDfromUUIDResourceURL(uuidBaseResourceUrl);
         this.uuidBaseResourceUrl = uuidBaseResourceUrl;
     }
-    
+
     public String getUuid() {
         return uuid;
     }
@@ -102,7 +105,9 @@ public class WorkflowRun implements Serializable {
      * @param workflow Workflow.
      */
     public void run(Workflow workflow, Map<String, String> kvMap) {
-        RunTavernaWorkflow.run(workflow, this, kvMap);
+        FacesContext context = FacesContext.getCurrentInstance();
+        WebAppTavernaRestClient tavernaRestClient = (WebAppTavernaRestClient) context.getApplication().evaluateExpressionGet(context, "#{tavernarestclient}", WebAppTavernaRestClient.class);
+        tavernaRestClient.run(workflow, this, kvMap);
     }
 
     /**
@@ -126,9 +131,11 @@ public class WorkflowRun implements Serializable {
     public void setRunstatus(TavernaWorkflowStatus runstatus) {
         this.runstatus = runstatus;
     }
-    
+
     public void updateRunstatus() {
-        this.runstatus = TavernaWorkflowStatus.OPERATING;
+        FacesContext context = FacesContext.getCurrentInstance();
+        WebAppTavernaRestClient tavernaRestClient = (WebAppTavernaRestClient) context.getApplication().evaluateExpressionGet(context, "#{tavernarestclient}", WebAppTavernaRestClient.class);
+        this.runstatus = tavernaRestClient.getRunStatus(uuidBaseResourceUrl);
+        //this.runstatus = TavernaWorkflowStatus.OPERATING;
     }
-    
 }

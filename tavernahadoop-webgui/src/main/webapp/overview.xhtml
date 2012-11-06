@@ -85,7 +85,7 @@
                         <h:link id="wf_run_status" value="#{workflowrun.runstatus}" outcome="progress" >
                             <f:param name="wfrid" value="#{workflowrun.wfrid}" />
                         </h:link>
-                        <p:poll interval="3"   
+                        <p:poll interval="10"   
                                 listener="#{workflowrun.updateRunstatus}" update="wf_run_status" />  
                     </p:column>  
                 </p:dataTable>  

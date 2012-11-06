@@ -14,6 +14,7 @@
         <module>./tavernahttp-restclient</module>
         <module>./defaulthttp-restclient</module>
         <module>./tavernahadoop-webgui</module>
+        <module>./t2flow-read</module>
     </modules>
     <build>
         <plugins>

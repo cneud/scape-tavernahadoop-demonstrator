@@ -1,3 +1,28 @@
+.ui-widget-header {
+    background-color: white;
+}
+
+/*.ui-progressbar-value {
+    border-color: black;
+    border: 1px solid black;
+}*/
+.scapeprogressbar, .ui-progressbar-value {
+    border: 1px solid #8DC0D9;
+    
+}
+/*.ui-widget-header {
+    border-color: black;
+    border: 1px solid black;
+}*/
+/*.ui-corner-all {
+    border-color: black;
+    border: 1px solid black;
+}*/
+.ui-growl{
+    margin-right:310px;
+}
+
+body { background-color: white }
 .strong {font-weight:bold;}
 .header { 
     top:-5; float:left;height: 120px;width:100%;

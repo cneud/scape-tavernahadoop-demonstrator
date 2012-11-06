@@ -16,12 +16,10 @@
  */
 package eu.scape_project.tb.beans;
 
-import java.awt.event.ActionEvent;
 import java.io.*;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -35,8 +33,8 @@ import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import eu.scape_project.tb.taverna.T2FlowFile;
 import eu.scape_project.tb.model.entity.WorkflowRun;
+import eu.scape_project.tb.taverna.rest.TavernaWorkflowStatus;
 
 /**
  * Backing bean of the overview page.
@@ -49,26 +47,7 @@ import eu.scape_project.tb.model.entity.WorkflowRun;
 public class OverviewBean implements Serializable {
 
     private static final Logger logger = LoggerFactory.getLogger(OverviewBean.class.getName());
-    private String value = "This editor is provided by PrimeFaces";
     private Workflow selectedWorkfow;
-
-    /**
-     * Getter of the value field.
-     *
-     * @return Value
-     */
-    public String getValue() {
-        return value;
-    }
-
-    /**
-     * Setter of the value field.
-     *
-     * @param value Value
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
 
     /**
      * Getter of the selected workflow
@@ -111,7 +90,7 @@ public class OverviewBean implements Serializable {
         try {
             FileOutputStream fos = new FileOutputStream(absPath);
             IOUtils.copyLarge(f.getInputstream(), fos);
-            FacesMessage msg = new FacesMessage("Workflow upload", "Workflow file " + event.getFile().getFileName() + " uploaded successfully.");
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,"Workflow upload", "Workflow file " + event.getFile().getFileName() + " uploaded successfully.");
             FacesContext.getCurrentInstance().addMessage("Workflow uploaded successfully", msg);
             Workflow wf = WorkflowFactory.createWorkflow(absPath);
             selectedWorkfow = wf;
@@ -127,42 +106,75 @@ public class OverviewBean implements Serializable {
     /**
      * Save port values implementation.
      */
-    private void savePortValuesImpl() {
+    private boolean savePortValuesImpl() {
         Map<String, String> kvMap = getKeyValueMap();
+        boolean isValueProvided = false;
+        if (kvMap == null || kvMap.isEmpty()) {
+            return false;
+        }
         for (String key : kvMap.keySet()) {
             String val = kvMap.get(key);
+            if(val != null && !val.isEmpty() && !val.equals(""))
+                isValueProvided = true;
             this.selectedWorkfow.setWorkflowInputPort(key, val);
+        }
+        if(!isValueProvided) {
+            return false;
         }
         WorkflowDao wfdao = new WorkflowDao();
         wfdao.update(selectedWorkfow);
+        return true;
     }
 
     /**
      * Save port values listener.
      */
     public void savePortValues() {
-        savePortValuesImpl();
         FacesContext context = FacesContext.getCurrentInstance();
+        if (!savePortValuesImpl()) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Saving port values failed", "Port values need to be provided."));
+            return;
+        }
         context.addMessage(null, new FacesMessage("Save workflow port values", "Workflow port values saved successfully."));
-
     }
 
     /**
      * Save port values and run workflow listener.
      */
     public void saveValuesAndRunWorkflow() {
-        savePortValuesImpl();
+        FacesContext context = FacesContext.getCurrentInstance();
+        if (!savePortValuesImpl()) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Unable to run workflow", "Port values need to be provided."));
+            return;
+        }
         WorkflowRun wr = new WorkflowRun();
-        wr.run(this.selectedWorkfow);
+//        wr.run(this.selectedWorkfow);
+        wr.setRunstatus(TavernaWorkflowStatus.INITIALISED);
+        wr.setUuidBaseResourceUrl("http://fue-l:8080/tavernaserver/rest/runs/73662556738883kkjh");
+        wr.setCreateddate(new Date());
+        this.selectedWorkfow.addWorkflowRun(wr);
+        WorkflowDao wfdao = new WorkflowDao();
+        wfdao.update(selectedWorkfow);
     }
 
     /**
      * Run workflow listener.
      */
     public void runWorkflow() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        if (!savePortValuesImpl()) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Unable to run workflow", "Port values need to be provided."));
+            return;
+        }
         WorkflowRun wr = new WorkflowRun();
-        Map<String, String> kvMap = getKeyValueMap();
-        wr.run(this.selectedWorkfow, kvMap);
+//        Map<String, String> kvMap = getKeyValueMap();
+//        wr.run(this.selectedWorkfow, kvMap);
+        wr.setRunstatus(TavernaWorkflowStatus.INITIALISED);
+        wr.setUuidBaseResourceUrl("http://fue-l:8080/tavernaserver/rest/runs/euydks6288sksldi728");
+        wr.setCreateddate(new Date());
+        this.selectedWorkfow.addWorkflowRun(wr);
+        WorkflowDao wfdao = new WorkflowDao();
+        wfdao.update(selectedWorkfow);
     }
 
     /**

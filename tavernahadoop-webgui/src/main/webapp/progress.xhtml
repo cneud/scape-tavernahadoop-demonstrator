@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="layouts/default.xhtml"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="header">
+        
+    </ui:define>
+    <ui:define name="navigation">
+
+        <h:form enctype="multipart/form-data" id="navform">  
+
+            <p:growl id="messages" showDetail="true" life="5000" />  
+            <p:dataTable styleClass="workflowtable" 
+                         style="width:420px" id="wftable" var="workflowrun" 
+                         value="#{overview.selectedWorkfow.workflowRuns}" scrollHeight="400"
+                         emptyMessage="No workflow runs available">
+                <p:column headerText="Workflow runs">  
+                    <p:commandLink actionListener="#{progress.setCurrentWorkflowRun}" value="#{workflowrun.uuid}" update=":wfrform">
+                        <f:param name="wfrid" value="#{workflowrun.wfrid}" />
+                    </p:commandLink>
+                </p:column>  
+            </p:dataTable>  
+
+        </h:form> 
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <h:form id="wfrform">  
+
+            <p:growl id="wfMessages" showDetail="true" life="5000"/>  
+
+            <fieldset style="margin-bottom: 30px">
+                <legend>
+                    <h:outputText value="Workflow run "/>
+                    <h:outputText styleClass="strong" id="wfruuid" value="#{progress.selectedWorkflowRun.uuid}" />
+                    <h:outputText value=" of workflow "/>
+                    <h:outputText styleClass="strong" id="wfrfilename" value="#{overview.selectedWorkfow.filename}" />
+                </legend>
+
+                <p><h:outputText value="Taverna workflow run progress:"/></p>
+                <p:progressBar styleClass="scapeprogressbar" widgetVar="pbAjax" ajax="true" value="#{progress.progress}" labelTemplate="{value}%">  
+                    <p:ajax event="complete" listener="#{progress.onComplete}" update="wfMessages"  onstart="pbAjax.start()" oncomplete="pbAjax.stop()"/>  
+                </p:progressBar>
+                <br/>
+                <p:commandButton ajax="false" value="Back to overview" action="overview"/>
+            </fieldset>
+
+        </h:form>
+    </ui:define>
+</ui:composition>

@@ -6,24 +6,27 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 template="layouts/default.xhtml"
                 xmlns:p="http://primefaces.org/ui">
-    
+
     <ui:define name="navigation">
-        
+
         <h:form enctype="multipart/form-data" id="uploadform">  
             <h:messages  />
             <p:fileUpload fileUploadListener="#{overview.handleFileUpload}"  
                           mode="advanced"  
-                          update="messages,wftable,:workflowform:wfheading,:workflowform:portslist"
+                          update="messages,wftable,:workflowform:wfheading,:workflowform:portslist,:workflowform:wfrunstable"
                           auto="true"  
                           sizeLimit="1000000"   
                           allowTypes="/(\.|\/)(t2flow)$/"
                           label="Upload workflow"
                           >
             </p:fileUpload>
-            <p:growl id="messages" showDetail="true" life="6000"/>  
-            <p:dataTable styleClass="workflowtable" style="width:440px" id="wftable" var="workflow" value="#{workflowTable.workflows}" scrollable="true">
+            <p:growl id="messages" showDetail="true" life="5000" />  
+            <p:dataTable styleClass="workflowtable" 
+                         style="width:420px" id="wftable" var="workflow" 
+                         value="#{workflowTable.workflows}" scrollHeight="400"
+                         emptyMessage="No workflows available">
                 <p:column headerText="Workflows">  
-                    <p:commandLink actionListener="#{overview.setCurrentWorkflow}" value="#{workflow.filename}" update=":uploadform:messages,wftable,:workflowform:wfheading,:workflowform:portslist">
+                    <p:commandLink actionListener="#{overview.setCurrentWorkflow}" value="#{workflow.filename}" update=":uploadform:messages,wftable,:workflowform:wfheading,:workflowform:portslist,:workflowform:wfrunstable">
                         <f:param name="wfid" value="#{workflow.wfid}" />
                     </p:commandLink>
                 </p:column>  
@@ -32,11 +35,12 @@
     </ui:define>
 
     <ui:define name="content">
-        
+
         <h:form id="workflowform">  
-            
-            <p:growl id="wfMessages" showDetail="true" life="6000"/>  
-            <fieldset>
+
+            <p:growl id="wfMessages" showDetail="true" life="5000"/>  
+
+            <fieldset style="margin-bottom: 30px">
                 <legend>
                     <h:outputText styleClass="strong" id="wfheading" value="Workflow #{overview.selectedWorkfow.filename}" />, 
                     submitted <h:outputText value="#{overview.selectedWorkfow.createddate}" >
@@ -51,10 +55,42 @@
                     </ui:repeat>
                 </h:panelGroup>
                 <br/>
-                <p:commandButton value="Save values" id="savebtn" process="@form" actionListener="#{overview.savePortValues}" update="wfMessages"/>  
-                <p:commandButton value="Save values &amp; run" id="saveandrunbtn" process="@form" actionListener="#{overview.saveValuesAndRunWorkflow}" update="wfMessages"/>  
-                <p:commandButton value="Run" id="runbtn" process="@form" actionListener="#{overview.runWorkflow}" update="wfMessages"/>  
+                <p:commandButton value="Save as default values" id="savebtn" process="@form" actionListener="#{overview.savePortValues}" update="wfMessages"/>  
+                <p:commandButton value="Save as default values &amp; run" id="saveandrunbtn" process="@form" actionListener="#{overview.saveValuesAndRunWorkflow}" update="wfMessages,wfrunstable"/>  
+                <p:commandButton value="Run" id="runbtn" process="@form" actionListener="#{overview.runWorkflow}" update="wfMessages,wfrunstable"/>  
             </fieldset>
+
+
+
+            <fieldset>
+                <legend>
+                    <h:outputText styleClass="strong" id="wfrunsfieldset" value="Workflow runs" />
+                </legend>
+                <p:dataTable styleClass="workflowtable" id="wfrunstable" 
+                             var="workflowrun" value="#{overview.selectedWorkfow.workflowRuns}" 
+                             scrollable="true" 
+                             emptyMessage="No workflow runs">
+                    <p:column headerText="UUID" style="width:400px">
+                        <h:outputLink value="#{workflowrun.uuidBaseResourceUrl}">
+                            #{workflowrun.uuid}
+                        </h:outputLink>
+                    </p:column>  
+                    <p:column headerText="Started" style="width:400px">  
+                        <h:outputText value="#{workflowrun.createddate}" >
+                            <f:convertDateTime pattern="dd.MM.yyyy HH:mm" timeZone="GMT+1"/>
+                        </h:outputText>
+                    </p:column>  
+                    <p:column headerText="Run status" style="width:450px">  
+                        
+                        <h:link id="wf_run_status" value="#{workflowrun.runstatus}" outcome="progress" >
+                            <f:param name="wfrid" value="#{workflowrun.wfrid}" />
+                        </h:link>
+                        <p:poll interval="3"   
+                                listener="#{workflowrun.updateRunstatus}" update="wf_run_status" />  
+                    </p:column>  
+                </p:dataTable>  
+            </fieldset>
+
         </h:form>
     </ui:define>
 </ui:composition>

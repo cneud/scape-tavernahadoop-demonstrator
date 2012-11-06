@@ -4,3 +4,6 @@
 *.jar
 *.war
 *.ear
+/tavernahadoop-webgui/target/
+/tavernahttp-restclient/target/
+/defaulthttp-restclient/target/

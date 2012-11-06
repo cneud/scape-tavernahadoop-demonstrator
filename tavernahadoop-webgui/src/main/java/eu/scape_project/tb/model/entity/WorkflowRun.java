@@ -16,20 +16,16 @@
  */
 package eu.scape_project.tb.model.entity;
 
-import eu.scape_project.tb.taverna.rest.TavernaServerRestClient;
-import java.io.File;
-import java.io.IOException;
+import eu.scape_project.tb.taverna.RunTavernaWorkflow;
+import eu.scape_project.tb.taverna.rest.TavernaRestUtil;
+import eu.scape_project.tb.taverna.rest.TavernaWorkflowStatus;
 import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.persistence.*;
-import eu.scape_project.tb.model.dao.WorkflowDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import eu.scape_project.tb.taverna.RunTavernaWorkflow;
 
 /**
  * Workflow run entity.
@@ -44,7 +40,9 @@ public class WorkflowRun implements Serializable {
     private long wfrid;
     private static Logger logger = LoggerFactory.getLogger(WorkflowRun.class.getName());
     private String uuidBaseResourceUrl;
+    private String uuid;
     private Date createddate;
+    private TavernaWorkflowStatus runstatus;
 
     /**
      * Empty constructor.
@@ -76,7 +74,16 @@ public class WorkflowRun implements Serializable {
     }
 
     public void setUuidBaseResourceUrl(String uuidBaseResourceUrl) {
+        this.uuid = TavernaRestUtil.getUUIDfromUUIDResourceURL(uuidBaseResourceUrl);
         this.uuidBaseResourceUrl = uuidBaseResourceUrl;
+    }
+    
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     @Column(name = "createddate")
@@ -110,4 +117,18 @@ public class WorkflowRun implements Serializable {
         }
         this.run(workflow, kvMap);
     }
+
+    @Column(name = "runstatus")
+    public TavernaWorkflowStatus getRunstatus() {
+        return runstatus;
+    }
+
+    public void setRunstatus(TavernaWorkflowStatus runstatus) {
+        this.runstatus = runstatus;
+    }
+    
+    public void updateRunstatus() {
+        this.runstatus = TavernaWorkflowStatus.OPERATING;
+    }
+    
 }

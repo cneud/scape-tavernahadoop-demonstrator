@@ -17,7 +17,6 @@
 package eu.scape_project.tb.taverna;
 
 import eu.scape_project.tb.config.Config;
-import eu.scape_project.tb.model.dao.WorkflowDao;
 import eu.scape_project.tb.model.entity.Workflow;
 import eu.scape_project.tb.model.entity.WorkflowRun;
 import eu.scape_project.tb.taverna.rest.TavernaServerRestClient;
@@ -28,7 +27,6 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
-import java.util.logging.Level;
 import org.apache.http.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,13 +100,9 @@ public class WebAppTavernaRestClient implements Serializable {
             for (String key : kvMap.keySet()) {
                 tavernaRestClient.setWorkflowInput(resourceUrl, key, kvMap.get(key));
             }
-
-//            // Add workflow run to workflow
-//            workflow.addWorkflowRun(workflowRun);
-//
-//            // Persist workflow
-//            WorkflowDao wfdao = new WorkflowDao();
-//            wfdao.update(workflow);
+            
+            tavernaRestClient.setWorkflowStatus(resourceUrl, TavernaWorkflowStatus.OPERATING);
+            
 
             success = true;
 

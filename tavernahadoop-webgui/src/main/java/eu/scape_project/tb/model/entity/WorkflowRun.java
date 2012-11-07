@@ -20,9 +20,12 @@ import eu.scape_project.tb.taverna.WebAppTavernaRestClient;
 import eu.scape_project.tb.taverna.rest.TavernaRestUtil;
 import eu.scape_project.tb.taverna.rest.TavernaWorkflowStatus;
 import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import javax.faces.context.FacesContext;
 import javax.persistence.*;
 import org.slf4j.Logger;
@@ -104,24 +107,24 @@ public class WorkflowRun implements Serializable {
      *
      * @param workflow Workflow.
      */
-    public void run(Workflow workflow, Map<String, String> kvMap) {
-        FacesContext context = FacesContext.getCurrentInstance();
-        WebAppTavernaRestClient tavernaRestClient = (WebAppTavernaRestClient) context.getApplication().evaluateExpressionGet(context, "#{tavernarestclient}", WebAppTavernaRestClient.class);
-        tavernaRestClient.run(workflow, this, kvMap);
-    }
+//    public void run(Workflow workflow, Map<String, String> kvMap) {
+//        FacesContext context = FacesContext.getCurrentInstance();
+//        WebAppTavernaRestClient tavernaRestClient = (WebAppTavernaRestClient) context.getApplication().evaluateExpressionGet(context, "#{tavernarestclient}", WebAppTavernaRestClient.class);
+//        tavernaRestClient.run(workflow, this, kvMap);
+//    }
 
     /**
      * Run workflow with default values, workflow default port values are used.
      *
      * @param workflow Workflow.
      */
-    public void run(Workflow workflow) {
-        Map<String, String> kvMap = new HashMap<String, String>();
-        for (WorkflowInputPort wfip : workflow.getWorkflowInputPorts()) {
-            kvMap.put(wfip.getPortname(), wfip.getDefaultvalue());
-        }
-        this.run(workflow, kvMap);
-    }
+//    public void run(Workflow workflow) {
+//        Map<String, String> kvMap = new HashMap<String, String>();
+//        for (WorkflowInputPort wfip : workflow.getWorkflowInputPorts()) {
+//            kvMap.put(wfip.getPortname(), wfip.getDefaultvalue());
+//        }
+//        this.run(workflow, kvMap);
+//    }
 
     @Column(name = "runstatus")
     public TavernaWorkflowStatus getRunstatus() {
@@ -133,9 +136,13 @@ public class WorkflowRun implements Serializable {
     }
 
     public void updateRunstatus() {
-        FacesContext context = FacesContext.getCurrentInstance();
-        WebAppTavernaRestClient tavernaRestClient = (WebAppTavernaRestClient) context.getApplication().evaluateExpressionGet(context, "#{tavernarestclient}", WebAppTavernaRestClient.class);
-        this.runstatus = tavernaRestClient.getRunStatus(uuidBaseResourceUrl);
-        //this.runstatus = TavernaWorkflowStatus.OPERATING;
+        WebAppTavernaRestClient tavernaRestClient = WebAppTavernaRestClient.getInstance();
+        URL url = null;
+        try {
+            url = new URL(uuidBaseResourceUrl);
+            this.runstatus = tavernaRestClient.getRunStatus(uuidBaseResourceUrl);
+        } catch (MalformedURLException ex) {
+            logger.error("Invalid resource URL");
+        }
     }
 }

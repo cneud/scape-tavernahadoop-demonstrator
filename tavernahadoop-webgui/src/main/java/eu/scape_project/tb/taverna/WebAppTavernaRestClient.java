@@ -29,21 +29,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 import java.util.logging.Level;
-import javax.faces.bean.ApplicationScoped;
-import javax.faces.bean.ManagedBean;
 import org.apache.http.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Web application taverna rest client. Uses the tavernahttp-restclient module
- * for managing requests to the Taverna Server.
+ * Web application taverna rest client. Singleton class for the
+ * tavernahttp-restclient module which performs requests to the Taverna Server.
  *
  * @author Sven Schlarb https://github.com/shsdev
  * @version 0.1
  */
-@ManagedBean(name = "tavernarestclient")
-@ApplicationScoped
 public class WebAppTavernaRestClient implements Serializable {
 
     private Logger logger = LoggerFactory.getLogger(WebAppTavernaRestClient.class.getName());
@@ -52,11 +48,24 @@ public class WebAppTavernaRestClient implements Serializable {
     private int port;
     private final String basepath;
     private final TavernaServerRestClient tavernaRestClient;
+    // Singleton Instance
+    private static WebAppTavernaRestClient instance = null;
 
-    protected WebAppTavernaRestClient() {
+    public static WebAppTavernaRestClient getInstance() {
+        if (instance == null) {
+            instance = new WebAppTavernaRestClient();
+        }
+        return instance;
+    }
+
+    private WebAppTavernaRestClient() {
         config = new Config();
         host = config.getProp("taverna.server.host");
-        port = Integer.parseInt(config.getProp("taverna.server.host"));
+        try {
+            port = Integer.parseInt(config.getProp("taverna.server.port"));
+        } catch (java.lang.NumberFormatException ex) {
+            logger.error("Invalid taverna host port number configuration.");
+        }
         basepath = config.getProp("taverna.server.restapi.basepath");
         tavernaRestClient = new TavernaServerRestClient(host, port, basepath);
         tavernaRestClient.setUser(config.getProp("taverna.server.username"));
@@ -94,13 +103,13 @@ public class WebAppTavernaRestClient implements Serializable {
                 tavernaRestClient.setWorkflowInput(resourceUrl, key, kvMap.get(key));
             }
 
-            // Add workflow run to workflow
-            workflow.addWorkflowRun(workflowRun);
+//            // Add workflow run to workflow
+//            workflow.addWorkflowRun(workflowRun);
+//
+//            // Persist workflow
+//            WorkflowDao wfdao = new WorkflowDao();
+//            wfdao.update(workflow);
 
-            // Persist workflow
-            WorkflowDao wfdao = new WorkflowDao();
-            wfdao.update(workflow);
-            
             success = true;
 
         } catch (org.apache.http.HttpException ex) {
@@ -109,16 +118,23 @@ public class WebAppTavernaRestClient implements Serializable {
             logger.error("Error", ex);
         } catch (IOException ex) {
             logger.error("Error", ex);
+        } finally {
+            return success;
         }
-        return success;
     }
 
     public TavernaWorkflowStatus getRunStatus(String uuidBaseResourceUrl) {
-        TavernaWorkflowStatus status = TavernaWorkflowStatus.ERROR;
+
+        TavernaWorkflowStatus status = TavernaWorkflowStatus.UNDEFINED;
+        URL url = null;
         try {
-            return tavernaRestClient.getWorkflowStatus(uuidBaseResourceUrl);
+            url = new URL(uuidBaseResourceUrl);
+            status = tavernaRestClient.getWorkflowStatus(url);
         } catch (HttpException ex) {
             logger.error("HTTP Error", ex);
+        } catch (MalformedURLException ex) {
+            logger.error("Malformed URL error", ex);
+        } finally {
             return status;
         }
     }

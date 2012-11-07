@@ -29,6 +29,24 @@ public enum TavernaWorkflowStatus {
     /**
      * Taverna workflow status
      */
+    UNDEFINED {
+        @Override
+        public String toString() {
+            return "Undefined";
+        }
+    },
+    /**
+     * Taverna workflow status
+     */
+    SUBMITTED {
+        @Override
+        public String toString() {
+            return "Submitted";
+        }
+    },
+    /**
+     * Taverna workflow status
+     */
     INITIALISED {
         @Override
         public String toString() {

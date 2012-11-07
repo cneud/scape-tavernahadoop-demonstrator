@@ -60,8 +60,6 @@
                 <p:commandButton value="Run" id="runbtn" process="@form" actionListener="#{overview.runWorkflow}" update="wfMessages,wfrunstable"/>  
             </fieldset>
 
-
-
             <fieldset>
                 <legend>
                     <h:outputText styleClass="strong" id="wfrunsfieldset" value="Workflow runs" />
@@ -81,11 +79,11 @@
                         </h:outputText>
                     </p:column>  
                     <p:column headerText="Run status" style="width:450px">  
-                        
+
                         <h:link id="wf_run_status" value="#{workflowrun.runstatus}" outcome="progress" >
                             <f:param name="wfrid" value="#{workflowrun.wfrid}" />
                         </h:link>
-                        <p:poll interval="10"   
+                        <p:poll interval="30"   
                                 listener="#{workflowrun.updateRunstatus}" update="wf_run_status" />  
                     </p:column>  
                 </p:dataTable>  

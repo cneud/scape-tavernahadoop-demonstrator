@@ -27,6 +27,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import eu.scape_project.tb.model.entity.Workflow;
 import eu.scape_project.tb.model.dao.WorkflowDao;
+import eu.scape_project.tb.model.entity.WorkflowInputPort;
 import eu.scape_project.tb.model.factory.WorkflowFactory;
 import org.apache.commons.io.IOUtils;
 import org.primefaces.event.FileUploadEvent;
@@ -34,6 +35,7 @@ import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import eu.scape_project.tb.model.entity.WorkflowRun;
+import eu.scape_project.tb.taverna.WebAppTavernaRestClient;
 import eu.scape_project.tb.taverna.rest.TavernaWorkflowStatus;
 
 /**
@@ -90,7 +92,7 @@ public class OverviewBean implements Serializable {
         try {
             FileOutputStream fos = new FileOutputStream(absPath);
             IOUtils.copyLarge(f.getInputstream(), fos);
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,"Workflow upload", "Workflow file " + event.getFile().getFileName() + " uploaded successfully.");
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Workflow upload", "Workflow file " + event.getFile().getFileName() + " uploaded successfully.");
             FacesContext.getCurrentInstance().addMessage("Workflow uploaded successfully", msg);
             Workflow wf = WorkflowFactory.createWorkflow(absPath);
             selectedWorkfow = wf;
@@ -114,11 +116,12 @@ public class OverviewBean implements Serializable {
         }
         for (String key : kvMap.keySet()) {
             String val = kvMap.get(key);
-            if(val != null && !val.isEmpty() && !val.equals(""))
+            if (val != null && !val.isEmpty() && !val.equals("")) {
                 isValueProvided = true;
+            }
             this.selectedWorkfow.setWorkflowInputPort(key, val);
         }
-        if(!isValueProvided) {
+        if (!isValueProvided) {
             return false;
         }
         WorkflowDao wfdao = new WorkflowDao();
@@ -148,9 +151,13 @@ public class OverviewBean implements Serializable {
             return;
         }
         WorkflowRun wr = new WorkflowRun();
-        wr.run(this.selectedWorkfow);
-        wr.setRunstatus(TavernaWorkflowStatus.INITIALISED);
-        wr.setUuidBaseResourceUrl("http://fue-l:8080/tavernaserver/rest/runs/73662556738883kkjh");
+        WebAppTavernaRestClient tavernaRestClient = WebAppTavernaRestClient.getInstance();
+        Map<String, String> kvMap = new HashMap<String, String>();
+        for (WorkflowInputPort wfip : this.selectedWorkfow.getWorkflowInputPorts()) {
+            kvMap.put(wfip.getPortname(), wfip.getDefaultvalue());
+        }
+        tavernaRestClient.run(this.selectedWorkfow, wr, kvMap);
+        wr.setRunstatus(TavernaWorkflowStatus.SUBMITTED);
         wr.setCreateddate(new Date());
         this.selectedWorkfow.addWorkflowRun(wr);
         WorkflowDao wfdao = new WorkflowDao();
@@ -167,10 +174,10 @@ public class OverviewBean implements Serializable {
             return;
         }
         WorkflowRun wr = new WorkflowRun();
-//        Map<String, String> kvMap = getKeyValueMap();
-//        wr.run(this.selectedWorkfow, kvMap);
-        wr.setRunstatus(TavernaWorkflowStatus.INITIALISED);
-        wr.setUuidBaseResourceUrl("http://fue-l:8080/tavernaserver/rest/runs/euydks6288sksldi728");
+        Map<String, String> kvMap = getKeyValueMap();
+        WebAppTavernaRestClient tavernaRestClient = WebAppTavernaRestClient.getInstance();
+        tavernaRestClient.run(this.selectedWorkfow, wr, kvMap);
+        wr.setRunstatus(TavernaWorkflowStatus.SUBMITTED);
         wr.setCreateddate(new Date());
         this.selectedWorkfow.addWorkflowRun(wr);
         WorkflowDao wfdao = new WorkflowDao();

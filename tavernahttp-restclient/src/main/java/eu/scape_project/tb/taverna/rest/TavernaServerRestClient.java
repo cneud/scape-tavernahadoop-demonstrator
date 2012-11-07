@@ -207,12 +207,15 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
             logger.error("Error while reading response.",ex);
         }
         logger.info("Status: "+statusStr);
-        if(statusStr.equals("Finished"))
+        statusStr = statusStr.replaceAll("\\s","");
+        if(statusStr.equals("Finished")) {
             return TavernaWorkflowStatus.FINISHED;
-        else if(statusStr.equals("Operating"))
+        } else if(statusStr.equals("Operating")) {
             return TavernaWorkflowStatus.OPERATING;
-        else if(statusStr.equals("Initialised"))
+        } else if(statusStr.equals("Initialized")) {
             return TavernaWorkflowStatus.INITIALISED;
+        }
+        this.consumeResponseEntityContent(response);
         return status;        
     }
 

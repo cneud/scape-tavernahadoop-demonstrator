@@ -48,14 +48,14 @@ public class HibernateSessionRequestFilter implements Filter {
             throws IOException, ServletException {
 
         try {
-            logger.debug("Starting a database transaction");
+            logger.info("Starting a database transaction");
             sf.getCurrentSession().beginTransaction();
 
             // Call the next filter (continue request processing)
             chain.doFilter(request, response);
 
             // Commit and cleanup
-            logger.debug("Committing the database transaction");
+            logger.info("Committing the database transaction");
             sf.getCurrentSession().getTransaction().commit();
 
         } catch (StaleObjectStateException staleEx) {
@@ -71,7 +71,7 @@ public class HibernateSessionRequestFilter implements Filter {
             logger.error("Hibernate error", ex);
             try {
                 if (sf.getCurrentSession().getTransaction().isActive()) {
-                    logger.debug("Trying to rollback database transaction after exception");
+                    logger.info("Trying to rollback database transaction after exception");
                     sf.getCurrentSession().getTransaction().rollback();
                 }
             } catch (Throwable rbEx) {
@@ -85,8 +85,8 @@ public class HibernateSessionRequestFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        logger.debug("Initializing filter...");
-        logger.debug("Obtaining SessionFactory from static HibernateUtil singleton");
+        logger.info("Initializing filter...");
+        logger.info("Obtaining SessionFactory from static HibernateUtil singleton");
         sf = HibernateUtil.getSessionFactory();
     }
 

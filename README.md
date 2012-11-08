@@ -45,12 +45,19 @@ https://ccp.cloudera.com/display/CDHDOC/Installing+CDH3+on+a+Single+Linux+Node+i
 Configuration & Deployment of the web application
 -------------------------------------------------
 
-Configure the web application parameters in 
+Rename the configuration template files:
+
+    tavernahadoop-webgui/src/main/resources/config_template.properties
+    tavernahadoop-webgui/src/main/resources/hibernate_template.cfg.xml
+
+to:
 
     tavernahadoop-webgui/src/main/resources/config.properties
+    tavernahadoop-webgui/src/main/resources/hibernate.cfg.xml
 
-which contains the settings for using the REST API of your Taverna Server and
-for deploying the web application to an Apache Tomcat application server. 
+and adapt the settings for using the REST API of your Taverna Server and
+for deploying the web application to an Apache Tomcat application server 
+(config.properties) and the mysql database settings (hibernate.cfg.xml). 
 
 In order to deploy the web application, change to the web application module
 directory and run the corresponding maven task:

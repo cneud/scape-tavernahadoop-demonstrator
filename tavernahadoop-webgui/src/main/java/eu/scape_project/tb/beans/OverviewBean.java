@@ -206,8 +206,12 @@ public class OverviewBean implements Serializable {
         for (String keyWithPrefix : map.keySet()) {
             if (keyWithPrefix.startsWith("wfipparam")) {
                 String key = keyWithPrefix.replace("wfipparam", "");
-                String val = map.get(keyWithPrefix);
-                kvMap.put(key, val);
+                // Do not add uuid field. It is injected after the workflow
+                // is submitted to the taverna server and the uuid is known.
+                if (!(key.equals("uuid"))) {
+                    String val = map.get(keyWithPrefix);
+                    kvMap.put(key, val);
+                }
             }
         }
         return kvMap;

@@ -51,9 +51,11 @@
 
                     <h:panelGroup id="portslist">
                         <ui:repeat var="inputport" value="#{overview.selectedWorkfow.workflowInputPorts}">
-                            <label class="inputtexts" for="wfipparam#{inputport.portname}">#{inputport.portname}</label>
-                            <input class="ui-inputtext ui-inputfield ui-widget ui-state-default ui-corner-all" type="text" name="wfipparam#{inputport.portname}" id="#{inputport.portname}" value="#{inputport.defaultvalue}"  size="40" />
-                            <br />
+                            <h:panelGroup rendered="#{inputport.portname != 'uuid'}">
+                                <label class="inputtexts" for="wfipparam#{inputport.portname}">#{inputport.portname}</label>
+                                <input class="ui-inputtext ui-inputfield ui-widget ui-state-default ui-corner-all" type="text" name="wfipparam#{inputport.portname}" id="#{inputport.portname}" value="#{inputport.defaultvalue}"  size="40" />
+                                <br />
+                            </h:panelGroup>
                         </ui:repeat>
                     </h:panelGroup>
                     <br/>

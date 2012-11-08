@@ -49,6 +49,7 @@ public class WorkflowFactory {
         wf.setFilename(t2flowAbsPath.substring(t2flowAbsPath.lastIndexOf(File.separator) + 1));
         wf.setCreateddate(new Date());
         T2FlowFile t2flow = new T2FlowFile(t2flowAbsPath);
+        wf.setUUIDInputPort(t2flow.hasUUIDInputPort());
         uk.org.taverna.scufl2.api.core.Workflow t2Wf = t2flow.getFirstWorkflow();
         NamedSet<InputWorkflowPort> t2InputPorts = t2Wf.getInputPorts();
         ArrayList<WorkflowInputPort> wfInputPorts = new ArrayList<WorkflowInputPort>();

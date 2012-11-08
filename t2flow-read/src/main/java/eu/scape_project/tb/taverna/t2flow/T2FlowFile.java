@@ -80,7 +80,7 @@ public class T2FlowFile {
         }
         return this.workflow.getOutputPorts();
     }
- 
+
     /**
      * Get first workflow.
      *
@@ -101,5 +101,30 @@ public class T2FlowFile {
             logger.error("I/O error", ex);
         }
         return w;
+    }
+
+    /**
+     * Check if the workflow has an UUID input port. This is needed as
+     * identifier for dependant hadoop jobs which receive the UUID as job name
+     * prefix.
+     *
+     * @return True if uuid input port is present, false otherwise
+     */
+    public Boolean hasUUIDInputPort() {
+        if (this.workflow == null) {
+            Workflow w = this.getFirstWorkflow();
+            this.workflow = w;
+        }
+        if (workflow == null) {
+            logger.error("Workflow object not initialised");
+            return false;
+        }
+        NamedSet<InputWorkflowPort> test = workflow.getInputPorts();
+        for (InputWorkflowPort inputPort : test) {
+            if (inputPort.getName().equals("uuid")) {
+                return true;
+            }
+        }
+        return false;
     }
 }

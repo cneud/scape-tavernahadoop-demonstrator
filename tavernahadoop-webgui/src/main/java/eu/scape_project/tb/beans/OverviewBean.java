@@ -95,6 +95,11 @@ public class OverviewBean implements Serializable {
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Workflow upload", "Workflow file " + event.getFile().getFileName() + " uploaded successfully.");
             FacesContext.getCurrentInstance().addMessage("Workflow uploaded successfully", msg);
             Workflow wf = WorkflowFactory.createWorkflow(absPath);
+            // Issue warning if uuid input port is not available
+            if (!wf.isUUIDInputPort()) {
+                FacesMessage msgWarnUUID = new FacesMessage(FacesMessage.SEVERITY_WARN, "UUID Input port missing", "It will not be possible to show the progress of any related hadoop/pig/hive jobs");
+                FacesContext.getCurrentInstance().addMessage("Workflow uploaded successfully", msgWarnUUID);
+            }
             selectedWorkfow = wf;
             WorkflowDao wfdao = new WorkflowDao();
             wfdao.save(wf);

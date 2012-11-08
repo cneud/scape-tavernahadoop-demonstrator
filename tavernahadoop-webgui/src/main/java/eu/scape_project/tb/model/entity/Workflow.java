@@ -41,6 +41,7 @@ public class Workflow implements Serializable {
     private List<WorkflowRun> workflowRuns = new ArrayList<WorkflowRun>();
     private String filename;
     private Date createddate;
+    private boolean UUIDInputPort;
 
     /**
      * Empty constructor.
@@ -172,5 +173,25 @@ public class Workflow implements Serializable {
      */
     public void setCreateddate(Date createddate) {
         this.createddate = createddate;
+    }
+
+    /**
+     * Getter of the UUIDInputPort field.
+     *
+     * @return True if the workflow has an uuid input port, false otherwise
+     */
+    @Column(name = "uuidinputport")
+    public boolean isUUIDInputPort() {
+        return UUIDInputPort;
+    }
+
+    /**
+     * Setter of the UUIDInputPort field.
+     *
+     * @param UUIDInputPort True if the workflow has an uuid input port, false
+     * otherwise
+     */
+    public void setUUIDInputPort(boolean UUIDInputPort) {
+        this.UUIDInputPort = UUIDInputPort;
     }
 }

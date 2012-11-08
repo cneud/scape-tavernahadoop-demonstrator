@@ -10,3 +10,7 @@
 /t2flow-annotread/target/
 /target/
 /t2flow-read/target/
+
+
+/tavernahadoop-webgui/src/main/resources/config.properties
+/tavernahadoop-webgui/src/main/resources/hibernate.cfg.xml

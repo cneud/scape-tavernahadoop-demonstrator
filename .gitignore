@@ -1,9 +1,12 @@
+# Compiled classes #
 *.class
 
 # Package Files #
 *.jar
 *.war
 *.ear
+
+# Targets #
 /tavernahadoop-webgui/target/
 /tavernahttp-restclient/target/
 /defaulthttp-restclient/target/
@@ -11,6 +14,10 @@
 /target/
 /t2flow-read/target/
 
+# User specific config files created from templates #
 
 /tavernahadoop-webgui/src/main/resources/config.properties
 /tavernahadoop-webgui/src/main/resources/hibernate.cfg.xml
+
+# Netbeans configuration file #
+nbactions.xml

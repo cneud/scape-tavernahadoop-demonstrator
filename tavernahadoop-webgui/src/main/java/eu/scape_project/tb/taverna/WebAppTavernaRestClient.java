@@ -16,7 +16,7 @@
  */
 package eu.scape_project.tb.taverna;
 
-import eu.scape_project.tb.config.Config;
+import eu.scape_project.tb.config.TavernaConfig;
 import eu.scape_project.tb.model.entity.Workflow;
 import eu.scape_project.tb.model.entity.WorkflowRun;
 import eu.scape_project.tb.taverna.rest.TavernaServerRestClient;
@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 public class WebAppTavernaRestClient implements Serializable {
 
     private Logger logger = LoggerFactory.getLogger(WebAppTavernaRestClient.class.getName());
-    private Config config;
+    private TavernaConfig config;
     private String host;
     private int port;
     private final String basepath;
@@ -57,7 +57,7 @@ public class WebAppTavernaRestClient implements Serializable {
     }
 
     private WebAppTavernaRestClient() {
-        config = new Config();
+        config = new TavernaConfig();
         host = config.getProp("taverna.server.host");
         try {
             port = Integer.parseInt(config.getProp("taverna.server.port"));

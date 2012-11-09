@@ -16,7 +16,7 @@
  */
 package eu.scape_project.tb.beans;
 
-import eu.scape_project.tb.config.Config;
+import eu.scape_project.tb.config.TavernaConfig;
 import java.io.*;
 import java.util.Date;
 import java.util.HashMap;
@@ -88,7 +88,7 @@ public class OverviewBean implements Serializable {
     public void handleFileUpload(FileUploadEvent event) {
         UploadedFile f = event.getFile();
         String fileName = f.getFileName();
-        Config c = new Config();
+        TavernaConfig c = new TavernaConfig();
         String workflowPath = c.getProp("taverna.workflow.upload.path");
         String absPath = workflowPath + fileName;
         logger.info("File uploaded: " + fileName);

@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory;
  * @author Sven Schlarb https://github.com/shsdev
  * @version 0.1
  */
-public class Config {
+public class TavernaConfig {
 
-    private static Logger logger = LoggerFactory.getLogger(Config.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(TavernaConfig.class.getName());
     private Properties properties;
     private HashMap<String, String> map;
     
@@ -41,11 +41,11 @@ public class Config {
      * @param propertiesFile a string path to a properties file
      * @throws GeneratorException
      */
-    public Config() {
+    public TavernaConfig() {
         try {
             properties = new Properties();
             
-            properties.load(Config.class.getResourceAsStream(TAVERNA_PROPERTIES));
+            properties.load(TavernaConfig.class.getResourceAsStream(TAVERNA_PROPERTIES));
             logger.debug("Property file \"" + TAVERNA_PROPERTIES + "\" loaded.");
         } catch (IOException ex) {
             logger.error("Unable to load properties file!");

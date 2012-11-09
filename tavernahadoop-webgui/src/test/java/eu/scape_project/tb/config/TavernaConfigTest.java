@@ -4,7 +4,7 @@
  */
 package eu.scape_project.tb.config;
 
-import eu.scape_project.tb.config.Config;
+import eu.scape_project.tb.config.TavernaConfig;
 import java.io.File;
 import static org.junit.Assert.assertTrue;
 import org.junit.*;
@@ -12,16 +12,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Tests of the Config class.
+ * Tests of the TavernaConfig class.
  *
  * @author Sven Schlarb https://github.com/shsdev
  * @version 0.1
  */
-public class ConfigTest {
+public class TavernaConfigTest {
     
-    private static Logger logger = LoggerFactory.getLogger(ConfigTest.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(TavernaConfigTest.class.getName());
     
-    public ConfigTest() {
+    public TavernaConfigTest() {
     }
 
     @BeforeClass
@@ -41,13 +41,13 @@ public class ConfigTest {
     }
 
     /**
-     * Test of getProp method, of class Config.
+     * Test of getProp method, of class TavernaConfig.
      */
     @Test
     public void testConfiguration() {
         
         System.out.println("getProp");
-        Config config = new Config();
+        TavernaConfig config = new TavernaConfig();
         
         String key = "taverna.server.port";
         String result = config.getProp(key);

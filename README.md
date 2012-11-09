@@ -65,17 +65,33 @@ Configuration is then done in four steps:
 
 1. Adapt the Taverna Server settings:
 
-    tavernahadoop-webgui/src/main/resources/taverna.properties
+    `tavernahadoop-webgui/src/main/resources/taverna.properties`
 
 2. Adapt the Hibernate settings according to your MySQL server:
     
-    tavernahadoop-webgui/src/main/resources/hibernate.cfg.xml
+    `tavernahadoop-webgui/src/main/resources/hibernate.cfg.xml`
 
-3. Copy the settings.xml available in the project root into your
-   local maven repository folder or copy the profile that it contains in an
-   existing settings.xml, e.g. for linux:
+3. Copy the tavernahadoop-webgui/settings.xml into your local maven repository 
+   folder:
 
-    cp settings.xml $HOME/.m2/
+    `cp settings.xml $HOME/.m2/`
+
+   If you already have a settings.xml, copy the tomcat deployment profile
+   
+    <profile>
+        <id>tomcat-deployment-profile</id>
+        <properties>
+          <tomcat.server.manager.url>http://localhost:8080/manager</tomcat.server.manager.url>
+          <tomcat.server.manager.user>tomcat</tomcat.server.manager.user>
+          <tomcat.server.manager.password>tomcat</tomcat.server.manager.password>
+        </properties>
+    </profile>
+
+    as a child of the "profiles" node and make sure the profile is activated:
+
+    <activeProfiles>
+        <activeProfile>tomcat-deployment-profile</activeProfile>
+    </activeProfiles>
 
 4. Adapt the settings for the Hadoop Job Tracker API:
 

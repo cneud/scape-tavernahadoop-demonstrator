@@ -24,6 +24,11 @@ authentication, and a basic Taverna REST client consuming the Taverna Server
 Runs. Taverna Server 2.4 REST API is documented at 
 http://dev.mygrid.org.uk/wiki/display/taverna/REST+API.
 
+Current status
+--------------
+
+At the current state, the prototype of the Taverna Server workflow is in place,
+the Hadoop integration is being planned.
 
 Installation requirements
 -------------------------
@@ -31,8 +36,9 @@ Installation requirements
 For building the application, the Java SE Development Kit (JDK) version >=1.6.0 
 and Apache Maven >= 2.2.1 is required. The web application needs a running 
 Taverna Server 2.4 instance, and Hadoop at least running in pseudo-distributed 
-mode. For deployment of the web application a servlet container, e.g. the Apache 
-Tomcat Web Application Server is needed (tested on version 6.26).
+mode and a MySQL Server version >= 5.2. For deployment of the web application 
+a servlet container, e.g. the Apache Tomcat Web Application Server is needed 
+(tested on 6.26 and 7.0.32).
 
 For installing the Taverna Server 2.4 follow the instructions here:
 
@@ -47,17 +53,33 @@ Configuration & Deployment of the web application
 
 Rename the configuration template files:
 
-    tavernahadoop-webgui/src/main/resources/config_template.properties
+    tavernahadoop-webgui/src/main/resources/taverna_template.properties
     tavernahadoop-webgui/src/main/resources/hibernate_template.cfg.xml
 
 to:
 
-    tavernahadoop-webgui/src/main/resources/config.properties
+    tavernahadoop-webgui/src/main/resources/taverna.properties
     tavernahadoop-webgui/src/main/resources/hibernate.cfg.xml
 
-and adapt the settings for using the REST API of your Taverna Server and
-for deploying the web application to an Apache Tomcat application server 
-(config.properties) and the mysql database settings (hibernate.cfg.xml). 
+Configuration is then done in four steps:
+
+1. Adapt the Taverna Server settings:
+
+    tavernahadoop-webgui/src/main/resources/taverna.properties
+
+2. Adapt the Hibernate settings according to your MySQL server:
+    
+    tavernahadoop-webgui/src/main/resources/hibernate.cfg.xml
+
+3. Copy the settings.xml available in the project root into your
+   local maven repository folder or copy the profile that it contains in an
+   existing settings.xml, e.g. for linux:
+
+    cp settings.xml $HOME/.m2/
+
+4. Adapt the settings for the Hadoop Job Tracker API:
+
+   STILL TO BE DEFINED
 
 In order to deploy the web application, change to the web application module
 directory and run the corresponding maven task:

@@ -77,8 +77,9 @@ Configuration is then done in four steps:
     `cp tavernahadoop-webgui/settings.xml $HOME/.m2/`
 
    If you already have a settings.xml, make the tomcat deployment profile
-   
-    `<profile>
+
+   <pre>   
+    <profile>
         <id>tomcat-deployment-profile</id>
         <properties>
           <tomcat.server.manager.url>http://localhost:8080/manager</tomcat.server.manager.url>
@@ -86,6 +87,7 @@ Configuration is then done in four steps:
           <tomcat.server.manager.password>tomcat</tomcat.server.manager.password>
         </properties>
     </profile>`
+   </pre>
 
     available as a child of the "profiles" node and make sure the profile is activated:
 

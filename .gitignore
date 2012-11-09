@@ -16,7 +16,7 @@
 
 # User specific config files created from templates #
 
-/tavernahadoop-webgui/src/main/resources/config.properties
+/tavernahadoop-webgui/src/main/resources/taverna.properties
 /tavernahadoop-webgui/src/main/resources/hibernate.cfg.xml
 
 # Netbeans configuration file #

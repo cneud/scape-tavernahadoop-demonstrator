@@ -89,9 +89,9 @@ Configuration is then done in four steps:
 
     available as a child of the "profiles" node and make sure the profile is activated:
 
-    `<activeProfiles>
-        <activeProfile>tomcat-deployment-profile</activeProfile>
-    </activeProfiles>`
+    `<activeProfiles>`
+        `<activeProfile>tomcat-deployment-profile</activeProfile>`
+    `</activeProfiles>`
 
 4. Adapt the settings for the Hadoop Job Tracker API:
 

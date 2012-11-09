@@ -78,7 +78,7 @@ Configuration is then done in four steps:
 
    If you already have a settings.xml, make the tomcat deployment profile
 
-   <pre>   
+``` xml   
     <profile>
         <id>tomcat-deployment-profile</id>
         <properties>
@@ -87,7 +87,7 @@ Configuration is then done in four steps:
           <tomcat.server.manager.password>tomcat</tomcat.server.manager.password>
         </properties>
     </profile>`
-   </pre>
+```
 
     available as a child of the "profiles" node and make sure the profile is activated:
 

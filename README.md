@@ -71,31 +71,31 @@ Configuration is then done in four steps:
     
     `tavernahadoop-webgui/src/main/resources/hibernate.cfg.xml`
 
-3. Copy the tavernahadoop-webgui/settings.xml into your local maven repository 
+3. Copy the `tavernahadoop-webgui/settings.xml` into your local maven repository 
    folder:
 
-    `cp settings.xml $HOME/.m2/`
+    `cp tavernahadoop-webgui/settings.xml $HOME/.m2/`
 
-   If you already have a settings.xml, copy the tomcat deployment profile
+   If you already have a settings.xml, make the tomcat deployment profile
    
-    <profile>
+    `<profile>
         <id>tomcat-deployment-profile</id>
         <properties>
           <tomcat.server.manager.url>http://localhost:8080/manager</tomcat.server.manager.url>
           <tomcat.server.manager.user>tomcat</tomcat.server.manager.user>
           <tomcat.server.manager.password>tomcat</tomcat.server.manager.password>
         </properties>
-    </profile>
+    </profile>`
 
-    as a child of the "profiles" node and make sure the profile is activated:
+    available as a child of the "profiles" node and make sure the profile is activated:
 
-    <activeProfiles>
+    `<activeProfiles>
         <activeProfile>tomcat-deployment-profile</activeProfile>
-    </activeProfiles>
+    </activeProfiles>`
 
 4. Adapt the settings for the Hadoop Job Tracker API:
 
-   STILL TO BE DEFINED
+   `STILL TO BE DEFINED`
 
 In order to deploy the web application, change to the web application module
 directory and run the corresponding maven task:

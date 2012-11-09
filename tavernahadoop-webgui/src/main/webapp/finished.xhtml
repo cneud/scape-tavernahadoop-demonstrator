@@ -44,17 +44,9 @@
                     <h:outputText styleClass="strong" id="wfrfilename" value="#{overview.selectedWorkfow.filename}" />
                 </legend>
 
-                <p><h:outputText value="Taverna workflow run progress:"/></p>
+                <p><h:outputText value="Taverna workflow run finished:"/></p>
                 
-                 <h:outputText id="wf_run_status" value="#{progress.selectedWorkflowRun.runstatus}" />
-                <p:poll interval="15"   
-                        listener="#{progress.selectedWorkflowRun.updateRunstatus}" update="wf_run_status" />  
-                
-                <br/>
-                <p><h:outputText value="Progress of related jobs:"/></p>
-                <p:progressBar styleClass="scapeprogressbar" widgetVar="pbAjax" ajax="true" value="#{progress.progress}" labelTemplate="{value}%">  
-                    <p:ajax event="complete" listener="#{progress.onComplete}" update="wfMessages"  onstart="pbAjax.start()" oncomplete="pbAjax.stop()"/>  
-                </p:progressBar>
+                <p><h:outputText value="#{finished.outcome}"/></p>
                 <br/>
                 <p:commandButton ajax="false" value="Back to overview" action="overview"/>
             </fieldset>

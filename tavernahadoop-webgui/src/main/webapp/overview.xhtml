@@ -5,7 +5,8 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
                 template="layouts/default.xhtml"
-                xmlns:p="http://primefaces.org/ui">
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
 
     <ui:define name="navigation">
 
@@ -84,7 +85,7 @@
                         </p:column>  
                         <p:column headerText="Run status" style="width:450px">  
 
-                            <h:link id="wf_run_status" value="#{workflowrun.runstatus}" outcome="progress" >
+                            <h:link id="wf_run_status" value="#{workflowrun.runstatus}" outcome="#{(fn:toLowerCase(workflowrun.runstatus) eq 'finished') ? 'finished' : 'progress'}" >
                                 <f:param name="wfrid" value="#{workflowrun.wfrid}" />
                             </h:link>
                             <p:poll interval="15"   

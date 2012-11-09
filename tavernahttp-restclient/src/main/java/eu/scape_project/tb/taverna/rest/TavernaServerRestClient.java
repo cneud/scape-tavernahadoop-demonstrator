@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -142,8 +143,6 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
             logger.error("Malformed URL Error", ex);
         }
     }
-    
-    
 
     /**
      * Set the workflow status of a workflow run.
@@ -181,14 +180,19 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
             logger.error("Malformed URL Error", ex);
         }
     }
-    
-    /*
+
+    /**
+     * Get workflow status.
+     *
+     * @param uuidBaseUrl UUID base url
+     * @return Workflow status
+     * @throws HttpException
      */
     public TavernaWorkflowStatus getWorkflowStatus(URL uuidBaseUrl) throws HttpException {
         TavernaWorkflowStatus status = null;
         URL statusUrl = null;
         try {
-            statusUrl = new URL(uuidBaseUrl+"/status");
+            statusUrl = new URL(uuidBaseUrl + "/status");
         } catch (MalformedURLException ex) {
             logger.error("Malformed URL Error", ex);
             return null;
@@ -204,19 +208,19 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
             InputStream content = sr.getContent();
             statusStr = IOUtils.toString(content);
         } catch (IOException ex) {
-            logger.error("Error while reading response.",ex);
+            logger.error("Error while reading response.", ex);
         }
-        logger.info("Status: "+statusStr);
-        statusStr = statusStr.replaceAll("\\s","");
-        if(statusStr.equals("Finished")) {
+        logger.info("Status: " + statusStr);
+        statusStr = statusStr.replaceAll("\\s", "");
+        if (statusStr.equals("Finished")) {
             return TavernaWorkflowStatus.FINISHED;
-        } else if(statusStr.equals("Operating")) {
+        } else if (statusStr.equals("Operating")) {
             return TavernaWorkflowStatus.OPERATING;
-        } else if(statusStr.equals("Initialized")) {
+        } else if (statusStr.equals("Initialized")) {
             return TavernaWorkflowStatus.INITIALISED;
         }
         this.consumeResponseEntityContent(response);
-        return status;        
+        return status;
     }
 
     /*
@@ -230,7 +234,7 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
             logger.error("Malformed URL Error", ex);
             return null;
         }
-        return status;        
+        return status;
     }
 
     /**
@@ -321,8 +325,48 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
 
     void deleteAllRuns() throws HttpException {
         ArrayList<String> runs = getCurrentTavernaRuns();
-        for(String uuid : runs) {
+        for (String uuid : runs) {
             deleteWorkflow(uuid);
         }
+    }
+    
+    
+
+    /**
+     * Get workflow status. // TODO: Under construction
+     *
+     * @param uuidBaseUrl UUID base url
+     * @return Workflow status
+     * @throws HttpException
+     */
+    public Document getWorkflowRunOutput(URL uuidBaseUrl) throws HttpException {
+        //http://fue-hdc01:8080/TavernaServer.2.4.1/rest/runs/9b116401-c341-4312-b186-c8d97f7bbc27
+        Document doc = null;
+        
+        URL outputUrl = null;
+        try {
+            outputUrl = new URL(uuidBaseUrl + "/output");
+        } catch (MalformedURLException ex) {
+            logger.error("Malformed URL Error", ex);
+            return null;
+        }
+        HttpResponse response = this.executeGet(outputUrl);
+        int code = response.getStatusLine().getStatusCode();
+        if (code != 200) {
+            this.throwHttpError(response.getStatusLine().toString());
+        }
+        String responseXml = "";
+        BasicManagedEntity sr = (BasicManagedEntity) response.getEntity();
+        try {
+            InputStream content = sr.getContent();
+            responseXml = IOUtils.toString(content);
+        } catch (IOException ex) {
+            logger.error("Error while reading response.", ex);
+        }
+        logger.info("Respone XML: " + responseXml);
+        
+       
+        this.consumeResponseEntityContent(response);
+        return doc;
     }
 }

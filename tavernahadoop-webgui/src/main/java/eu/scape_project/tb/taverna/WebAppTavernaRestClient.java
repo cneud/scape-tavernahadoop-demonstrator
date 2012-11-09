@@ -94,15 +94,15 @@ public class WebAppTavernaRestClient implements Serializable {
             // Set UUID resource URL
             workflowRun.setUuidBaseResourceUrl(uuidRURL);
             logger.info(workflowRun.getUuidBaseResourceUrl());
+            
+            // 2. Inject UUID in key-value map
+            kvMap.put("uuid", workflowRun.getUuid());
 
-            // 2. PUT INPUT PORTS
+            // 3. PUT INPUT PORTS
             URL resourceUrl = new URL(workflowRun.getUuidBaseResourceUrl());
             for (String key : kvMap.keySet()) {
                 tavernaRestClient.setWorkflowInput(resourceUrl, key, kvMap.get(key));
             }
-            
-            // 3. Inject UUID in key-value map
-            kvMap.put("uuid", workflowRun.getUuid());
             
             // 4. Run workflow
             tavernaRestClient.setWorkflowStatus(resourceUrl, TavernaWorkflowStatus.OPERATING);

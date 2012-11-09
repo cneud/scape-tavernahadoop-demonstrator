@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <profiles>
+        <profile>
+            <id>tomcat-deployment-profile</id>
+            <properties>
+                <tomcat.server.manager.url>http://localhost:8080/manager</tomcat.server.manager.url>
+                <tomcat.server.manager.user>tomcat</tomcat.server.manager.user>
+                <tomcat.server.manager.password>tomcat</tomcat.server.manager.password>
+            </properties>
+        </profile>
+    </profiles>
+    <activeProfiles>
+        <activeProfile>tomcat-deployment-profile</activeProfile>
+    </activeProfiles>
+</settings>

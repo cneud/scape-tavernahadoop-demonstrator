@@ -34,7 +34,7 @@ public class Config {
     private Properties properties;
     private HashMap<String, String> map;
     
-    public static final String CONFIG_PROPERTIES = "/config.properties";
+    public static final String TAVERNA_PROPERTIES = "/taverna.properties";
 
     /**
      * Construct the property utils object from the properties file
@@ -45,8 +45,8 @@ public class Config {
         try {
             properties = new Properties();
             
-            properties.load(Config.class.getResourceAsStream(CONFIG_PROPERTIES));
-            logger.debug("Property file \"" + CONFIG_PROPERTIES + "\" loaded.");
+            properties.load(Config.class.getResourceAsStream(TAVERNA_PROPERTIES));
+            logger.debug("Property file \"" + TAVERNA_PROPERTIES + "\" loaded.");
         } catch (IOException ex) {
             logger.error("Unable to load properties file!");
         }

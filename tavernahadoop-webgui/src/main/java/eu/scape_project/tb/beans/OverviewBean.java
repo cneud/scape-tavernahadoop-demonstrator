@@ -204,6 +204,7 @@ public class OverviewBean implements Serializable {
         Map<String, String> kvMap = new HashMap<String, String>();
         Map<String, String> map = externalContext.getRequestParameterMap();
         for (String keyWithPrefix : map.keySet()) {
+            // the prefix "wfipparam" is used to filter key value pair fields
             if (keyWithPrefix.startsWith("wfipparam")) {
                 String key = keyWithPrefix.replace("wfipparam", "");
                 // Do not add uuid field. It is injected after the workflow

@@ -72,5 +72,11 @@ public enum TavernaWorkflowStatus {
         public String toString() {
             return "Error";
         }
+    },
+    NONEXISTENT {
+        @Override
+        public String toString() {
+            return "Nonexistent";
+        }
     }
 }

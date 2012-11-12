@@ -198,12 +198,19 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      */
     public TavernaWorkflowStatus getWorkflowStatus(URL uuidBaseUrl) throws HttpException {
         TavernaWorkflowStatus status = null;
+        String uuid = TavernaRestUtil.getUUIDfromUUIDResourceURL(uuidBaseUrl.toExternalForm());
+        ArrayList<String> runs =  getCurrentTavernaRuns();
+        if(!runs.contains(uuid)) {
+            status = TavernaWorkflowStatus.NONEXISTENT;
+            return status;
+        }
         URL statusUrl = null;
         try {
             statusUrl = new URL(uuidBaseUrl + "/status");
         } catch (MalformedURLException ex) {
             logger.error("Malformed URL Error", ex);
-            return null;
+            status = TavernaWorkflowStatus.ERROR;
+            return status;
         }
         HttpResponse response = this.executeGet(statusUrl, "text/plain");
         int code = response.getStatusLine().getStatusCode();
@@ -217,6 +224,8 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
             statusStr = IOUtils.toString(content);
         } catch (IOException ex) {
             logger.error("Error while reading response.", ex);
+            status = TavernaWorkflowStatus.ERROR;
+            return status;
         }
         logger.info("Status: " + statusStr);
         statusStr = statusStr.replaceAll("\\s", "");
@@ -339,7 +348,7 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
     }
 
     /**
-     * Get workflow status. // TODO: Under construction
+     * Get workflow status.
      *
      * @param uuidBaseUrl UUID base url
      * @return Workflow status

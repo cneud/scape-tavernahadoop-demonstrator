@@ -42,6 +42,6 @@ public class DefaultHttpRestClientDemo {
         // Example: Google search REST API
         // http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=Google%20REST%20API
         DefaultHttpRestClient simpleRestClient = new DefaultHttpRestClient("ajax.googleapis.com", 80, "/ajax/services/search");
-        simpleRestClient.executeGet("web?v=1.0&q=Google%20REST%20API");
+        simpleRestClient.executeGet("web?v=1.0&q=Google%20REST%20API","application/json");
     }
 }

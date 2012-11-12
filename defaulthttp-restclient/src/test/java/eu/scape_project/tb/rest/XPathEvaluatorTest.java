@@ -64,7 +64,7 @@ public class XPathEvaluatorTest {
         ByteArrayEntity byteArrayEntity = new ByteArrayEntity(bytes);
         BasicHttpResponse response = new BasicHttpResponse(statusLine);
         response.setEntity(byteArrayEntity);
-        ResponseParser responseParser = new ResponseParser(response);
+        XmlResponseParser responseParser = new XmlResponseParser(response);
         if (responseParser == null) {
             fail("Response parser object not initialised.");
         }

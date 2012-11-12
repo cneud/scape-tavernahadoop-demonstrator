@@ -69,6 +69,10 @@ public class WebAppTavernaRestClient implements Serializable {
         tavernaRestClient.setUser(config.getProp("taverna.server.username"));
         tavernaRestClient.setPassword(config.getProp("taverna.server.password"));
     }
+    
+    public TavernaServerRestClient getClient() {
+        return tavernaRestClient;
+    }
 
     /**
      * Submit, initialise, and run a taverna workflow using the

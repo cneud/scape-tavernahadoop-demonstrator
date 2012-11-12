@@ -36,14 +36,14 @@ public class XPathEvaluator {
 
     private static Logger logger = LoggerFactory.getLogger(XPathEvaluator.class.getName());
     private XPath xpath;
-    private ResponseParser rp;
+    private XmlResponseParser rp;
 
     /**
      * Constructor of the XPath evaluator class.
      *
      * @param rp Response parser
      */
-    public XPathEvaluator(ResponseParser rp) {
+    public XPathEvaluator(XmlResponseParser rp) {
         this.rp = rp;
         xpath = XPathFactory.newInstance().newXPath();
     }

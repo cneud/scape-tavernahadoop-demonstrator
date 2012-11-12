@@ -26,12 +26,12 @@ import static org.junit.Assert.*;
 import org.w3c.dom.Document;
 
 /**
- * JUnit tests of the ResponseParser class.
+ * JUnit tests of the XmlResponseParser class.
  *
  * @author Sven Schlarb https://github.com/shsdev
  * @version 1.0
  */
-public class ResponseParserTest {
+public class XmlResponseParserTest {
 
     private BasicStatusLine statusLine;
 
@@ -54,7 +54,7 @@ public class ResponseParserTest {
     }
 
     /**
-     * Test of parseResponse method, of class ResponseParser.
+     * Test of parseResponse method, of class XmlResponseParser.
      */
     @Test
     public void testParseResponse() throws UnsupportedEncodingException {
@@ -63,7 +63,7 @@ public class ResponseParserTest {
         ByteArrayEntity byteArrayEntity = new ByteArrayEntity(bytes);
         BasicHttpResponse response = new BasicHttpResponse(statusLine);
         response.setEntity(byteArrayEntity);
-        ResponseParser responseParser = new ResponseParser(response);
+        XmlResponseParser responseParser = new XmlResponseParser(response);
         if (responseParser == null) {
             fail("Response parser object not initialised.");
         }

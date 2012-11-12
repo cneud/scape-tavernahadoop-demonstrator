@@ -4,8 +4,8 @@
  */
 package eu.scape_project.tb.taverna.rest;
 
+import static org.junit.Assert.assertEquals;
 import org.junit.*;
-import static org.junit.Assert.*;
 
 /**
  *

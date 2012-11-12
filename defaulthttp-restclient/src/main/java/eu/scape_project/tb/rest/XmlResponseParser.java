@@ -17,6 +17,7 @@
 package eu.scape_project.tb.rest;
 
 import java.io.IOException;
+import java.io.InputStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -33,9 +34,9 @@ import org.xml.sax.SAXException;
  * @author Sven Schlarb https://github.com/shsdev
  * @version 1.0
  */
-public class ResponseParser {
+public class XmlResponseParser {
 
-    private static Logger logger = LoggerFactory.getLogger(ResponseParser.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(XmlResponseParser.class.getName());
     private HttpResponse response;
     private Document responseXml;
     private boolean isParsed;
@@ -45,7 +46,7 @@ public class ResponseParser {
      *
      * @param response
      */
-    public ResponseParser(HttpResponse response) {
+    public XmlResponseParser(HttpResponse response) {
         this.response = response;
         isParsed = false;
     }
@@ -57,7 +58,8 @@ public class ResponseParser {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
             DocumentBuilder db = dbf.newDocumentBuilder();
-            responseXml = db.parse(response.getEntity().getContent());
+            InputStream responseContent = response.getEntity().getContent();
+            responseXml = db.parse(responseContent);
         } catch (SAXException ex) {
             logger.error("SAX error", ex);
         } catch (IOException ex) {

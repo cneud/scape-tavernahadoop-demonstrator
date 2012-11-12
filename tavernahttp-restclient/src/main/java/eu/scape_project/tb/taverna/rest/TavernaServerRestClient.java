@@ -16,27 +16,26 @@
  */
 package eu.scape_project.tb.taverna.rest;
 
-import eu.scape_project.tb.rest.*;
+import eu.scape_project.tb.rest.ContentType;
+import eu.scape_project.tb.rest.DefaultHttpAuthRestClient;
+import eu.scape_project.tb.rest.XPathEvaluator;
+import eu.scape_project.tb.rest.XmlResponseParser;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import org.apache.commons.io.FileUtils;
+import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.conn.BasicManagedEntity;
-import org.apache.http.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -52,6 +51,7 @@ import org.w3c.dom.NodeList;
 public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
 
     private static Logger logger = LoggerFactory.getLogger(TavernaServerRestClient.class.getName());
+    private SimpleBasicHttpAuthenticator authenticator;
 
     /**
      * Constructor of the taverna server rest client. Constructor parameters are
@@ -60,7 +60,6 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      * @param host Host
      * @param port Port
      * @param basePath Base path
-     * @param restPath
      */
     public TavernaServerRestClient(String host, int port, String basePath) {
         super(host, port, basePath);
@@ -81,6 +80,7 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
         if (password != null) {
             logger.info("Setting credentials");
             this.setCredentials();
+            this.initAuthenticator();
         }
     }
 
@@ -98,7 +98,15 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
         if (user != null) {
             logger.info("Setting credentials");
             this.setCredentials();
+            this.initAuthenticator();
         }
+    }
+
+    /**
+     * Init simple basic HTTP authenticator after user and password are set.
+     */
+    private void initAuthenticator() {
+        this.authenticator = new SimpleBasicHttpAuthenticator(this.user, this.password);
     }
 
     /**
@@ -197,7 +205,7 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
             logger.error("Malformed URL Error", ex);
             return null;
         }
-        HttpResponse response = this.executeGet(statusUrl);
+        HttpResponse response = this.executeGet(statusUrl, "text/plain");
         int code = response.getStatusLine().getStatusCode();
         if (code != 200) {
             this.throwHttpError(response.getStatusLine().toString());
@@ -247,12 +255,12 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      */
     public ArrayList<String> getCurrentTavernaRuns() throws HttpException {
         ArrayList<String> uuids = new ArrayList<String>();
-        HttpResponse response = this.executeGet("runs");
+        HttpResponse response = this.executeGet("runs", "application/xml");
         int code = response.getStatusLine().getStatusCode();
         if (code != 200) {
             this.throwHttpError(response.getStatusLine().toString());
         }
-        ResponseParser rp = new ResponseParser(response);
+        XmlResponseParser rp = new XmlResponseParser(response);
         rp.parseResponse();
         XPathEvaluator xPathEval = new XPathEvaluator(rp);
         NodeList items = xPathEval.evaluate("/runList/run");
@@ -329,8 +337,6 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
             deleteWorkflow(uuid);
         }
     }
-    
-    
 
     /**
      * Get workflow status. // TODO: Under construction
@@ -339,34 +345,22 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      * @return Workflow status
      * @throws HttpException
      */
-    public Document getWorkflowRunOutput(URL uuidBaseUrl) throws HttpException {
-        //http://fue-hdc01:8080/TavernaServer.2.4.1/rest/runs/9b116401-c341-4312-b186-c8d97f7bbc27
-        Document doc = null;
-        
-        URL outputUrl = null;
+    public List<KeyValuePair> getWorkflowRunOutputValues(URL uuidBaseUrl) throws HttpException {
+        URL outputRestUrl = null;
         try {
-            outputUrl = new URL(uuidBaseUrl + "/output");
+            outputRestUrl = new URL(uuidBaseUrl + "/output");
         } catch (MalformedURLException ex) {
             logger.error("Malformed URL Error", ex);
             return null;
         }
-        HttpResponse response = this.executeGet(outputUrl);
+        HttpResponse response = this.executeGet(outputRestUrl, "application/xml");
         int code = response.getStatusLine().getStatusCode();
         if (code != 200) {
             this.throwHttpError(response.getStatusLine().toString());
         }
-        String responseXml = "";
-        BasicManagedEntity sr = (BasicManagedEntity) response.getEntity();
-        try {
-            InputStream content = sr.getContent();
-            responseXml = IOUtils.toString(content);
-        } catch (IOException ex) {
-            logger.error("Error while reading response.", ex);
-        }
-        logger.info("Respone XML: " + responseXml);
-        
-       
-        this.consumeResponseEntityContent(response);
-        return doc;
+        TavernaResponseParser trp = new TavernaResponseParser(response);
+
+        trp.setAuthenticator(this.authenticator);
+        return trp.getResponseOutputValues();
     }
 }

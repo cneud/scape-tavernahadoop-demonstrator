@@ -8,7 +8,7 @@
                 template="layouts/default.xhtml"
                 xmlns:p="http://primefaces.org/ui">
     <ui:define name="header">
-        
+
     </ui:define>
     <ui:define name="navigation">
 
@@ -44,9 +44,13 @@
                     <h:outputText styleClass="strong" id="wfrfilename" value="#{overview.selectedWorkfow.filename}" />
                 </legend>
 
-                <p><h:outputText value="Taverna workflow run finished:"/></p>
-                
-                <p><h:outputText value="#{finished.outcome}"/></p>
+                <p><h:outputText value="Taverna workflow run finished: #{finished.outputValues[0].key}"/></p>
+
+                <p:dataList value="#{finished.outputValues}" var="outval" itemType="disc">  
+                    <b>#{outval.key}</b><br/>
+                    #{outval.value}  
+                </p:dataList>  
+
                 <br/>
                 <p:commandButton ajax="false" value="Back to overview" action="overview"/>
             </fieldset>

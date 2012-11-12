@@ -4,13 +4,14 @@ scape-tavernahadoop-demonstrator
 Introduction
 ------------
 
-The `scape-tavernahadoop-demonstrator` project consists of the three modules 
-`defaulthttp-restclient`, `tavernaserver-restclient`, and `tavernahadoop-webgui`
-which together demonstrate the orchestration of Hadoop Jobs using the Taverna 
-Server.
+The `scape-tavernahadoop-demonstrator` project consists of the four modules 
+`defaulthttp-restclient`, `tavernaserver-restclient`, `t2flow-read` and 
+`tavernahadoop-webgui` which together demonstrate the orchestration of Hadoop 
+Jobs using the Taverna Server.
 
-The main application is the `tavernahadoop-webgui` which can be deployed to an
-Apache Tomcat Web Application Server (tested on version 6.26).
+The main application is the `tavernahadoop-webgui` web application which can be 
+deployed to an Apache Tomcat Web Application Server (tested on version 6.26 and 
+7.0.32).
 
 The tavernaserver-restclient is a generic REST client including a client for the 
 Taverna Server 2.4 which is available for download at 
@@ -63,11 +64,12 @@ to:
 
 Configuration is then done in four steps:
 
-1. Adapt the Taverna Server settings:
+1. Adapt the Taverna Server settings for accessing the REST API of the Taverna 
+   Server:
 
     `tavernahadoop-webgui/src/main/resources/taverna.properties`
 
-2. Adapt the Hibernate settings according to your MySQL server:
+2. Adapt the Hibernate settings for accessing the MySQL server:
     
     `tavernahadoop-webgui/src/main/resources/hibernate.cfg.xml`
 
@@ -89,7 +91,8 @@ Configuration is then done in four steps:
     </profile>`
 ```
 
-    available as a child of the "profiles" node and make sure the profile is activated:
+    available as a child of the "profiles" node and make sure the profile is 
+    activated:
 
 ``` xml
     <activeProfiles>

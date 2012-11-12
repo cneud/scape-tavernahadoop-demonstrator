@@ -84,18 +84,22 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
      * @param resourceUrl Sub-resource is added to the base path
      * @return HTTP response
      */
-    public HttpResponse executeGet(URL resourceUrl) {
+    public HttpResponse executeGet(URL resourceUrl, String headerAccept) {
         HttpGet httpget = new HttpGet(resourceUrl.toExternalForm());
+        httpget.addHeader("Accept", headerAccept);
+        
         logger.info("Resource path: " + resourceUrl.toExternalForm());
         HttpResponse response = null;
         try {
             logger.info("executing request " + httpget.getRequestLine());
             response = this.execute(httpget);
+            Header contentTypeHeader = response.getEntity().getContentType();
+            logger.info("content type: " + contentTypeHeader.toString());
             HttpEntity entity = response.getEntity();
-
             logger.info(response.getStatusLine().toString());
+            long contLen = entity.getContentLength();
             if (entity != null) {
-                logger.info("HTTP GET response content length: " + entity.getContentLength());
+                logger.info("HTTP GET response content length: " + contLen);
             }
         } catch (IOException e) {
             logger.error("I/O Error while executing HTTP GET request");
@@ -109,7 +113,7 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
      * @param subResource Sub-resource is added to the base path
      * @return HTTP response
      */
-    public HttpResponse executeGet(String subResource) {
+    public HttpResponse executeGet(String subResource, String headerAccept) {
         String resource = FileUtility.makePath(this.getBaseUrlStr(), subResource);
         URL resourceUrl = null;
         try {
@@ -117,7 +121,7 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
         } catch (MalformedURLException ex) {
             logger.error("Malformed URL Error while executing HTTP GET request", ex);
         }
-        return executeGet(resourceUrl);
+        return executeGet(resourceUrl, headerAccept);
     }
 
     /**

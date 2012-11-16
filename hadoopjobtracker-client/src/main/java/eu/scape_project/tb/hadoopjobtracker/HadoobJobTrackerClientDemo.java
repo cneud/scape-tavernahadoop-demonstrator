@@ -30,8 +30,8 @@ public class HadoobJobTrackerClientDemo {
 
     public static void main(String[] args) {
 
-        String myJobTrackerName = "localhost";
-        //String myJobTrackerName = "fue-hdc01";
+        //String myJobTrackerName = "localhost";
+        String myJobTrackerName = "fue-hdc01";
         int myJobTrackerPort = 8021;
 
         HadoobJobTrackerClient myJobClt = new HadoobJobTrackerClient(myJobTrackerName, myJobTrackerPort);
@@ -63,14 +63,18 @@ public class HadoobJobTrackerClientDemo {
         System.out.println("***Get a list of ALL jobs");
         String UUIDall = "";   //This will return all jobs
         HDJobStatus[] uuidCltJobsAll = myJobClt.UUIDJobs(UUIDall);
-        for (HDJobStatus singleUUIDJobStatusAll : uuidCltJobsAll) {
-            System.out.println("JobID: " + singleUUIDJobStatusAll.getJobID());
-            System.out.println("    JobName: " + singleUUIDJobStatusAll.getJobName());
-            System.out.println("    Is complete: " + singleUUIDJobStatusAll.getJobIsComplete());
-            System.out.println("    User: " + singleUUIDJobStatusAll.getJobUserName());
-            System.out.println("    Failure info: " + singleUUIDJobStatusAll.getJobFailureInfo());
-            System.out.println("    Map progress: " + singleUUIDJobStatusAll.getJobMapProgress());
-            System.out.println("    Reduce progress: " + singleUUIDJobStatusAll.getJobReduceProgress());
+        if (uuidCltJobsAll.length > 0) {
+            for (HDJobStatus singleUUIDJobStatusAll : uuidCltJobsAll) {
+                System.out.println("JobID: " + singleUUIDJobStatusAll.getJobID());
+                System.out.println("    JobName: " + singleUUIDJobStatusAll.getJobName());
+                System.out.println("    Is complete: " + singleUUIDJobStatusAll.getJobIsComplete());
+                System.out.println("    User: " + singleUUIDJobStatusAll.getJobUserName());
+                System.out.println("    Failure info: " + singleUUIDJobStatusAll.getJobFailureInfo());
+                System.out.println("    Map progress: " + singleUUIDJobStatusAll.getJobMapProgress());
+                System.out.println("    Reduce progress: " + singleUUIDJobStatusAll.getJobReduceProgress());
+            }
+        } else {
+            System.out.println("No jobs found.");
         }
         System.out.println("**************************");
 
@@ -78,15 +82,20 @@ public class HadoobJobTrackerClientDemo {
         System.out.println("***Get a list of jobs with a specific UUID.");
         String UUID = "c009b143-68ed-47c5-ae22-8c1d9a00544c";   //Job UUID (if this is part of the JobName the jobObject will go into the HDJobStatus[])
         HDJobStatus[] uuidCltJobs = myJobClt.UUIDJobs(UUID);
-        for (HDJobStatus singleUUIDJobStatus : uuidCltJobs) {
-            System.out.println("JobID: " + singleUUIDJobStatus.getJobID());
-            System.out.println("    JobName: " + singleUUIDJobStatus.getJobName());
-            System.out.println("    Is complete: " + singleUUIDJobStatus.getJobIsComplete());
-            System.out.println("    User: " + singleUUIDJobStatus.getJobUserName());
-            System.out.println("    Failure info: " + singleUUIDJobStatus.getJobFailureInfo());
-            System.out.println("    Map progress: " + singleUUIDJobStatus.getJobMapProgress());
-            System.out.println("    Reduce progress: " + singleUUIDJobStatus.getJobReduceProgress());
+        if (uuidCltJobs.length > 0) {
+            for (HDJobStatus singleUUIDJobStatus : uuidCltJobs) {
+                System.out.println("JobID: " + singleUUIDJobStatus.getJobID());
+                System.out.println("    JobName: " + singleUUIDJobStatus.getJobName());
+                System.out.println("    Is complete: " + singleUUIDJobStatus.getJobIsComplete());
+                System.out.println("    User: " + singleUUIDJobStatus.getJobUserName());
+                System.out.println("    Failure info: " + singleUUIDJobStatus.getJobFailureInfo());
+                System.out.println("    Map progress: " + singleUUIDJobStatus.getJobMapProgress());
+                System.out.println("    Reduce progress: " + singleUUIDJobStatus.getJobReduceProgress());
+            }
+        } else {
+            System.out.println("No jobs found.");
         }
+
         System.out.println("**************************");
     }
 }

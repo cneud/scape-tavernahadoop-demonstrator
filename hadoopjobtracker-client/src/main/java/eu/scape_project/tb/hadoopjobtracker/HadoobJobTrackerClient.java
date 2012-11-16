@@ -132,6 +132,7 @@ public class HadoobJobTrackerClient {
 
         int numberOfJobs = allHadoopJobs.length;
         logger.info("Number of ALL jobs on the cluster: " + numberOfJobs);
+        logger.info("Searching for jobs containing the UUID: '" + UUID + "'");
 
         ArrayList<HDJobStatus> allUUIDJobs = new ArrayList<HDJobStatus>();
         if (numberOfJobs > 0) {
@@ -145,10 +146,7 @@ public class HadoobJobTrackerClient {
                     logger.error("Error retrieving jobName for job " + singleJobID + ". ERR: " + ex.getMessage());
                 }
                 
-                if (UUID.equals("")) singleJobName = ""; // if UUID is passed as an empty string "" => you will get back all jobs (regardless of the UUID in the jobName)
-
-                if (singleJobName.toLowerCase().indexOf(UUID.toLowerCase()) >= 0) {
-                    logger.info("FOUND UUID: '" + UUID + "' found in jobName '" + singleJobName + "'.");
+                if ((singleJobName.toLowerCase().indexOf(UUID.toLowerCase()) >= 0) || (UUID.equals(""))) {
                     HDJobStatus newJobStatus = new HDJobStatus();
                     newJobStatus.setJobID(singleJobStatus.getJobID().toString());
                     newJobStatus.setJobIsComplete(singleJobStatus.isJobComplete());

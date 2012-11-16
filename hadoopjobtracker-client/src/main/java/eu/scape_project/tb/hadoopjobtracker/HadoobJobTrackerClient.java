@@ -160,8 +160,6 @@ public class HadoobJobTrackerClient {
             }
         }
         return allUUIDJobs.toArray(new HDJobStatus[allUUIDJobs.size()]);
-
-
     }
 
     private static String getJobName(JobClient jobClt, JobID singleJobID) throws IOException {

@@ -30,8 +30,8 @@ public class HadoobJobTrackerClientDemo {
 
     public static void main(String[] args) {
 
-        //String myJobTrackerName = "localhost";
-        String myJobTrackerName = "fue-hdc01";
+        String myJobTrackerName = "localhost";
+        //String myJobTrackerName = "fue-hdc01";
         int myJobTrackerPort = 8021;
 
         HadoobJobTrackerClient myJobClt = new HadoobJobTrackerClient(myJobTrackerName, myJobTrackerPort);

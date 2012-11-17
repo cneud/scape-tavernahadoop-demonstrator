@@ -18,6 +18,8 @@ package eu.scape_project.tb.rest;
 
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.conn.BasicClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,8 +44,8 @@ public class DefaultHttpAuthRestClient extends DefaultHttpRestClient {
      * @param port Port
      * @param basePath Base path
      */
-    public DefaultHttpAuthRestClient(String host, int port, String basePath) {
-        super(host, port, basePath);
+    public DefaultHttpAuthRestClient(BasicClientConnectionManager bccm, String host, int port, String basePath) {
+        super(bccm, host, port, basePath);
     }
 
     public String getPassword() {
@@ -71,8 +73,14 @@ public class DefaultHttpAuthRestClient extends DefaultHttpRestClient {
      * @param password Password
      */
     protected void setCredentials() {
-        this.getCredentialsProvider().setCredentials(
-                new AuthScope(this.getHost(), this.getPort()),
+        BasicCredentialsProvider bcp = new BasicCredentialsProvider();
+        bcp.setCredentials(
+                new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT, AuthScope.ANY_REALM),
                 new UsernamePasswordCredentials(this.user, this.password));
+//        this.getCredentialsProvider().setCredentials(
+//                new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT, AuthScope.ANY_REALM),
+//                new UsernamePasswordCredentials(this.user, this.password));
+        this.setCredentialsProvider(bcp);
+      
     }
 }

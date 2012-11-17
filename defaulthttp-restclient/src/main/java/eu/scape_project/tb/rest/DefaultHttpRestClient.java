@@ -23,19 +23,27 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Level;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpException;
-import org.apache.http.HttpResponse;
+import org.apache.commons.httpclient.NTCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.http.*;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.DefaultRedirectStrategy;
+import org.apache.http.impl.conn.BasicClientConnectionManager;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +55,7 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  */
 public class DefaultHttpRestClient extends DefaultHttpClient {
-
+    
     private String host;
     private int port;
     private String basePath;
@@ -61,12 +69,14 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
      * @param port Port
      * @param basePath Base path
      */
-    public DefaultHttpRestClient(String host, int port, String basePath) {
+    public DefaultHttpRestClient(BasicClientConnectionManager bccm, String host, int port, String basePath) {
+        super(bccm);
         this.host = host;
         this.port = port;
         this.basePath = basePath;
         try {
-            baseUri = URIUtils.createURI("http", host, port, this.basePath, "", "");
+            baseUri = new URIBuilder().setScheme("http").setHost(host)
+                    .setPort(port).setPath(this.basePath).build();
         } catch (URISyntaxException ex) {
             logger.error("URI Syntax Error", ex);
         }
@@ -92,7 +102,18 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
         HttpResponse response = null;
         try {
             logger.info("executing request " + httpget.getRequestLine());
-            response = this.execute(httpget);
+            
+            HttpContext ctx = new BasicHttpContext();
+            CredentialsProvider credsProvider = new BasicCredentialsProvider();
+            credsProvider.setCredentials(
+                new org.apache.http.auth.AuthScope(
+                    org.apache.http.auth.AuthScope.ANY_HOST, 
+                    org.apache.http.auth.AuthScope.ANY_PORT, 
+                    org.apache.http.auth.AuthScope.ANY_REALM),
+                new UsernamePasswordCredentials("taverna", "taverna"));
+            ctx.setAttribute(ClientContext.CREDS_PROVIDER, credsProvider);
+            
+            response = this.execute(httpget, ctx);
             Header contentTypeHeader = response.getEntity().getContentType();
             logger.info("content type: " + contentTypeHeader.toString());
             HttpEntity entity = response.getEntity();
@@ -102,7 +123,7 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
                 logger.info("HTTP GET response content length: " + contLen);
             }
         } catch (IOException e) {
-            logger.error("I/O Error while executing HTTP GET request");
+            logger.error("I/O Error while executing HTTP GET request",e);
         }
         return response;
     }
@@ -139,8 +160,8 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
             stringEntity.setContentType(contentTypeHeader);
             httpPut.setEntity(stringEntity);
             logger.info("executing request " + httpPut.getRequestLine()
-                    + "with value:\n"+putContent+"\nand mime type:\n"
-                    +contentType.toString()+"");
+                    + "with value:\n" + putContent + "\nand mime type:\n"
+                    + contentType.toString() + "");
             response = this.execute(httpPut);
             HttpEntity entity = response.getEntity();
             logger.info(response.getStatusLine().toString());
@@ -196,9 +217,8 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
         }
         return response;
     }
-    
-    
- /**
+
+    /**
      * Execute DELETE request. Response entity must be consumed by the caller.
      *
      * @param subResource Sub-resource is added to the base path
@@ -228,7 +248,7 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
      * @return HTTP response
      */
     public HttpResponse executeDelete(String uuid) {
-        String resource = FileUtility.makePath(this.getBaseUrlStr(),"rest/runs", uuid);
+        String resource = FileUtility.makePath(this.getBaseUrlStr(), "rest/runs", uuid);
         URL resourceUrl = null;
         try {
             resourceUrl = new URL(resource);
@@ -237,7 +257,6 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
         }
         return executeDelete(resourceUrl);
     }
-   
 
     /**
      * Getter of the host field
@@ -268,12 +287,12 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
                 + baseUri.getPort() + baseUri.getPath();
         return urlStr;
     }
-
+    
     protected void throwHttpError(String msg) throws HttpException {
         logger.error(msg);
         throw new HttpException(msg);
     }
-
+    
     protected void consumeResponseEntityContent(HttpResponse response) {
         if (response != null) {
             HttpEntity httpEntity = response.getEntity();

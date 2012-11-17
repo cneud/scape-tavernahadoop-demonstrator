@@ -16,6 +16,7 @@
 */
 package eu.scape_project.tb.rest;
 
+import eu.scape_project.tb.rest.util.FileUtility;
 import java.io.File;
 import junit.framework.TestSuite;
 import org.junit.AfterClass;

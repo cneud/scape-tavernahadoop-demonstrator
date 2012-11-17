@@ -16,6 +16,8 @@
  */
 package eu.scape_project.tb.rest;
 
+import eu.scape_project.tb.rest.xml.XPathEvaluator;
+import eu.scape_project.tb.rest.xml.XmlResponseParser;
 import java.io.UnsupportedEncodingException;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.entity.ByteArrayEntity;

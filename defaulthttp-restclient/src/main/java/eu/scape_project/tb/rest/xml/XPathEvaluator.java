@@ -14,7 +14,7 @@
  * limitations under the License.
  * under the License.
  */
-package eu.scape_project.tb.rest;
+package eu.scape_project.tb.rest.xml;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;

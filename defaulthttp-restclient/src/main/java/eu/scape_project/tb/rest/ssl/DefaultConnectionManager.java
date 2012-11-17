@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package eu.scape_project.tb.rest;
+package eu.scape_project.tb.rest.ssl;
 
+import eu.scape_project.tb.rest.ssl.DefaultTrustManager;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -51,7 +52,9 @@ public class DefaultConnectionManager extends BasicClientConnectionManager {
                 // is thrown.
                 SSLSocketFactory sf = new SSLSocketFactory(ctx, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
                 SchemeRegistry schemeRegistry = new SchemeRegistry();
+                Scheme httpScheme = new Scheme("http", 8080, sf);
                 Scheme httpsScheme = new Scheme("https", 8443, sf);
+                schemeRegistry.register(httpScheme);
                 schemeRegistry.register(httpsScheme);
                 BasicClientConnectionManager cm = new BasicClientConnectionManager(schemeRegistry);
                 instance = new DefaultConnectionManager(schemeRegistry);

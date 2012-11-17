@@ -16,31 +16,26 @@
  */
 package eu.scape_project.tb.rest;
 
+import eu.scape_project.tb.rest.util.FileUtility;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.logging.Level;
-import org.apache.commons.httpclient.NTCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.http.*;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpException;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.client.utils.URIUtils;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.DefaultRedirectStrategy;
 import org.apache.http.impl.conn.BasicClientConnectionManager;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.BasicHttpContext;
@@ -166,7 +161,7 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
         HttpResponse response = null;
         try {
             StringEntity stringEntity = new StringEntity(putContent, "UTF-8");
-            BasicHeader contentTypeHeader = new BasicHeader("Content-Type", contentType.toString());
+            BasicHeader contentTypeHeader = new BasicHeader("Content-Type", contentType.getMimeType());
             stringEntity.setContentType(contentTypeHeader);
             httpPut.setEntity(stringEntity);
             logger.info("executing request " + httpPut.getRequestLine()
@@ -179,7 +174,7 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
                 logger.info("HTTP PUT response content length: " + entity.getContentLength());
             }
         } catch (IOException e) {
-            logger.error("I/O Error while executing HTTP PUT request");
+            logger.error("I/O Error while executing HTTP PUT request", e);
         }
         return response;
     }

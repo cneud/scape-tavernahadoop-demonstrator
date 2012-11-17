@@ -16,15 +16,10 @@
  */
 package eu.scape_project.tb.rest;
 
+import eu.scape_project.tb.rest.ssl.DefaultConnectionManager;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import javax.net.ssl.*;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.impl.conn.BasicClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

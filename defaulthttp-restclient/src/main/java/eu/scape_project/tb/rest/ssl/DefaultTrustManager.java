@@ -14,7 +14,7 @@
  * limitations under the License.
  * under the License.
  */
-package eu.scape_project.tb.rest;
+package eu.scape_project.tb.rest.ssl;
 
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;

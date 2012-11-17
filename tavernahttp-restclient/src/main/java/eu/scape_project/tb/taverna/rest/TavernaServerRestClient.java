@@ -16,10 +16,10 @@
  */
 package eu.scape_project.tb.taverna.rest;
 
-import eu.scape_project.tb.rest.ContentType;
 import eu.scape_project.tb.rest.DefaultHttpAuthRestClient;
-import eu.scape_project.tb.rest.XPathEvaluator;
-import eu.scape_project.tb.rest.XmlResponseParser;
+import eu.scape_project.tb.rest.ssl.DefaultConnectionManager;
+import eu.scape_project.tb.rest.xml.XPathEvaluator;
+import eu.scape_project.tb.rest.xml.XmlResponseParser;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +32,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.conn.BasicManagedEntity;
+import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,8 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
 
     private static Logger logger = LoggerFactory.getLogger(TavernaServerRestClient.class.getName());
     private SimpleBasicHttpAuthenticator authenticator;
+    
+    private int httpsReplacePort;
 
     /**
      * Constructor of the taverna server rest client. Constructor parameters are
@@ -61,9 +64,22 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      * @param port Port
      * @param basePath Base path
      */
-    public TavernaServerRestClient(String host, int port, String basePath) {
-        super(host, port, basePath);
-        logger.info("host: " + host + ", port: " + port + ", basepath: " + basePath);
+    public TavernaServerRestClient(String scheme, String host, int port, String basePath) {
+        super(scheme, host, port, basePath);
+        logger.info("Creating client, scheme: "+scheme+ ", host: " + host + ", port: " + port + ", basepath: " + basePath);
+    }
+
+    /**
+     * Constructor of the taverna server rest client. Constructor parameters are
+     * autowired, see src/main/resources/tavernaconfig.properties.
+     *
+     * @param host Host
+     * @param port Port
+     * @param basePath Base path
+     */
+    public TavernaServerRestClient(String scheme, String host, int port, String basePath, boolean isSSL) {
+        super(DefaultConnectionManager.getInstance(),scheme, host, port, basePath);
+        logger.info("Creating SSL client, scheme: "+scheme+ ", host: " + host + ", port: " + port + ", basepath: " + basePath);
     }
 
     /**
@@ -102,6 +118,17 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
         }
     }
 
+    public int getHttpsReplacePort() {
+        return httpsReplacePort;
+    }
+
+    @Autowired
+    public void setHttpsReplacePort(int httpsReplacePort) {
+        this.httpsReplacePort = httpsReplacePort;
+    }
+    
+    
+
     /**
      * Init simple basic HTTP authenticator after user and password are set.
      */
@@ -117,19 +144,21 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      * @param inputPort Name of the input port
      * @param value Value to be set for the input port
      */
-    public void setWorkflowInput(URL uuidBaseUrl, String inputPort, String value) throws HttpException {
+    public void setWorkflowInput(URL uuidBaseUrl, String inputPort, String value) throws TavernaClientException {
         try {
             String putContent = "<t2sr:runInput "
                     + "xmlns:t2sr=\"http://ns.taverna.org.uk/2010/xml/server/rest/\">\n"
                     + "\t<t2sr:value>" + value + "</t2sr:value>\n"
                     + "</t2sr:runInput>\n";
-            URL resourceUrl = new URL(uuidBaseUrl.toString() + "/input/input/" + inputPort);
+            
+            String urlStr = getSchemeUrl(uuidBaseUrl.toString());
+            URL resourceUrl = new URL(urlStr + "/input/input/" + inputPort);
             HttpResponse response = this.executePut(resourceUrl, putContent, ContentType.APPLICATION_XML);
             int code = response.getStatusLine().getStatusCode();
             if (code != 200) {
-                this.throwHttpError(response.getStatusLine().toString());
+                throw new TavernaClientException("HTTP status code: "+response.getStatusLine().toString());
             }
-            this.consumeResponseEntityContent(response);
+            this.consume(response);
         } catch (MalformedURLException ex) {
             logger.error("Malformed URL Error", ex);
         }
@@ -143,7 +172,7 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      * @param inputPort Name of the input port
      * @param value Value to be set for the input port
      */
-    public void setWorkflowInput(String uuid, String inputPort, String value) throws HttpException {
+    public void setWorkflowInput(String uuid, String inputPort, String value) throws TavernaClientException {
         try {
             URL uuidBaseUrl = new URL(this.getBaseUrlStr() + "/rest/runs/" + uuid);
             this.setWorkflowInput(uuidBaseUrl, inputPort, value);
@@ -167,7 +196,7 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
             if (code != 200) {
                 this.throwHttpError(response.getStatusLine().toString());
             }
-            this.consumeResponseEntityContent(response);
+            this.consume(response);
         } catch (MalformedURLException ex) {
             logger.error("Malformed URL Error", ex);
         }
@@ -236,7 +265,7 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
         } else if (statusStr.equals("Initialized")) {
             return TavernaWorkflowStatus.INITIALISED;
         }
-        this.consumeResponseEntityContent(response);
+        this.consume(response);
         return status;
     }
 
@@ -292,7 +321,7 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      * http://${server}:${port}/tavernaserver/rest/runs/UUID
      */
     public String submitWorkflow(File workflowFile) throws HttpException {
-        HttpResponse response = this.executeFileContentPost("runs", workflowFile, ContentType.APPLICATION_TAVERNA_XML);
+        HttpResponse response = this.executeFileContentPost("runs", workflowFile, ContentType.create("application/vnd.taverna.t2flow+xml"));
         int code = response.getStatusLine().getStatusCode();
         if (code != 201) {
             this.throwHttpError(response.getStatusLine().toString());
@@ -303,7 +332,7 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
             Header locationHeader = locationHeaders[0];
             restLocation = locationHeader.getValue();
         }
-        this.consumeResponseEntityContent(response);
+        this.consume(response);
         return restLocation;
     }
 
@@ -371,5 +400,21 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
 
         trp.setAuthenticator(this.authenticator);
         return trp.getResponseOutputValues();
+    }
+    
+    /**
+     * Converts a https url to a http url. This is done because the Taverna
+     * Server returns a https URL on a http request.
+     * @param httpsSchemeUrl https scheme url
+     * @return http scheme url
+     */
+    private String getSchemeUrl(String httpsSchemeUrl) {
+        if(this.getScheme().equals("https")) {
+            return httpsSchemeUrl;
+        }
+        String httpSchemeUrl = httpsSchemeUrl.replace("https://","http://");
+        httpSchemeUrl = httpSchemeUrl.replace(":"+httpsReplacePort+"/",":"+this.getPort()+"/");
+        logger.info("Changing https URL "+httpsSchemeUrl+" to http URL "+httpSchemeUrl);
+        return httpSchemeUrl;
     }
 }

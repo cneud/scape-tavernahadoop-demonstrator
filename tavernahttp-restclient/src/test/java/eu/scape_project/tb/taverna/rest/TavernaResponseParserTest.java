@@ -16,8 +16,7 @@
  */
 package eu.scape_project.tb.taverna.rest;
 
-
-import eu.scape_project.tb.rest.XmlResponseParser;
+import eu.scape_project.tb.rest.xml.XmlResponseParser;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -34,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 /**
+ * Test class of the TavernaResponseParser class.
  *
  * @author Sven Schlarb https://github.com/shsdev
  * @version 0.1
@@ -101,12 +101,12 @@ public class TavernaResponseParserTest {
     @Test
     public void testGetRequestsWithXmlResponse() throws MalformedURLException, HttpException {
 
-        TavernaServerRestClient tsrc = new TavernaServerRestClient("fue.onb.ac.at", 80, "/TavernaServer.2.4.1/rest");
+        TavernaServerRestClient tsrc = new TavernaServerRestClient("http", "localhost", 80, "/TavernaServer.2.4.1/rest");
         tsrc.setUser("taverna");
         tsrc.setPassword("taverna");
-        
+
         // TODO: dirty test
-        
+
         String urlStr = "http://fue.onb.ac.at/TavernaServer.2.4.1/rest/runs/cc99dfa1-445d-4a20-93cc-f17b24b40131";
 
         //String urlStr = tsrc.getBaseUrlStr()+"/runs";

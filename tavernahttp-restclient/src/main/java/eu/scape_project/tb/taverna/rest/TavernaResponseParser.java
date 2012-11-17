@@ -16,8 +16,8 @@
  */
 package eu.scape_project.tb.taverna.rest;
 
-import eu.scape_project.tb.rest.XPathEvaluator;
-import eu.scape_project.tb.rest.XmlResponseParser;
+import eu.scape_project.tb.rest.xml.XPathEvaluator;
+import eu.scape_project.tb.rest.xml.XmlResponseParser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

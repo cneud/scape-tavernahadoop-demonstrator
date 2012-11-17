@@ -91,7 +91,7 @@ public class TavernaServerRestClientDemo {
             // Now you can start the file running. This is done by using a PUT 
             // to set http://${server}:${port}/tavernaserver/rest/runs/UUID/status 
             // to the plain text value "Operating".
-            tsrc.setWorkflowStatus(resourceUrl, TavernaWorkflowStatus.OPERATING);
+//            tsrc.setWorkflowStatus(resourceUrl, TavernaWorkflowStatus.OPERATING);
 
             // 4. GET STATUS
             // Now you need to poll, waiting for the workflow to finish. To 
@@ -101,28 +101,28 @@ public class TavernaServerRestClientDemo {
             // Finished instead of Operating (or Initialized, the starting 
             // state).
             // Polling for a maximum of 30 seconds every 1 second
-            int i = 0;
-            while (i < 30) {
-                try {
-                    if (tsrc.getWorkflowStatus(resourceUrl) == TavernaWorkflowStatus.FINISHED) {
-                        logger.info("Workflow finished.");
-                        break;
-                    }
-                    Thread.sleep(1000); // polling every 1 second
-                } catch (InterruptedException e) {
-                }
-                i++;
-            }
+//            int i = 0;
+//            while (i < 30) {
+//                try {
+//                    if (tsrc.getWorkflowStatus(resourceUrl) == TavernaWorkflowStatus.FINISHED) {
+//                        logger.info("Workflow finished.");
+//                        break;
+//                    }
+//                    Thread.sleep(1000); // polling every 1 second
+//                } catch (InterruptedException e) {
+//                }
+//                i++;
+//            }
 
             // GET CURRENT RUNS
-            tsrc.getCurrentTavernaRuns();
+//            tsrc.getCurrentTavernaRuns();
 
             // DELETE RUN(S)
 //            tsrc.deleteWorkflow(resourceUrl);
 //            tsrc.deleteAllRuns();
 
             // Shutdown client
-            tsrc.getConnectionManager().shutdown();
+//            tsrc.getConnectionManager().shutdown();
         } catch (HttpException ex) {
             logger.error("Error", ex);
         }

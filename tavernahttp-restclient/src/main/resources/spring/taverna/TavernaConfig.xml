@@ -17,11 +17,13 @@
     </bean>
         
     <bean id="tavernaServerRestClient" class="eu.scape_project.tb.taverna.rest.TavernaServerRestClient">
+        <constructor-arg value="${taverna.server.scheme}" />
         <constructor-arg value="${taverna.server.host}" />
         <constructor-arg value="${taverna.server.port}" />
         <constructor-arg value="${taverna.server.restapi.basepath}" />
         <property name="user" value="${taverna.server.username}" />
         <property name="password" value="${taverna.server.password}" />
+        <property name="httpsReplacePort" value="${taverna.server.https.replace.port}" />
     </bean>
  
 </beans>

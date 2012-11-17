@@ -18,8 +18,12 @@ package eu.scape_project.tb.rest;
 
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.conn.BasicClientConnectionManager;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +51,7 @@ public class DefaultHttpAuthRestClient extends DefaultHttpRestClient {
     public DefaultHttpAuthRestClient(String scheme, String host, int port, String basePath) {
         super(scheme, host, port, basePath);
     }
-    
+
     /**
      * Constructor of the simple authentication http rest client (secure).
      *
@@ -64,7 +68,11 @@ public class DefaultHttpAuthRestClient extends DefaultHttpRestClient {
     }
 
     public void setPassword(String password) {
+        logger.debug("Setting password ...");
         this.password = password;
+        if (user != null) {
+            setCredentials();
+        }
     }
 
     public String getUser() {
@@ -72,9 +80,11 @@ public class DefaultHttpAuthRestClient extends DefaultHttpRestClient {
     }
 
     public void setUser(String user) {
+        logger.debug("Setting user ...");
         this.user = user;
-        if(password != null)
+        if (password != null) {
             setCredentials();
+        }
     }
 
     /**
@@ -88,10 +98,15 @@ public class DefaultHttpAuthRestClient extends DefaultHttpRestClient {
         bcp.setCredentials(
                 new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT, AuthScope.ANY_REALM),
                 new UsernamePasswordCredentials(this.user, this.password));
-//        this.getCredentialsProvider().setCredentials(
-//                new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT, AuthScope.ANY_REALM),
-//                new UsernamePasswordCredentials(this.user, this.password));
         this.setCredentialsProvider(bcp);
-      
+        // Auth context
+        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+        credsProvider.setCredentials(
+                new org.apache.http.auth.AuthScope(
+                org.apache.http.auth.AuthScope.ANY_HOST,
+                org.apache.http.auth.AuthScope.ANY_PORT,
+                org.apache.http.auth.AuthScope.ANY_REALM),
+                new UsernamePasswordCredentials(this.user, this.password));
+        httpContext.setAttribute(ClientContext.CREDS_PROVIDER, credsProvider);
     }
 }

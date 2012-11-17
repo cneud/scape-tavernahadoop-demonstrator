@@ -35,6 +35,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.client.utils.URIUtils;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
@@ -44,6 +45,7 @@ import org.apache.http.impl.conn.BasicClientConnectionManager;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +64,8 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
     private String basePath;
     protected URI baseUri;
     private static Logger logger = LoggerFactory.getLogger(DefaultHttpRestClient.class.getName());
-    HttpContext ctx;
+    
+    protected HttpContext httpContext;
 
     /**
      * Constructor of the simple authentication http rest client (Insecure).
@@ -88,7 +91,7 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
     }
 
     private void init(String scheme, String host, int port, String basePath) {
-        ctx = new BasicHttpContext();
+        httpContext = new BasicHttpContext();
         this.scheme = scheme;
         this.host = host;
         this.port = port;
@@ -120,18 +123,7 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
         HttpResponse response = null;
         try {
             logger.info("executing request " + httpget.getRequestLine());
-
-
-            CredentialsProvider credsProvider = new BasicCredentialsProvider();
-            credsProvider.setCredentials(
-                    new org.apache.http.auth.AuthScope(
-                    org.apache.http.auth.AuthScope.ANY_HOST,
-                    org.apache.http.auth.AuthScope.ANY_PORT,
-                    org.apache.http.auth.AuthScope.ANY_REALM),
-                    new UsernamePasswordCredentials("taverna", "taverna"));
-            ctx.setAttribute(ClientContext.CREDS_PROVIDER, credsProvider);
-
-            response = this.execute(httpget, ctx);
+            response = this.execute(httpget, httpContext);
             Header contentTypeHeader = response.getEntity().getContentType();
             logger.info("content type: " + contentTypeHeader.toString());
             HttpEntity entity = response.getEntity();
@@ -180,7 +172,7 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
             logger.info("executing request " + httpPut.getRequestLine()
                     + "with value:\n" + putContent + "\nand mime type:\n"
                     + contentType.toString() + "");
-            response = this.execute(httpPut);
+            response = this.execute(httpPut, httpContext);
             HttpEntity entity = response.getEntity();
             logger.info(response.getStatusLine().toString());
             if (entity != null) {
@@ -222,9 +214,9 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
         HttpPost httpPost = new HttpPost(resource);
         HttpResponse response = null;
         try {
-            FileEntity fileEntity = new FileEntity(file, contentType.toString());
+            FileEntity fileEntity = new FileEntity(file, contentType);
             httpPost.setEntity(fileEntity);
-            response = this.execute(httpPost);
+            response = this.execute(httpPost, httpContext);
             HttpEntity entity = response.getEntity();
             logger.info(response.getStatusLine().toString());
             if (entity != null) {
@@ -247,7 +239,7 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
         HttpResponse response = null;
         try {
             logger.info("executing request " + httpDelete.getRequestLine());
-            response = this.execute(httpDelete);
+            response = this.execute(httpDelete, httpContext);
             HttpEntity entity = response.getEntity();
             logger.info(response.getStatusLine().toString());
             if (entity != null) {
@@ -311,12 +303,12 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
         throw new HttpException(msg);
     }
 
-    protected void consumeResponseEntityContent(HttpResponse response) {
+    protected void consume(HttpResponse response) {
         if (response != null) {
             HttpEntity httpEntity = response.getEntity();
             if (httpEntity != null) {
                 try {
-                    httpEntity.consumeContent();
+                    EntityUtils.consume(httpEntity);
                 } catch (IOException ex) {
                     logger.error("Error while consuming response entity content.", ex);
                 }

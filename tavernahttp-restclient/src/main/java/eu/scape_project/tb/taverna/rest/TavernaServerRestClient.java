@@ -188,13 +188,13 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      * http://${server}:${port}/tavernaserver/rest/runs/UUID
      * @param status Status of the workflow run to be set
      */
-    public void setWorkflowStatus(URL uuidBaseUrl, TavernaWorkflowStatus status) throws HttpException {
+    public void setWorkflowStatus(URL uuidBaseUrl, TavernaWorkflowStatus status) throws TavernaClientException {
         try {
             URL resourceUrl = new URL(uuidBaseUrl.toString() + "/status");
             HttpResponse response = this.executePut(resourceUrl, status.toString(), ContentType.TEXT_PLAIN);
             int code = response.getStatusLine().getStatusCode();
             if (code != 200) {
-                this.throwHttpError(response.getStatusLine().toString());
+                throw new TavernaClientException("HTTP status code: "+response.getStatusLine().toString());
             }
             this.consume(response);
         } catch (MalformedURLException ex) {
@@ -209,7 +209,7 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      * is created)
      * @param status Status of the workflow run to be set
      */
-    public void setWorkflowStatus(String uuid, TavernaWorkflowStatus status) throws HttpException {
+    public void setWorkflowStatus(String uuid, TavernaWorkflowStatus status) throws TavernaClientException {
         try {
             URL uuidBaseUrl = new URL(this.getBaseUrlStr() + "/rest/runs/" + uuid);
             this.setWorkflowStatus(uuidBaseUrl, status);
@@ -225,7 +225,7 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      * @return Workflow status
      * @throws HttpException
      */
-    public TavernaWorkflowStatus getWorkflowStatus(URL uuidBaseUrl) throws HttpException {
+    public TavernaWorkflowStatus getWorkflowStatus(URL uuidBaseUrl) throws TavernaClientException {
         TavernaWorkflowStatus status = null;
         String uuid = TavernaRestUtil.getUUIDfromUUIDResourceURL(uuidBaseUrl.toExternalForm());
         ArrayList<String> runs =  getCurrentTavernaRuns();
@@ -244,7 +244,7 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
         HttpResponse response = this.executeGet(statusUrl, "text/plain");
         int code = response.getStatusLine().getStatusCode();
         if (code != 200) {
-            this.throwHttpError(response.getStatusLine().toString());
+            throw new TavernaClientException("HTTP status code: "+response.getStatusLine().toString());
         }
         String statusStr = "";
         BasicManagedEntity sr = (BasicManagedEntity) response.getEntity();
@@ -271,7 +271,7 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
 
     /*
      */
-    public TavernaWorkflowStatus getWorkflowStatus(String uuid) throws HttpException {
+    public TavernaWorkflowStatus getWorkflowStatus(String uuid) throws TavernaClientException {
         TavernaWorkflowStatus status = null;
         try {
             URL uuidBaseUrl = new URL(this.getBaseUrlStr() + "/rest/runs/" + uuid);
@@ -291,12 +291,12 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      *
      * @return List of Taverna UUID strings
      */
-    public ArrayList<String> getCurrentTavernaRuns() throws HttpException {
+    public ArrayList<String> getCurrentTavernaRuns() throws TavernaClientException {
         ArrayList<String> uuids = new ArrayList<String>();
         HttpResponse response = this.executeGet("runs", "application/xml");
         int code = response.getStatusLine().getStatusCode();
         if (code != 200) {
-            this.throwHttpError(response.getStatusLine().toString());
+            throw new TavernaClientException("HTTP status code: "+response.getStatusLine().toString());
         }
         XmlResponseParser rp = new XmlResponseParser(response);
         rp.parseResponse();
@@ -320,11 +320,11 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      * @return UUID base URL of the workflow run, i.e.
      * http://${server}:${port}/tavernaserver/rest/runs/UUID
      */
-    public String submitWorkflow(File workflowFile) throws HttpException {
+    public String submitWorkflow(File workflowFile) throws TavernaClientException {
         HttpResponse response = this.executeFileContentPost("runs", workflowFile, ContentType.create("application/vnd.taverna.t2flow+xml"));
         int code = response.getStatusLine().getStatusCode();
         if (code != 201) {
-            this.throwHttpError(response.getStatusLine().toString());
+            throw new TavernaClientException("HTTP status code: "+response.getStatusLine().toString());
         }
         String restLocation = null;
         if (response.containsHeader("Location")) {
@@ -344,11 +344,11 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      * @param inputPort Name of the input port
      * @param value Value to be set for the input port
      */
-    public void deleteWorkflow(URL uuidBaseUrl) throws HttpException {
+    public void deleteWorkflow(URL uuidBaseUrl) throws TavernaClientException {
         HttpResponse response = this.executeDelete(uuidBaseUrl);
         int code = response.getStatusLine().getStatusCode();
         if (code != 204) {
-            this.throwHttpError(response.getStatusLine().toString());
+            throw new TavernaClientException("HTTP status code: "+response.getStatusLine().toString());
         }
     }
 
@@ -360,7 +360,7 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      * @param inputPort Name of the input port
      * @param value Value to be set for the input port
      */
-    public void deleteWorkflow(String uuid) throws HttpException {
+    public void deleteWorkflow(String uuid) throws TavernaClientException {
         try {
             URL uuidBaseUrl = new URL(this.getBaseUrlStr() + "/runs/" + uuid);
             this.deleteWorkflow(uuidBaseUrl);
@@ -369,7 +369,7 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
         }
     }
 
-    void deleteAllRuns() throws HttpException {
+    void deleteAllRuns() throws TavernaClientException {
         ArrayList<String> runs = getCurrentTavernaRuns();
         for (String uuid : runs) {
             deleteWorkflow(uuid);
@@ -383,7 +383,7 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      * @return Workflow status
      * @throws HttpException
      */
-    public List<KeyValuePair> getWorkflowRunOutputValues(URL uuidBaseUrl) throws HttpException {
+    public List<KeyValuePair> getWorkflowRunOutputValues(URL uuidBaseUrl) throws TavernaClientException {
         URL outputRestUrl = null;
         try {
             outputRestUrl = new URL(uuidBaseUrl + "/output");
@@ -394,7 +394,7 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
         HttpResponse response = this.executeGet(outputRestUrl, "application/xml");
         int code = response.getStatusLine().getStatusCode();
         if (code != 200) {
-            this.throwHttpError(response.getStatusLine().toString());
+            throw new TavernaClientException("HTTP status code: "+response.getStatusLine().toString());
         }
         TavernaResponseParser trp = new TavernaResponseParser(response);
 

@@ -123,7 +123,7 @@ public class TavernaServerRestClientDemo {
 
             // Shutdown client
 //            tsrc.getConnectionManager().shutdown();
-        } catch (HttpException ex) {
+        } catch (TavernaClientException ex) {
             logger.error("Error", ex);
         }
     }

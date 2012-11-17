@@ -281,6 +281,10 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
         return port;
     }
 
+    public String getScheme() {
+        return scheme;
+    }
+
     /**
      * Get full base URL. Full base URL is the combination of the scheme, host,
      * port, and base path information.

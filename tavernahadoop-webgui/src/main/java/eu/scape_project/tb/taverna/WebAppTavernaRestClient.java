@@ -19,6 +19,7 @@ package eu.scape_project.tb.taverna;
 import eu.scape_project.tb.config.TavernaConfig;
 import eu.scape_project.tb.model.entity.Workflow;
 import eu.scape_project.tb.model.entity.WorkflowRun;
+import eu.scape_project.tb.taverna.rest.TavernaClientException;
 import eu.scape_project.tb.taverna.rest.TavernaServerRestClient;
 import eu.scape_project.tb.taverna.rest.TavernaWorkflowStatus;
 import java.io.File;
@@ -27,7 +28,6 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
-import org.apache.http.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,8 +42,10 @@ public class WebAppTavernaRestClient implements Serializable {
 
     private Logger logger = LoggerFactory.getLogger(WebAppTavernaRestClient.class.getName());
     private TavernaConfig config;
+    private String scheme;
     private String host;
     private int port;
+    private int httpsReplacePort;
     private final String basepath;
     private final TavernaServerRestClient tavernaRestClient;
     // Singleton Instance
@@ -58,16 +60,19 @@ public class WebAppTavernaRestClient implements Serializable {
 
     private WebAppTavernaRestClient() {
         config = new TavernaConfig();
+        scheme = config.getProp("taverna.server.scheme");
         host = config.getProp("taverna.server.host");
         try {
             port = Integer.parseInt(config.getProp("taverna.server.port"));
+            httpsReplacePort = Integer.parseInt(config.getProp("taverna.server.https.replace.port"));
         } catch (java.lang.NumberFormatException ex) {
             logger.error("Invalid taverna host port number configuration.");
         }
         basepath = config.getProp("taverna.server.restapi.basepath");
-        tavernaRestClient = new TavernaServerRestClient(host, port, basepath);
+        tavernaRestClient = new TavernaServerRestClient(scheme, host, port, basepath);
         tavernaRestClient.setUser(config.getProp("taverna.server.username"));
         tavernaRestClient.setPassword(config.getProp("taverna.server.password"));
+        tavernaRestClient.setHttpsReplacePort(httpsReplacePort);
     }
     
     public TavernaServerRestClient getClient() {
@@ -113,7 +118,7 @@ public class WebAppTavernaRestClient implements Serializable {
 
             success = true;
 
-        } catch (org.apache.http.HttpException ex) {
+        } catch (TavernaClientException ex) {
             logger.error("Error", ex);
         } catch (MalformedURLException ex) {
             logger.error("Error", ex);
@@ -131,7 +136,7 @@ public class WebAppTavernaRestClient implements Serializable {
         try {
             url = new URL(uuidBaseResourceUrl);
             status = tavernaRestClient.getWorkflowStatus(url);
-        } catch (HttpException ex) {
+        } catch (TavernaClientException ex) {
             logger.error("HTTP Error", ex);
         } catch (MalformedURLException ex) {
             logger.error("Malformed URL error", ex);

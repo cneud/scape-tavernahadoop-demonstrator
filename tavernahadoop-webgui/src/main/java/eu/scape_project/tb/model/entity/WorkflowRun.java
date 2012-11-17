@@ -75,52 +75,54 @@ public class WorkflowRun implements Serializable {
         return uuidBaseResourceUrl;
     }
 
+    /**
+     * Setting UUID resource URL implicitely sets UUID.
+     *
+     * @param uuidBaseResourceUrl UUID resource URL
+     */
     public void setUuidBaseResourceUrl(String uuidBaseResourceUrl) {
         this.uuid = TavernaRestUtil.getUUIDfromUUIDResourceURL(uuidBaseResourceUrl);
         this.uuidBaseResourceUrl = uuidBaseResourceUrl;
     }
 
+    /**
+     * Getter for the UUID field.
+     *
+     * @return UUID (unique identifier of a workflow run)
+     */
     public String getUuid() {
         return uuid;
     }
 
+    /**
+     *
+     * Setter for the UUID field.
+     *
+     * @param uuid UUID (unique identifier of a workflow run)
+     */
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
 
+    /**
+     * Getter for the createddate field.
+     *
+     * @return Created date
+     */
     @Column(name = "createddate")
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     public Date getCreateddate() {
         return createddate;
     }
 
+    /**
+     * Setter for the createddate field.
+     *
+     * @param createddate Created date
+     */
     public void setCreateddate(Date createddate) {
         this.createddate = createddate;
     }
-
-    /**
-     * Run workflow with default values, workflow default port values are used.
-     *
-     * @param workflow Workflow.
-     */
-//    public void run(Workflow workflow, Map<String, String> kvMap) {
-//        FacesContext context = FacesContext.getCurrentInstance();
-//        WebAppTavernaRestClient tavernaRestClient = (WebAppTavernaRestClient) context.getApplication().evaluateExpressionGet(context, "#{tavernarestclient}", WebAppTavernaRestClient.class);
-//        tavernaRestClient.run(workflow, this, kvMap);
-//    }
-
-    /**
-     * Run workflow with default values, workflow default port values are used.
-     *
-     * @param workflow Workflow.
-     */
-//    public void run(Workflow workflow) {
-//        Map<String, String> kvMap = new HashMap<String, String>();
-//        for (WorkflowInputPort wfip : workflow.getWorkflowInputPorts()) {
-//            kvMap.put(wfip.getPortname(), wfip.getDefaultvalue());
-//        }
-//        this.run(workflow, kvMap);
-//    }
 
     @Column(name = "runstatus")
     public TavernaWorkflowStatus getRunstatus() {

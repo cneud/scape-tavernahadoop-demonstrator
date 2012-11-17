@@ -19,6 +19,7 @@ package eu.scape_project.tb.beans;
 import eu.scape_project.tb.model.entity.WorkflowRun;
 import eu.scape_project.tb.taverna.WebAppTavernaRestClient;
 import eu.scape_project.tb.taverna.rest.KeyValuePair;
+import eu.scape_project.tb.taverna.rest.TavernaClientException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -28,7 +29,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import org.apache.http.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +60,7 @@ public class FinishedBean implements Serializable {
             URL url = new URL(urlStr);
             outputValues = tavernaRestClient.getClient().getWorkflowRunOutputValues(url);
 
-        } catch (HttpException ex) {
+        } catch (TavernaClientException ex) {
             logger.error("HTTP error", ex);
         } catch (MalformedURLException ex) {
             logger.error("Malformed URL error", ex);

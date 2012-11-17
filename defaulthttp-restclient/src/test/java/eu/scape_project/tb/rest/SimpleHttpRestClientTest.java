@@ -69,7 +69,6 @@ public class SimpleHttpRestClientTest extends TestSuite {
     public void setUp() throws NoSuchAlgorithmException, KeyManagementException {
         SSLContext sslContext = SSLContext.getInstance("SSL");
 
-// set up a TrustManager that trusts everything
         sslContext.init(null, new TrustManager[]{new X509TrustManager() {
 
                 @Override
@@ -96,9 +95,8 @@ public class SimpleHttpRestClientTest extends TestSuite {
         SchemeRegistry schemeRegistry = new SchemeRegistry();
         schemeRegistry.register(httpsScheme);
 
-// apache HttpClient version >4.2 should use BasicClientConnectionManager
         BasicClientConnectionManager cm = new BasicClientConnectionManager(schemeRegistry);
-        client = new DefaultHttpRestClient(cm, "ajax.googleapis.com", 80, "/ajax/services/search");
+        client = new DefaultHttpRestClient(/*cm,*/ "http", "ajax.googleapis.com", 80, "/ajax/services/search");
     }
 
     /**

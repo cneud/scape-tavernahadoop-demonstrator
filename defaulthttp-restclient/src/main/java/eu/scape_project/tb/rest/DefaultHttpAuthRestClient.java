@@ -38,14 +38,25 @@ public class DefaultHttpAuthRestClient extends DefaultHttpRestClient {
     private static Logger logger = LoggerFactory.getLogger(DefaultHttpAuthRestClient.class.getName());
 
     /**
-     * Constructor of the simple authentication http rest client.
+     * Constructor of the simple authentication http rest client (insecure).
      *
      * @param host Host
      * @param port Port
      * @param basePath Base path
      */
-    public DefaultHttpAuthRestClient(BasicClientConnectionManager bccm, String host, int port, String basePath) {
-        super(bccm, host, port, basePath);
+    public DefaultHttpAuthRestClient(String scheme, String host, int port, String basePath) {
+        super(scheme, host, port, basePath);
+    }
+    
+    /**
+     * Constructor of the simple authentication http rest client (secure).
+     *
+     * @param host Host
+     * @param port Port
+     * @param basePath Base path
+     */
+    public DefaultHttpAuthRestClient(BasicClientConnectionManager bccm, String scheme, String host, int port, String basePath) {
+        super(bccm, scheme, host, port, basePath);
     }
 
     public String getPassword() {

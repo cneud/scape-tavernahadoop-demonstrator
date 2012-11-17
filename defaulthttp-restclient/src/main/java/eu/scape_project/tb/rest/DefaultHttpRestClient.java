@@ -55,28 +55,46 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  */
 public class DefaultHttpRestClient extends DefaultHttpClient {
-    
+
+    private String scheme;
     private String host;
     private int port;
     private String basePath;
     protected URI baseUri;
     private static Logger logger = LoggerFactory.getLogger(DefaultHttpRestClient.class.getName());
+    HttpContext ctx;
 
     /**
-     * Constructor of the simple authentication http rest client.
+     * Constructor of the simple authentication http rest client (Insecure).
      *
      * @param host Host
      * @param port Port
      * @param basePath Base path
      */
-    public DefaultHttpRestClient(BasicClientConnectionManager bccm, String host, int port, String basePath) {
+    public DefaultHttpRestClient(String scheme, String host, int port, String basePath) {
+        init(scheme, host, port, basePath);
+    }
+
+    /**
+     * Constructor of the simple authentication http rest client (Secure).
+     *
+     * @param host Host
+     * @param port Port
+     * @param basePath Base path
+     */
+    public DefaultHttpRestClient(BasicClientConnectionManager bccm, String scheme, String host, int port, String basePath) {
         super(bccm);
+        init(scheme, host, port, basePath);
+    }
+
+    private void init(String scheme, String host, int port, String basePath) {
+        ctx = new BasicHttpContext();
+        this.scheme = scheme;
         this.host = host;
         this.port = port;
         this.basePath = basePath;
         try {
-            baseUri = new URIBuilder().setScheme("http").setHost(host)
-                    .setPort(port).setPath(this.basePath).build();
+            baseUri = new URIBuilder().setScheme(scheme).setHost(host).setPort(port).setPath(this.basePath).build();
         } catch (URISyntaxException ex) {
             logger.error("URI Syntax Error", ex);
         }
@@ -97,22 +115,22 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
     public HttpResponse executeGet(URL resourceUrl, String headerAccept) {
         HttpGet httpget = new HttpGet(resourceUrl.toExternalForm());
         httpget.addHeader("Accept", headerAccept);
-        
+
         logger.info("Resource path: " + resourceUrl.toExternalForm());
         HttpResponse response = null;
         try {
             logger.info("executing request " + httpget.getRequestLine());
-            
-            HttpContext ctx = new BasicHttpContext();
+
+
             CredentialsProvider credsProvider = new BasicCredentialsProvider();
             credsProvider.setCredentials(
-                new org.apache.http.auth.AuthScope(
-                    org.apache.http.auth.AuthScope.ANY_HOST, 
-                    org.apache.http.auth.AuthScope.ANY_PORT, 
+                    new org.apache.http.auth.AuthScope(
+                    org.apache.http.auth.AuthScope.ANY_HOST,
+                    org.apache.http.auth.AuthScope.ANY_PORT,
                     org.apache.http.auth.AuthScope.ANY_REALM),
-                new UsernamePasswordCredentials("taverna", "taverna"));
+                    new UsernamePasswordCredentials("taverna", "taverna"));
             ctx.setAttribute(ClientContext.CREDS_PROVIDER, credsProvider);
-            
+
             response = this.execute(httpget, ctx);
             Header contentTypeHeader = response.getEntity().getContentType();
             logger.info("content type: " + contentTypeHeader.toString());
@@ -123,7 +141,7 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
                 logger.info("HTTP GET response content length: " + contLen);
             }
         } catch (IOException e) {
-            logger.error("I/O Error while executing HTTP GET request",e);
+            logger.error("I/O Error while executing HTTP GET request", e);
         }
         return response;
     }
@@ -287,12 +305,12 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
                 + baseUri.getPort() + baseUri.getPath();
         return urlStr;
     }
-    
+
     protected void throwHttpError(String msg) throws HttpException {
         logger.error(msg);
         throw new HttpException(msg);
     }
-    
+
     protected void consumeResponseEntityContent(HttpResponse response) {
         if (response != null) {
             HttpEntity httpEntity = response.getEntity();

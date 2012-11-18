@@ -52,16 +52,14 @@ public class DefaultHttpRestClientDemo {
         DefaultHttpAuthRestClient insecureRestClient = new DefaultHttpAuthRestClient("http", "localhost", 8080, "/TavernaServer.2.4.1/rest");
         insecureRestClient.setUser("taverna");
         insecureRestClient.setPassword("taverna");
-//        insecureRestClient.setAuthContext();
         insecureRestClient.executeGet("/runs", "application/xml");
         
         // SECURE
         // Example: Taverna Server REST API (list runs)
         // https://localhost:8443/TavernaServer.2.4.1/rest/runs
-        DefaultHttpAuthRestClient secureRestClient = new DefaultHttpAuthRestClient(DefaultConnectionManager.getInstance(), "https", "localhost", 8443, "/TavernaServer.2.4.1/rest");
+        DefaultHttpsAuthRestClient secureRestClient = new DefaultHttpsAuthRestClient(DefaultConnectionManager.getInstance(), "https", "localhost", 8443, "/TavernaServer.2.4.1/rest");
         secureRestClient.setUser("taverna");
         secureRestClient.setPassword("taverna");
-//        secureRestClient.setAuthContext();
         secureRestClient.executeGet("/runs", "application/xml");
     }
 }

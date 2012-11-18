@@ -80,12 +80,16 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
      * @param port Port
      * @param basePath Base path
      */
-    public DefaultHttpRestClient(BasicClientConnectionManager bccm, String scheme, String host, int port, String basePath) {
+//    public DefaultHttpRestClient(BasicClientConnectionManager bccm, String scheme, String host, int port, String basePath) {
+//        super(bccm);
+//        init(scheme, host, port, basePath);
+//    }
+    
+    protected DefaultHttpRestClient(BasicClientConnectionManager bccm) {
         super(bccm);
-        init(scheme, host, port, basePath);
     }
 
-    private void init(String scheme, String host, int port, String basePath) {
+    protected final void init(String scheme, String host, int port, String basePath) {
         httpContext = new BasicHttpContext();
         this.scheme = scheme;
         this.host = host;

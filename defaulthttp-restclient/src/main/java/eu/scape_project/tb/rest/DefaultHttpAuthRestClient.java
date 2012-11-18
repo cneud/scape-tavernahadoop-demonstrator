@@ -57,8 +57,8 @@ public class DefaultHttpAuthRestClient extends DefaultHttpRestClient {
      * @param port Port
      * @param basePath Base path
      */
-    public DefaultHttpAuthRestClient(BasicClientConnectionManager bccm, String scheme, String host, int port, String basePath) {
-        super(bccm, scheme, host, port, basePath);
+    protected DefaultHttpAuthRestClient(BasicClientConnectionManager bccm) {
+        super(bccm);
     }
 
     public String getPassword() {

@@ -38,25 +38,25 @@ public class DefaultConnectionManager extends BasicClientConnectionManager {
     public static DefaultConnectionManager getInstance() {
         if (instance == null) {
             try {
-                // SECURE with SSL support (trust everything)
-                // SSL certificate validation must be configured, otherwise a
-                // "javax.net.ssl.SSLPeerUnverifiedException: peer not authenticated"
-                // exception is thrown.
-                SSLContext ctx = SSLContext.getInstance("TLS");
-                ctx.init(new KeyManager[0], new TrustManager[]{new DefaultTrustManager()}, new SecureRandom());
-                SSLContext.setDefault(ctx);
-                // SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER: 
-                // Don't check if host name in certificate coincides with the server 
-                // name of the Taverna Server, otherwise the exception
-                // "javax.net.ssl.SSLException: hostname in certificate didn't match"
-                // is thrown.
-                SSLSocketFactory sf = new SSLSocketFactory(ctx, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-                SchemeRegistry schemeRegistry = new SchemeRegistry();
-                Scheme httpScheme = new Scheme("http", 8080, sf);
-                Scheme httpsScheme = new Scheme("https", 8443, sf);
-                schemeRegistry.register(httpScheme);
-                schemeRegistry.register(httpsScheme);
-                BasicClientConnectionManager cm = new BasicClientConnectionManager(schemeRegistry);
+// SECURE with SSL support (trust everything)
+// SSL certificate validation must be configured, otherwise a
+// "javax.net.ssl.SSLPeerUnverifiedException: peer not authenticated"
+// exception is thrown.
+SSLContext ctx = SSLContext.getInstance("TLS");
+ctx.init(new KeyManager[0], new TrustManager[]{new DefaultTrustManager()}, new SecureRandom());
+SSLContext.setDefault(ctx);
+// SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER: 
+// Don't check if host name in certificate coincides with the server 
+// name of the Taverna Server, otherwise the exception
+// "javax.net.ssl.SSLException: hostname in certificate didn't match"
+// is thrown.
+SSLSocketFactory sf = new SSLSocketFactory(ctx, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+SchemeRegistry schemeRegistry = new SchemeRegistry();
+Scheme httpScheme = new Scheme("http", 8080, sf);
+Scheme httpsScheme = new Scheme("https", 8443, sf);
+schemeRegistry.register(httpScheme);
+schemeRegistry.register(httpsScheme);
+//BasicClientConnectionManager cm = new BasicClientConnectionManager(schemeRegistry);
                 instance = new DefaultConnectionManager(schemeRegistry);
             } catch (KeyManagementException ex) {
                 logger.error("Key Management Exception error", ex);

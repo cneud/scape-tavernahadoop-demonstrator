@@ -122,6 +122,34 @@ Check then if the application is running at
 
     http://${tomcat.server.host}:${tomcat.server.port}/tavernahadoop-webgui
 
+Default HTTP REST Client
+------------------------
+
+This generic REST client (module `defaulthttp-restclient`) is based on Apache's
+`org.apache.http.impl.client.DefaultHttpClient`. It can set up
+GET, PUT, POST, and DELETE requests with Basic HTTP authentication over HTTP 
+or HTTPS.
+
+``` text
+                        [DefaultHttpClient]
+                             (Apache)
+                                |
+                                |
+                                |
+                      [DefaultHttpRestClient]
+                        (Basic REST Client)
+                         |              |
+                        |                |
+                       |                  |
+     [DefaultHttpAuthRestClient]   [DefaultHttpsRestClient]
+   (REST Client w. Authentication)     (SSL REST Client)
+                 |
+                 |
+                 |
+    [DefaultHttpsAuthRestClient]
+ (SSL REST Client w. Authentication)
+```
+
 Taverna Server 2.4 REST client
 ------------------------------
 
@@ -159,3 +187,30 @@ module by executing the main class `TavernaServerRestClientDemo`.
     Workflow run(s) can be deleted using `TavernaServerRestClient.deleteWorkflow` by
     indicating the UUID base resource URL or using `TavernaServerRestClient.deleteAllRuns`
     which lists current workflow runs and deletes them all.
+
+Troubleshooting
+---------------
+
+1.  HTTP 302 Moved Temporarily/Found
+    At the current state, the TavernaServerRestClient is using the client for 
+    the "insecure" configuration of the Taverna Server.
+    See http://dev.mygrid.org.uk/wiki/display/taverna/A+Beginner%27s+Installation+Guide+to+Taverna+Server
+    for more information on how to set up a "secure" or "insecure" instance
+    of the Taverna Server.
+    In summary, the "secure" or "insecure" mode is configured in
+    `apache-tomcat-${tomcat-version}/webapps/TavernaServer.2.4.1/WEB-INF/web.xml`
+    Comment/uncomment one of the context parameters (default is secure mode) to 
+    activate either the secure or the insecure profile:
+``` xml
+    <param-value>WEB-INF/secure.xml</param-value>
+    <!--param-value>WEB-INF/insecure.xml</param-value-->
+```
+    If the Taverna Server is configured in "secure" mode, the http request url
+    `http://${server}:8080/TavernaServer.2.4.1/rest/runs` is relocated to the 
+    https request url `https://${server}:8443/TavernaServer.2.4.1/rest/runs` by
+    the server. This requires an HTTP client with SSL support. In principle,
+    the underlying defaulthttp-restclient supports https requests by using the
+    eu.scape_project.tb.rest.DefaultHttpsAuthRestClient, so this
+    behaviour could easily be changed by using the letting TavernaServerRestClient
+    extend the DefaultHttpsAuthRestClient instead of the DefaultHttpAuthRestClient 
+    class.

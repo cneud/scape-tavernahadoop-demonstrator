@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:runDescription xmlns:ns1="http://ns.taverna.org.uk/2010/xml/server/" xmlns:ns2="http://ns.taverna.org.uk/2010/xml/server/rest/" xmlns:ns3="http://www.w3.org/1999/xlink" ns2:owner="taverna" ns1:serverBuildTimestamp="2012-10-03T15:40:42+0100" ns1:serverRevision="unknownRevision (branch: tags/server-2.4.1/server-webapp)" ns1:serverVersion="2.4.1">
+    <ns2:expiry ns3:href="https://localhost:8443/TavernaServer.2.4.1/rest/runs/c382adb2-fd72-4acc-9b4a-94acec8c54ac/expiry">20121119T174244.388+0100</ns2:expiry>
+    <ns2:creationWorkflow ns3:href="https://localhost:8443/TavernaServer.2.4.1/rest/runs/c382adb2-fd72-4acc-9b4a-94acec8c54ac/workflow"/>
+    <ns2:createTime ns3:href="https://localhost:8443/TavernaServer.2.4.1/rest/runs/c382adb2-fd72-4acc-9b4a-94acec8c54ac/createTime"/>
+    <ns2:startTime ns3:href="https://localhost:8443/TavernaServer.2.4.1/rest/runs/c382adb2-fd72-4acc-9b4a-94acec8c54ac/startTime"/>
+    <ns2:finishTime ns3:href="https://localhost:8443/TavernaServer.2.4.1/rest/runs/c382adb2-fd72-4acc-9b4a-94acec8c54ac/finishTime"/>
+    <ns2:status ns3:href="https://localhost:8443/TavernaServer.2.4.1/rest/runs/c382adb2-fd72-4acc-9b4a-94acec8c54ac/status"/>
+    <ns2:workingDirectory ns3:href="https://localhost:8443/TavernaServer.2.4.1/rest/runs/c382adb2-fd72-4acc-9b4a-94acec8c54ac/wd"/>
+    <ns2:inputs ns3:href="https://localhost:8443/TavernaServer.2.4.1/rest/runs/c382adb2-fd72-4acc-9b4a-94acec8c54ac/input"/>
+    <ns2:output ns3:href="https://localhost:8443/TavernaServer.2.4.1/rest/runs/c382adb2-fd72-4acc-9b4a-94acec8c54ac/output"/>
+    <ns2:securityContext ns3:href="https://localhost:8443/TavernaServer.2.4.1/rest/runs/c382adb2-fd72-4acc-9b4a-94acec8c54ac/security"/>
+    <ns2:listeners ns3:href="https://localhost:8443/TavernaServer.2.4.1/rest/runs/c382adb2-fd72-4acc-9b4a-94acec8c54ac/listeners">
+        <ns2:listener ns3:href="https://localhost:8443/TavernaServer.2.4.1/rest/runs/c382adb2-fd72-4acc-9b4a-94acec8c54ac/listeners/io"/>
+    </ns2:listeners>
+</ns2:runDescription>

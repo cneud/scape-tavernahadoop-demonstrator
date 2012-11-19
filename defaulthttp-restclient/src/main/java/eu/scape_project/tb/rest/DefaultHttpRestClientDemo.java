@@ -45,6 +45,12 @@ public class DefaultHttpRestClientDemo {
         
         // The examples require a running instance of the Taverna Server 2.4.1
         // http://dev.mygrid.org.uk/wiki/display/taverna/A+Beginner%27s+Installation+Guide+to+Taverna+Server
+        // SECURE/INSECURE mode is configured in
+        // apache-tomcat-${tomcat-version}/webapps/TavernaServer.${taverna-version}/WEB-INF/web.xml
+        // Uncomment one of the context parameters (default is secure mode) to 
+        // activate the secure or the insecure profile:
+        // <param-value>WEB-INF/secure.xml</param-value>
+        // <!--param-value>WEB-INF/insecure.xml</param-value-->
 
         // INSECURE
         // Example: Taverna Server REST API (list runs)

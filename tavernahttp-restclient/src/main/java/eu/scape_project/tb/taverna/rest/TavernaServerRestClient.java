@@ -69,19 +69,6 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
     }
 
     /**
-     * Constructor of the taverna server rest client. Constructor parameters are
-     * autowired, see src/main/resources/tavernaconfig.properties.
-     *
-     * @param host Host
-     * @param port Port
-     * @param basePath Base path
-     */
-    public TavernaServerRestClient(String scheme, String host, int port, String basePath, boolean isSSL) {
-        super(DefaultConnectionManager.getInstance(), scheme, host, port, basePath);
-        logger.info("Creating SSL client, scheme: " + scheme + ", host: " + host + ", port: " + port + ", basepath: " + basePath);
-    }
-
-    /**
      * Setter of the user field (autowired, see
      * src/main/resources/tavernaconfig.properties)
      *
@@ -117,20 +104,42 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
         }
     }
 
-    public int getHttpsReplacePort() {
-        return httpsReplacePort;
-    }
-
-    @Autowired
-    public void setHttpsReplacePort(int httpsReplacePort) {
-        this.httpsReplacePort = httpsReplacePort;
-    }
-
     /**
      * Init simple basic HTTP authenticator after user and password are set.
      */
     private void initAuthenticator() {
         this.authenticator = new SimpleBasicHttpAuthenticator(this.user, this.password);
+    }
+
+    /**
+     * Replace HTTPS port when using Taverna in insecure mode. The Taverna
+     * Server returns HTTPS URLs in insecure mode. The HTTPS port, e.g. 8443,
+     * is then replaced by the HTTP port, e.g. 8080, for follow-up requests 
+     * based on URLs contained in the REST response of the server. 
+     * This allows converting a "secure" HTTPS REST resource URL:
+     * https://${server}:8443/TavernaServer.2.4.1/rest/runs
+     * to an "insecure" HTTP REST resource URL:
+     * http://${server}:8080/TavernaServer.2.4.1/rest/runs
+     * @return HTTPS port
+     */
+    public int getHttpsReplacePort() {
+        return httpsReplacePort;
+    }
+
+    /**
+     * Replace HTTPS port when using Taverna in insecure mode. The Taverna
+     * Server returns HTTPS URLs in insecure mode. The HTTPS port, e.g. 8443,
+     * is then replaced by the HTTP port, e.g. 8080, for follow-up requests 
+     * based on URLs contained in the REST response of the server. 
+     * This allows converting a "secure" HTTPS REST resource URL:
+     * https://${server}:8443/TavernaServer.2.4.1/rest/runs
+     * to an "insecure" HTTP REST resource URL:
+     * http://${server}:8080/TavernaServer.2.4.1/rest/runs
+     * @param httpsReplacePort HTTPS port
+     */
+    @Autowired
+    public void setHttpsReplacePort(int httpsReplacePort) {
+        this.httpsReplacePort = httpsReplacePort;
     }
 
     /**

@@ -16,9 +16,7 @@
  */
 package eu.scape_project.tb.taverna.rest;
 
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +26,7 @@ import org.slf4j.LoggerFactory;
  * @author Sven Schlarb https://github.com/shsdev
  * @version 0.1
  */
-public class KeyValuePair {
+public class KeyValuePair implements Serializable {
 
     private static Logger logger = LoggerFactory.getLogger(KeyValuePair.class.getName());
     private String key;

@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<xs:schema targetNamespace="http://www.w3.org/1999/xlink" xmlns:mstns="http://ns.taverna.org.uk/2010/xml/server/rest/" xmlns="http://www.w3.org/1999/xlink" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" attributeFormDefault="qualified" elementFormDefault="qualified" xmlns:app2="http://www.w3.org/1999/xlink" xmlns:app1="http://ns.taverna.org.uk/2010/xml/server/">
+    <xs:import namespace="http://ns.taverna.org.uk/2010/xml/server/rest/" />
+    <xs:import namespace="http://ns.taverna.org.uk/2010/xml/server/" />
+    <xs:attribute name="href" msdata:Prefix="ns3" type="xs:string" />
+</xs:schema>

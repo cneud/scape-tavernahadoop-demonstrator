@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<xs:schema id="NewDataSet" targetNamespace="http://ns.taverna.org.uk/2010/xml/server/rest/" xmlns:mstns="http://ns.taverna.org.uk/2010/xml/server/rest/" xmlns="http://ns.taverna.org.uk/2010/xml/server/rest/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" attributeFormDefault="qualified" elementFormDefault="qualified" xmlns:app1="http://ns.taverna.org.uk/2010/xml/server/" xmlns:app2="http://www.w3.org/1999/xlink" msdata:schemafragmentcount="3">
+<!-- Generated using Flame-Ware Solutions XML-2-XSD v2.0 at http://www.flame-ware.com/Products/XML-2-XSD/ -->
+    <xs:import namespace="http://ns.taverna.org.uk/2010/xml/server/" schemaLocation="tavernaserver.xsd" />
+    <xs:import namespace="http://www.w3.org/1999/xlink" schemaLocation="xlink.xsd" />
+    
+    <xs:element name="runDescription" msdata:Prefix="ns2">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="expiry" msdata:Prefix="ns2" nillable="true" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:simpleContent msdata:Prefix="ns2" msdata:ColumnName="expiry_Text" msdata:Ordinal="1">
+                            <xs:extension base="xs:string">
+                                <xs:attribute ref="app2:href" />
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="creationWorkflow" msdata:Prefix="ns2" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:attribute ref="app2:href" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="createTime" msdata:Prefix="ns2" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:attribute ref="app2:href" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="startTime" msdata:Prefix="ns2" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:attribute ref="app2:href" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="finishTime" msdata:Prefix="ns2" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:attribute ref="app2:href" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="status" msdata:Prefix="ns2" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:attribute ref="app2:href" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="workingDirectory" msdata:Prefix="ns2" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:attribute ref="app2:href" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="inputs" msdata:Prefix="ns2" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:attribute ref="app2:href" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="output" msdata:Prefix="ns2" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:attribute ref="app2:href" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="securityContext" msdata:Prefix="ns2" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:attribute ref="app2:href" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="listeners" msdata:Prefix="ns2" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="listener" msdata:Prefix="ns2" minOccurs="0" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:attribute ref="app2:href" />
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute ref="app2:href" />
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute name="owner" msdata:Prefix="ns2" type="xs:string" />
+            <xs:attribute ref="app1:serverBuildTimestamp" />
+            <xs:attribute ref="app1:serverRevision" />
+            <xs:attribute ref="app1:serverVersion" />
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msdata:Prefix="ns2">
+        <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="runDescription" />
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<xs:schema targetNamespace="http://ns.taverna.org.uk/2010/xml/server/" xmlns:mstns="http://ns.taverna.org.uk/2010/xml/server/rest/" xmlns="http://ns.taverna.org.uk/2010/xml/server/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" attributeFormDefault="qualified" elementFormDefault="qualified" xmlns:app1="http://ns.taverna.org.uk/2010/xml/server/" xmlns:app2="http://www.w3.org/1999/xlink">
+    <xs:import namespace="http://ns.taverna.org.uk/2010/xml/server/rest/" />
+    <xs:import namespace="http://www.w3.org/1999/xlink" />
+    <xs:attribute name="serverBuildTimestamp" msdata:Prefix="ns1" type="xs:string" />
+    <xs:attribute name="serverRevision" msdata:Prefix="ns1" type="xs:string" />
+    <xs:attribute name="serverVersion" msdata:Prefix="ns1" type="xs:string" />
+</xs:schema>

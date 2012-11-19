@@ -27,7 +27,7 @@
                          value="#{workflowTable.workflows}" scrollHeight="400"
                          emptyMessage="No workflows available">
                 <p:column headerText="Workflows">  
-                    <p:commandLink actionListener="#{overview.setCurrentWorkflow}" value="#{workflow.filename}" update=":workflowform:workflowpanel">
+                    <p:commandLink actionListener="#{overview.setCurrentWorkflow}" value="#{workflow.filename}" update=":workflowform:workflowpanel" >
                         <f:param name="wfid" value="#{workflow.wfid}" />
                     </p:commandLink>
                 </p:column>  

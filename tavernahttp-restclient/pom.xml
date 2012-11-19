@@ -1,7 +1,7 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<parent>
+    <parent>
         <groupId>eu.scape_project.tb</groupId>
         <artifactId>scape-tavernahadoop-demonstrator</artifactId>
         <version>1.0</version>
@@ -13,6 +13,25 @@
     <version>1.0</version>
     <packaging>jar</packaging>
     <name>tavernahttp-restclient</name>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>0.8.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <generatePackage>eu.scape_project.tb.taverna</generatePackage>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
     <dependencies>
         <dependency>
             <groupId>eu.scape_project.tb</groupId>
@@ -50,7 +69,7 @@
     </properties>
     
     <repositories>
-         <repository>
+        <repository>
             <id>com.springsource.repository.bundles.release</id>
             <name>SpringSource Enterprise Bundle Repository - SpringSource Releases</name>
             <url>http://repository.springsource.com/maven/bundles/release</url>

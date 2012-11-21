@@ -22,11 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * TavernaServerRestClientDemo class. Demonstration of the Taverna server REST
@@ -45,15 +42,18 @@ public class TavernaServerRestClientDemo {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException {
-        ApplicationContext appContext =
-                new ClassPathXmlApplicationContext("spring/taverna/TavernaConfig.xml");
+
         // Properties of the TavernaServerRestClient bean are defined in the 
         // properties file src/main/resources/tavernaconfig.properties. 
         // Host, port, base URL fields are provided at construction time, the
         // object, username and password are defined afterwards.
-        TavernaServerRestClient tsrc = (TavernaServerRestClient) appContext.getBean("tavernaServerRestClient");
-
+       
+        TavernaServerRestClient tsrc = new TavernaServerRestClient("https", "fue-hdc01", 8443, "/TavernaServer.2.4.1/rest");
+        tsrc.setUser("taverna");
+        tsrc.setPassword("taverna");
+        
         try {
+            
             // 1. POST WORKFLOW
             // The client starts by creating a workflow run. This is done by 
             // POSTing a T2flow document to the service at the address
@@ -72,6 +72,7 @@ public class TavernaServerRestClientDemo {
             File workflowFile = File.createTempFile("tavernaworkflow", ".t2flow");
             FileOutputStream fos = new FileOutputStream(workflowFile);
             IOUtils.copyLarge(workflowResource, fos);
+            logger.info("Temporary workflow file created: "+workflowFile.getAbsolutePath());
             String uuidBaseResourceUrl = tsrc.submitWorkflow(workflowFile);
             logger.info(uuidBaseResourceUrl);
 

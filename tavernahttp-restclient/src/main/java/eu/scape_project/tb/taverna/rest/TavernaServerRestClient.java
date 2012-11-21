@@ -17,7 +17,6 @@
 package eu.scape_project.tb.taverna.rest;
 
 import eu.scape_project.tb.rest.DefaultHttpAuthRestClient;
-import eu.scape_project.tb.rest.ssl.DefaultConnectionManager;
 import eu.scape_project.tb.rest.xml.XPathEvaluator;
 import eu.scape_project.tb.rest.xml.XmlResponseParser;
 import java.io.File;
@@ -35,7 +34,6 @@ import org.apache.http.conn.BasicManagedEntity;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -74,10 +72,9 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      *
      * @param user
      */
-    @Autowired
     @Override
     public void setUser(String user) {
-        logger.info("Autowiring User name: " + user);
+        logger.info("Setting user name: " + user);
         this.user = user;
         if (password != null) {
             logger.info("Setting credentials");
@@ -92,10 +89,9 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      *
      * @param user
      */
-    @Autowired
     @Override
     public void setPassword(String password) {
-        logger.info("Autowiring password: " + password);
+        logger.info("Setting password: " + password);
         this.password = password;
         if (user != null) {
             logger.info("Setting credentials");
@@ -137,7 +133,6 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      * http://${server}:8080/TavernaServer.2.4.1/rest/runs
      * @param httpsReplacePort HTTPS port
      */
-    @Autowired
     public void setHttpsReplacePort(int httpsReplacePort) {
         this.httpsReplacePort = httpsReplacePort;
     }
@@ -241,7 +236,7 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
             return status;
         }
         String uuidBaseUrlStr = this.getAdaptedSchemeUrl(uuidBaseUrl.toExternalForm());
-        URL statusUrl = null;
+        URL statusUrl;
         try {
             statusUrl = new URL(uuidBaseUrlStr + "/status");
         } catch (MalformedURLException ex) {
@@ -254,7 +249,7 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
         if (code != 200) {
             throw new TavernaClientException("HTTP status code: " + response.getStatusLine().toString());
         }
-        String statusStr = "";
+        String statusStr;
         BasicManagedEntity sr = (BasicManagedEntity) response.getEntity();
         try {
             InputStream content = sr.getContent();
@@ -280,7 +275,7 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
     /*
      */
     public TavernaWorkflowStatus getWorkflowStatus(String uuid) throws TavernaClientException {
-        TavernaWorkflowStatus status = null;
+        TavernaWorkflowStatus status;
         try {
             URL uuidBaseUrl = new URL(this.getBaseUrlStr() + "/rest/runs/" + uuid);
             status = this.getWorkflowStatus(uuidBaseUrl);
@@ -393,7 +388,7 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      * @throws HttpException
      */
     public List<KeyValuePair> getWorkflowRunOutputValues(URL uuidBaseUrl) throws TavernaClientException {
-        URL outputRestUrl = null;
+        URL outputRestUrl;
         String uuidBaseUrlStr = this.getAdaptedSchemeUrl(uuidBaseUrl.toExternalForm());
         try {
             outputRestUrl = new URL(uuidBaseUrlStr + "/output");

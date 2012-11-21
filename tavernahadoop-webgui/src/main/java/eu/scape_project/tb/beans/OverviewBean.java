@@ -91,7 +91,7 @@ public class OverviewBean implements Serializable {
         TavernaConfig c = new TavernaConfig();
         String workflowPath = c.getProp("taverna.workflow.upload.path");
         String absPath = workflowPath + fileName;
-        logger.info("File uploaded: " + fileName);
+        logger.info("Uploading file to: " + absPath);
         try {
             FileOutputStream fos = new FileOutputStream(absPath);
             IOUtils.copyLarge(f.getInputstream(), fos);

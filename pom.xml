@@ -29,7 +29,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>eu.scape_project.tb.rest.DefaultHttpRestClientDemo</mainClass>
+                            <!--mainClass>eu.scape_project.tb.taverna.rest.TavernaServerRestClientDemo</mainClass-->
                         </manifest>
                     </archive>
                 </configuration>

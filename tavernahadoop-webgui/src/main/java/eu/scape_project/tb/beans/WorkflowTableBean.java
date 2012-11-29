@@ -16,11 +16,11 @@
  */
 package eu.scape_project.tb.beans;
 
+import eu.scape_project.tb.model.dao.WorkflowDao;
+import eu.scape_project.tb.model.entity.Workflow;
 import java.io.Serializable;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
-import eu.scape_project.tb.model.entity.Workflow;
-import eu.scape_project.tb.model.dao.WorkflowDao;
 
 /**
  * Backing bean of the workflow table component.

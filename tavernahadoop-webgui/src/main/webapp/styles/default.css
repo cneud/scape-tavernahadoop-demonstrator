@@ -1,14 +1,45 @@
+body {
+    font-family: sans-serif;
+    font-size: 100%;
+}
+#workflowform table {
+ background-color: red; 
+  width: 97%;
+}
+.wfrunsuuid {
+    
+    width: 47%;
+}
+.wfrunsuuidheader {
+    width: 47%;
+}
+.wfrunsdate {   
+    width: 25%;
+}
+.wfrunsdateheader {
+    width: 25%;
+}
+.wfrunsstatus {
+    width: 25%;
+}.wfrunsstatusheader {
+    width: 25%;
+}
 .ui-widget-header {
     background-color: white;
 }
+
+.ui-datatable {
+    
+}
+
 
 /*.ui-progressbar-value {
     border-color: black;
     border: 1px solid black;
 }*/
 .scapeprogressbar, .ui-progressbar-value {
-    border: 1px solid #8DC0D9;
-    
+    /*border: 1px solid #8DC0D9;*/
+
 }
 /*.ui-widget-header {
     border-color: black;
@@ -48,4 +79,4 @@ label.inputtexts {
     text-align:right;
     font-weight:bold;
 }
-table.workflowtable { border: 1px solid #8DC0D9 }
+table.workflowtable { }

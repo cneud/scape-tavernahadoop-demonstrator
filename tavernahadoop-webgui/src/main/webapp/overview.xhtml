@@ -14,7 +14,7 @@
             <h:messages  />
             <p:fileUpload fileUploadListener="#{overview.handleFileUpload}"  
                           mode="advanced"  
-                          update="messages,workflowtable,:workflowform:workflowpanel"
+                          update=":uploadform:messages,:uploadform:workflowtable,:workflowform:workflowpanel"
                           auto="true"  
                           sizeLimit="1000000"   
                           allowTypes="/(\.|\/)(t2flow)$/"
@@ -23,7 +23,7 @@
             </p:fileUpload>
             <p:growl id="messages" showDetail="true" life="5000" />  
             <p:dataTable id="workflowtable" styleClass="workflowtable" 
-                         style="width:420px" var="workflow" 
+                         style="width:350px" var="workflow" 
                          value="#{workflowTable.workflows}" scrollHeight="400"
                          emptyMessage="No workflows available">
                 <p:column headerText="Workflows">  
@@ -60,31 +60,29 @@
                         </ui:repeat>
                     </h:panelGroup>
                     <br/>
-                    <p:commandButton value="Save as default values" id="savebtn" process="@form" actionListener="#{overview.savePortValues}" update="wfMessages"/>  
-                    <p:commandButton value="Save as default values &amp; run" id="saveandrunbtn" process="@form" actionListener="#{overview.saveValuesAndRunWorkflow}" update="wfMessages,wfrunstable"/>  
-                    <p:commandButton value="Run" id="runbtn" process="@form" actionListener="#{overview.runWorkflow}" update="wfMessages,wfrunstable"/>  
+                    <p:commandButton widgetVar="savebtn" value="Save as default values" id="savebtn" process="@form" actionListener="#{overview.savePortValues}" update=":workflowform:wfMessages" onclick="savebtn.disable()"/>  
+                    <p:commandButton widgetVar="saveandrunbtn" value="Save as default values &amp; run" id="saveandrunbtn" process="@form" actionListener="#{overview.saveValuesAndRunWorkflow}" update=":workflowform:wfMessages,:workflowform:wfrunstable" onclick="runbtn.disable();saveandrunbtn.disable()"/>  
+                    <p:commandButton widgetVar="runbtn" value="Run" id="runbtn" process="@form" actionListener="#{overview.runWorkflow}" update=":workflowform:wfMessages,:workflowform:wfrunstable" onclick="runbtn.disable();saveandrunbtn.disable()"/>  
                 </fieldset>
 
                 <fieldset>
                     <legend>
                         <h:outputText styleClass="strong" id="wfrunsfieldset" value="Workflow runs" />
                     </legend>
-                    <p:dataTable styleClass="workflowtable" id="wfrunstable" 
+                    <p:dataTable id="wfrunstable" 
                                  var="workflowrun" value="#{overview.selectedWorkfow.workflowRuns}" 
-                                 scrollable="true" 
                                  emptyMessage="No workflow runs">
-                        <p:column headerText="UUID" style="width:400px">
+                        <p:column styleClass="wfrunsuuid" headerText="UUID">
                             <h:outputLink value="#{workflowrun.uuidBaseResourceUrl}">
                                 #{workflowrun.uuid}
                             </h:outputLink>
                         </p:column>  
-                        <p:column headerText="Started" style="width:400px">  
+                        <p:column styleClass="wfrunsdate" headerText="Started">  
                             <h:outputText value="#{workflowrun.createddate}" >
                                 <f:convertDateTime pattern="dd.MM.yyyy HH:mm" timeZone="GMT+1"/>
                             </h:outputText>
                         </p:column>  
-                        <p:column headerText="Run status" style="width:450px">  
-
+                        <p:column styleClass="wfrunsstatus" headerText="Run status">  
                             <h:link id="wf_run_status" value="#{workflowrun.runstatus}" outcome="#{(fn:toLowerCase(workflowrun.runstatus) eq 'finished') ? 'finished' : 'progress'}" >
                                 <f:param name="wfrid" value="#{workflowrun.wfrid}" />
                             </h:link>

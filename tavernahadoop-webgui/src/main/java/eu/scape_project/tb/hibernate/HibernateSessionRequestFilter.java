@@ -20,6 +20,7 @@ import java.io.IOException;
 import javax.servlet.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.StaleObjectStateException;
+import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +49,14 @@ public class HibernateSessionRequestFilter implements Filter {
             throws IOException, ServletException {
 
         try {
+            if (sf == null || sf.isClosed()) {
+                if (sf != null) {
+                    sf.openSession();
+                } else {
+                    Configuration configuration = new Configuration();
+                    sf = configuration.buildSessionFactory();
+                }
+            }
             logger.info("Starting a database transaction");
             sf.getCurrentSession().beginTransaction();
 

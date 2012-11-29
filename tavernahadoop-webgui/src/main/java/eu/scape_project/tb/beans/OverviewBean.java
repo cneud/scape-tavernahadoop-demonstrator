@@ -17,6 +17,14 @@
 package eu.scape_project.tb.beans;
 
 import eu.scape_project.tb.config.TavernaConfig;
+import eu.scape_project.tb.model.dao.WorkflowDao;
+import eu.scape_project.tb.model.entity.Workflow;
+import eu.scape_project.tb.model.entity.WorkflowInputPort;
+import eu.scape_project.tb.model.entity.WorkflowRun;
+import eu.scape_project.tb.model.factory.WorkflowFactory;
+import eu.scape_project.tb.rest.util.FileUtility;
+import eu.scape_project.tb.taverna.WebAppTavernaRestClient;
+import eu.scape_project.tb.taverna.rest.TavernaWorkflowStatus;
 import java.io.*;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,18 +34,11 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import eu.scape_project.tb.model.entity.Workflow;
-import eu.scape_project.tb.model.dao.WorkflowDao;
-import eu.scape_project.tb.model.entity.WorkflowInputPort;
-import eu.scape_project.tb.model.factory.WorkflowFactory;
 import org.apache.commons.io.IOUtils;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import eu.scape_project.tb.model.entity.WorkflowRun;
-import eu.scape_project.tb.taverna.WebAppTavernaRestClient;
-import eu.scape_project.tb.taverna.rest.TavernaWorkflowStatus;
 
 /**
  * Backing bean of the overview page.
@@ -89,15 +90,26 @@ public class OverviewBean implements Serializable {
         UploadedFile f = event.getFile();
         String fileName = f.getFileName();
         TavernaConfig c = new TavernaConfig();
-        String workflowPath = c.getProp("taverna.workflow.upload.path");
-        String absPath = workflowPath + fileName;
-        logger.info("Uploading file to: " + absPath);
+        String wfDirParam = c.getProp("taverna.workflow.upload.path");
+        File wfDir = new File(wfDirParam);
+        if (!wfDir.exists()) {
+            FacesMessage msgMissingUpldPath = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Workflow upload failed", "Workflow upload directory "+wfDirParam+" does not exist.");
+            FacesContext.getCurrentInstance().addMessage("Workflow uploaded successfully", msgMissingUpldPath);
+            return;
+        }
+        if (!wfDir.canWrite()) {
+            FacesMessage msgMissingUpldPath = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Workflow upload failed", "No permission to write to upload directory "+wfDirParam+".");
+            FacesContext.getCurrentInstance().addMessage("Workflow uploaded successfully", msgMissingUpldPath);
+            return;
+        }
+        String wfPath =  FileUtility.makePath(wfDirParam + fileName);
+        logger.info("Uploading file to: " + wfPath);
         try {
-            FileOutputStream fos = new FileOutputStream(absPath);
+            FileOutputStream fos = new FileOutputStream(wfPath);
             IOUtils.copyLarge(f.getInputstream(), fos);
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Workflow upload", "Workflow file " + event.getFile().getFileName() + " uploaded successfully.");
             FacesContext.getCurrentInstance().addMessage("Workflow uploaded successfully", msg);
-            Workflow wf = WorkflowFactory.createWorkflow(absPath);
+            Workflow wf = WorkflowFactory.createWorkflow(wfPath);
             // Issue warning if uuid input port is not available
             if (!wf.isUUIDInputPort()) {
                 FacesMessage msgWarnUUID = new FacesMessage(FacesMessage.SEVERITY_WARN, "UUID Input port missing", "It will not be possible to show the progress of any related hadoop/pig/hive jobs");

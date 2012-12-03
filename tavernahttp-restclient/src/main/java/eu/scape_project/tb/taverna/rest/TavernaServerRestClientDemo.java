@@ -48,7 +48,7 @@ public class TavernaServerRestClientDemo {
         // Host, port, base URL fields are provided at construction time, the
         // object, username and password are defined afterwards.
        
-        TavernaServerRestClient tsrc = new TavernaServerRestClient("https", "fue-hdc01", 8443, "/TavernaServer.2.4.1/rest");
+        TavernaServerRestClient tsrc = new TavernaServerRestClient("http", "fue-hdc01", 8080, "/TavernaServer.2.4.1/rest");
         tsrc.setUser("taverna");
         tsrc.setPassword("taverna");
         

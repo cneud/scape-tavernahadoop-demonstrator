@@ -47,6 +47,15 @@ public enum TavernaWorkflowStatus {
     /**
      * Taverna workflow status
      */
+    POLLING {
+        @Override
+        public String toString() {
+            return "Polling ...";
+        }
+    },
+    /**
+     * Taverna workflow status
+     */
     INITIALISED {
         @Override
         public String toString() {

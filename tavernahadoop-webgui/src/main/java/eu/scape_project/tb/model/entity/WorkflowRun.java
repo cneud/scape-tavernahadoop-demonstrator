@@ -43,7 +43,6 @@ public class WorkflowRun implements Serializable {
     private String uuid;
     private Date createddate;
     private TavernaWorkflowStatus runstatus;
-
     /**
      * Empty constructor.
      */
@@ -132,15 +131,29 @@ public class WorkflowRun implements Serializable {
     public void setRunstatus(TavernaWorkflowStatus runstatus) {
         this.runstatus = runstatus;
     }
-
+    
     public void updateRunstatus() {
         WebAppTavernaRestClient tavernaRestClient = WebAppTavernaRestClient.getInstance();
         URL url = null;
         try {
+            if(uuidBaseResourceUrl != null) {
             url = new URL(uuidBaseResourceUrl);
             this.runstatus = tavernaRestClient.getRunStatus(uuidBaseResourceUrl);
+            } else {
+                this.runstatus = TavernaWorkflowStatus.POLLING;
+            }
         } catch (MalformedURLException ex) {
             logger.error("Invalid resource URL");
         }
     }
+    
+    public String viewWorkflowRun() {
+        if(this.runstatus.equals(TavernaWorkflowStatus.FINISHED))
+            return "finished";
+        else
+            return "progress";
+    }
+    
+
+    
 }

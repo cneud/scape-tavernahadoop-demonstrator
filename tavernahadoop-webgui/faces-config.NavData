@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scene Scope="Project" version="2">
+    <Scope Scope="Faces Configuration Only"/>
+    <Scope Scope="Project">
+        <Node id="finished.xhtml" x="155" y="145" zoom="true"/>
+        <Node id="index.html" x="53" y="47" zoom="true"/>
+        <Node id="overview.xhtml" x="332" y="43" zoom="true"/>
+        <Node id="progress.xhtml" x="400" y="300" zoom="true"/>
+        <Node id="layouts/default.xhtml" x="650" y="150" zoom="true"/>
+        <Node id="styles/jquery-ui-1.9.1.custom-blue/index.html" x="150" y="450" zoom="true"/>
+    </Scope>
+    <Scope Scope="All Faces Configurations"/>
+</Scene>

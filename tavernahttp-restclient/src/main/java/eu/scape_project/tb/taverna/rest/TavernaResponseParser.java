@@ -70,21 +70,17 @@ public class TavernaResponseParser {
             return null;
         }
         List<KeyValuePair> resultList = new ArrayList<KeyValuePair>();
-        KeyValuePair keyValuePair = null;
+        KeyValuePair keyValuePair;
         NodeList nl = xPathEval.evaluate("/workflowOutputs/output");
         for (int i = 0; i < nl.getLength(); i++) {
             try {
-                InputStream in = null;
+                InputStream in;
                 Node n = nl.item(i);
                 NamedNodeMap outputAttributes = n.getAttributes();
                 String portName = outputAttributes.getNamedItem("ns1:name").getNodeValue();
                 Node valueNode = n.getFirstChild();
                 NamedNodeMap valueAttributes = valueNode.getAttributes();
                 String hrefStr = valueAttributes.getNamedItem("ns2:href").getNodeValue();
-                // TODO: configure server
-                if (hrefStr.contains("fue-hdc01")) {
-                    hrefStr = hrefStr.replace("fue-hdc01:8080", "fue.onb.ac.at:80");
-                }
                 Authenticator.setDefault(authenticator);
                 in = new URL(hrefStr).openStream();
                 String result = "";

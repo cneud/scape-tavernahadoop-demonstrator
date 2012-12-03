@@ -17,7 +17,6 @@
 package eu.scape_project.tb.taverna.rest;
 
 import java.net.Authenticator;
-import java.net.InetAddress;
 import java.net.PasswordAuthentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +30,9 @@ import org.slf4j.LoggerFactory;
 public class SimpleBasicHttpAuthenticator extends Authenticator {
 
     private static Logger logger = LoggerFactory.getLogger(SimpleBasicHttpAuthenticator.class.getName());
-    String username = "taverna";
-    String password = "taverna";
+    
+    String username;
+    String password;
 
     private SimpleBasicHttpAuthenticator() {
     }

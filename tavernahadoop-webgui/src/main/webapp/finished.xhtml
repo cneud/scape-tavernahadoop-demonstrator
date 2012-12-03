@@ -20,7 +20,7 @@
                          value="#{overview.selectedWorkfow.workflowRuns}" scrollHeight="400"
                          emptyMessage="No workflow runs available">
                 <p:column headerText="Workflow runs">  
-                    <p:commandLink actionListener="#{progress.setCurrentWorkflowRun}" value="#{workflowrun.uuid}" update=":wfrform">
+                    <p:commandLink actionListener="#{progress.setCurrentWorkflowRun}" value="#{workflowrun.uuid}" update=":wfrform:contentpanel">
                         <f:param name="wfrid" value="#{workflowrun.wfrid}" />
                     </p:commandLink>
                 </p:column>  
@@ -34,26 +34,30 @@
 
         <h:form id="wfrform">  
 
-            <p:growl id="wfMessages" showDetail="true" life="5000"/>  
+            <p:panel id="contentpanel">
 
-            <fieldset style="margin-bottom: 30px">
-                <legend>
-                    <h:outputText value="Workflow run "/>
-                    <h:outputText styleClass="strong" id="wfruuid" value="#{progress.selectedWorkflowRun.uuid}" />
-                    <h:outputText value=" of workflow "/>
-                    <h:outputText styleClass="strong" id="wfrfilename" value="#{overview.selectedWorkfow.filename}" />
-                </legend>
+                <p:growl id="wfMessages" showDetail="true" life="5000"/>  
 
-                <p><h:outputText value="Taverna workflow run finished: #{finished.outputValues[0].key}"/></p>
+                <fieldset style="margin-bottom: 30px">
+                    <legend>
+                        <h:outputText value="Workflow run "/>
+                        <h:outputText styleClass="strong" id="wfruuid" value="#{progress.wfRunUuid}" />
+                        <h:outputText value=" of workflow "/>
+                        <h:outputText styleClass="strong" id="wfrfilename" value="#{progress.wfFileName}" />
+                    </legend>
 
-                <p:dataList value="#{finished.outputValues}" var="outval" itemType="disc">  
-                    <b>#{outval.key}</b><br/>
-                    #{outval.value}  
-                </p:dataList>  
+                    <p><h:outputText value="Taverna workflow run finished: #{finished.outputValues[0].key}"/></p>
 
-                <br/>
-                <p:commandButton ajax="false" value="Back to overview" action="overview"/>
-            </fieldset>
+                    <p:dataList value="#{finished.outputValues}" var="outval" itemType="disc">  
+                        <b>#{outval.key}</b><br/>
+                        <pre>#{outval.value}</pre>  
+                    </p:dataList>  
+
+                    <br/>
+                    <p:commandButton ajax="false" value="Back to overview" action="overview"/>
+                </fieldset>
+
+            </p:panel>
 
         </h:form>
     </ui:define>

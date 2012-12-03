@@ -29,6 +29,11 @@ import org.slf4j.LoggerFactory;
 @SessionScoped
 public class ProgressBean implements Serializable {
 
+    
+    String wfRunId;
+    String wfRunUuid;
+    String wfFileName;
+    
     WorkflowRun selectedWorkflowRun;
     private Integer progress;
     private static Logger logger = LoggerFactory.getLogger(ProgressBean.class.getName());
@@ -50,6 +55,32 @@ public class ProgressBean implements Serializable {
         jobsProgress.put("one",50);
         jobsProgress.put("two",70);
     }
+    
+    
+    public String getWfRunId() {
+        return wfRunId;
+    }
+
+    public void setWfRunId(String wfRunId) {
+        this.wfRunId = wfRunId;
+    }
+
+    public String getWfFileName() {
+        return wfFileName;
+    }
+
+    public void setWfFileName(String wfFileName) {
+        this.wfFileName = wfFileName;
+    }
+
+    public String getWfRunUuid() {
+        return wfRunUuid;
+    }
+
+    public void setWfRunUuid(String wfRunUuid) {
+        this.wfRunUuid = wfRunUuid;
+    }
+    
 
     public List getJobs() {
         return jobs;

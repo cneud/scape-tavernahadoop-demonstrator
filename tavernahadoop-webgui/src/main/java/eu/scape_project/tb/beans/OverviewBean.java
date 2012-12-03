@@ -45,6 +45,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author Sven Schlarb https://github.com/shsdev
  * @version 0.1
+ * 
+ * TODO: Workflow run table is not updated when the run is started
  */
 @ManagedBean(name = "overview")
 @SessionScoped
@@ -197,7 +199,7 @@ public class OverviewBean implements Serializable {
         Map<String, String> kvMap = getKeyValueMap();
         WebAppTavernaRestClient tavernaRestClient = WebAppTavernaRestClient.getInstance();
         tavernaRestClient.run(this.selectedWorkfow, wr, kvMap);
-        wr.setRunstatus(TavernaWorkflowStatus.SUBMITTED);
+        wr.setRunstatus(TavernaWorkflowStatus.POLLING);
         wr.setCreateddate(new Date());
         this.selectedWorkfow.addWorkflowRun(wr);
         WorkflowDao wfdao = new WorkflowDao();

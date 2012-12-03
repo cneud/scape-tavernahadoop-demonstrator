@@ -61,8 +61,8 @@
                     </h:panelGroup>
                     <br/>
                     <p:commandButton widgetVar="savebtn" value="Save as default values" id="savebtn" process="@form" actionListener="#{overview.savePortValues}" update=":workflowform:wfMessages" onclick="savebtn.disable()"/>  
-                    <p:commandButton widgetVar="saveandrunbtn" value="Save as default values &amp; run" id="saveandrunbtn" process="@form" actionListener="#{overview.saveValuesAndRunWorkflow}" update=":workflowform:wfMessages,:workflowform:wfrunstable" onclick="runbtn.disable();saveandrunbtn.disable()"/>  
-                    <p:commandButton widgetVar="runbtn" value="Run" id="runbtn" process="@form" actionListener="#{overview.runWorkflow}" update=":workflowform:wfMessages,:workflowform:wfrunstable" onclick="runbtn.disable();saveandrunbtn.disable()"/>  
+                    <p:commandButton widgetVar="saveandrunbtn" value="Save as default values &amp; run" id="saveandrunbtn" process="@form" actionListener="#{overview.saveValuesAndRunWorkflow}" update=":workflowform:wfMessages,:workflowform:wfrunstable"/>  
+                    <p:commandButton widgetVar="runbtn" value="Run" id="runbtn" process="@form" actionListener="#{overview.runWorkflow}" update=":workflowform:wfMessages,:workflowform:wfrunstable"/>  
                 </fieldset>
 
                 <fieldset>
@@ -83,9 +83,12 @@
                             </h:outputText>
                         </p:column>  
                         <p:column styleClass="wfrunsstatus" headerText="Run status">  
-                            <h:link id="wf_run_status" value="#{workflowrun.runstatus}" outcome="#{(fn:toLowerCase(workflowrun.runstatus) eq 'finished') ? 'finished' : 'progress'}" >
-                                <f:param name="wfrid" value="#{workflowrun.wfrid}" />
-                            </h:link>
+                            
+                            <h:commandLink id="wf_run_status" action="#{workflowrun.viewWorkflowRun}" value="#{workflowrun.runstatus}" >
+                                <f:setPropertyActionListener target="#{progress.wfFileName}" value="#{overview.selectedWorkfow.filename}" />
+                                <f:setPropertyActionListener target="#{progress.wfRunUuid}" value="#{workflowrun.uuid}" />
+                                <f:setPropertyActionListener target="#{progress.wfRunId}" value="#{workflowrun.wfrid}" />
+                            </h:commandLink>
                             <p:poll interval="15"   
                                     listener="#{workflowrun.updateRunstatus}" update="wf_run_status" />  
                         </p:column>  

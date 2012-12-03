@@ -16,6 +16,9 @@
  */
 package eu.scape_project.tb.beans;
 
+import eu.scape_project.tb.faces.FacesUtil;
+import eu.scape_project.tb.model.dao.WorkflowDao;
+import eu.scape_project.tb.model.dao.WorkflowRunDao;
 import eu.scape_project.tb.model.entity.WorkflowRun;
 import eu.scape_project.tb.taverna.WebAppTavernaRestClient;
 import eu.scape_project.tb.taverna.rest.KeyValuePair;
@@ -23,6 +26,7 @@ import eu.scape_project.tb.taverna.rest.TavernaClientException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -42,6 +46,7 @@ import org.slf4j.LoggerFactory;
 @ManagedBean(name = "finished")
 @SessionScoped
 public class FinishedBean implements Serializable {
+    
 
     private List<KeyValuePair> outputValues;
     private static Logger logger = LoggerFactory.getLogger(FinishedBean.class.getName());
@@ -49,17 +54,30 @@ public class FinishedBean implements Serializable {
 
     @PostConstruct
     public void initFinishedBean() {
+        updateOutputValues();
+    }
+
+    
+    
+    public void updateOutputValues() {
+//        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+//        String index = externalContext.getRequestParameterMap().get("wfrid");
+        ProgressBean progress = FacesUtil.findBean("progress");
+        
+        WorkflowRunDao wfrdao = new WorkflowRunDao();
+        this.selectedWorkflowRun = wfrdao.findByWorkflowRunIdentifier(progress.wfRunId);
+        List<KeyValuePair> emptyList = new ArrayList<KeyValuePair>();
+        KeyValuePair kvp = new KeyValuePair("empty","empty");
+        emptyList.add(kvp);
         try {
-            ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
-            ProgressBean progress = (ProgressBean) externalContext.getSessionMap().get("progress");
-            this.selectedWorkflowRun = progress.getSelectedWorkflowRun();
-
-            WebAppTavernaRestClient tavernaRestClient = WebAppTavernaRestClient.getInstance();
-
-            String urlStr = this.selectedWorkflowRun.getUuidBaseResourceUrl();
-            URL url = new URL(urlStr);
-            outputValues = tavernaRestClient.getClient().getWorkflowRunOutputValues(url);
-
+            if (this.selectedWorkflowRun != null) {
+                WebAppTavernaRestClient tavernaRestClient = WebAppTavernaRestClient.getInstance();
+                String urlStr = this.selectedWorkflowRun.getUuidBaseResourceUrl();
+                URL url = new URL(urlStr);
+                outputValues = tavernaRestClient.getClient().getWorkflowRunOutputValues(url);
+            } else {
+                outputValues = emptyList;
+            }
         } catch (TavernaClientException ex) {
             logger.error("HTTP error", ex);
         } catch (MalformedURLException ex) {
@@ -68,10 +86,21 @@ public class FinishedBean implements Serializable {
     }
 
     public List getOutputValues() {
+        updateOutputValues();
         return outputValues;
     }
 
     public void setOutputValues(List outputValues) {
         this.outputValues = outputValues;
     }
+
+    public WorkflowRun getSelectedWorkflowRun() {
+        return selectedWorkflowRun;
+    }
+
+    public void setSelectedWorkflowRun(WorkflowRun selectedWorkflowRun) {
+        this.selectedWorkflowRun = selectedWorkflowRun;
+    }
+    
+    
 }

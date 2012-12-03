@@ -56,14 +56,9 @@ public class FinishedBean implements Serializable {
     public void initFinishedBean() {
         updateOutputValues();
     }
-
-    
     
     public void updateOutputValues() {
-//        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
-//        String index = externalContext.getRequestParameterMap().get("wfrid");
         ProgressBean progress = FacesUtil.findBean("progress");
-        
         WorkflowRunDao wfrdao = new WorkflowRunDao();
         this.selectedWorkflowRun = wfrdao.findByWorkflowRunIdentifier(progress.wfRunId);
         List<KeyValuePair> emptyList = new ArrayList<KeyValuePair>();

@@ -154,6 +154,4 @@ public class WorkflowRun implements Serializable {
             return "progress";
     }
     
-
-    
 }

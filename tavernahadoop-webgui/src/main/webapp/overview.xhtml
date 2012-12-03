@@ -84,11 +84,11 @@
                         </p:column>  
                         <p:column styleClass="wfrunsstatus" headerText="Run status">  
                             
-                            <h:commandLink id="wf_run_status" action="#{workflowrun.viewWorkflowRun}" value="#{workflowrun.runstatus}" >
+                            <p:commandLink id="wf_run_status" ajax="false" action="#{workflowrun.viewWorkflowRun}" value="#{workflowrun.runstatus}" >
                                 <f:setPropertyActionListener target="#{progress.wfFileName}" value="#{overview.selectedWorkfow.filename}" />
                                 <f:setPropertyActionListener target="#{progress.wfRunUuid}" value="#{workflowrun.uuid}" />
                                 <f:setPropertyActionListener target="#{progress.wfRunId}" value="#{workflowrun.wfrid}" />
-                            </h:commandLink>
+                            </p:commandLink>
                             <p:poll interval="15"   
                                     listener="#{workflowrun.updateRunstatus}" update="wf_run_status" />  
                         </p:column>  

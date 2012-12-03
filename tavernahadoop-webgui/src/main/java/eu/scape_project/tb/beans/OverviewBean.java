@@ -179,7 +179,7 @@ public class OverviewBean implements Serializable {
             kvMap.put(wfip.getPortname(), wfip.getDefaultvalue());
         }
         tavernaRestClient.run(this.selectedWorkfow, wr, kvMap);
-        wr.setRunstatus(TavernaWorkflowStatus.SUBMITTED);
+        wr.setRunstatus(TavernaWorkflowStatus.POLLING);
         wr.setCreateddate(new Date());
         this.selectedWorkfow.addWorkflowRun(wr);
         WorkflowDao wfdao = new WorkflowDao();

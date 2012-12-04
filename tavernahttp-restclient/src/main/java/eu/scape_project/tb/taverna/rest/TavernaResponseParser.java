@@ -88,7 +88,7 @@ public class TavernaResponseParser {
                 BufferedReader buf = new BufferedReader(inR);
                 String line;
                 while ((line = buf.readLine()) != null) {
-                    result += line;
+                    result += line + "\n";
                 }
                 keyValuePair = new KeyValuePair(portName, result);
                 resultList.add(keyValuePair);

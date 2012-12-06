@@ -81,6 +81,8 @@ public class TavernaResponseParser {
                 Node valueNode = n.getFirstChild();
                 NamedNodeMap valueAttributes = valueNode.getAttributes();
                 String hrefStr = valueAttributes.getNamedItem("ns2:href").getNodeValue();
+                // TODO: remove!
+                 hrefStr = hrefStr.replace("fue-hdc01:8080", "fue.onb.ac.at:80");
                 Authenticator.setDefault(authenticator);
                 in = new URL(hrefStr).openStream();
                 String result = "";

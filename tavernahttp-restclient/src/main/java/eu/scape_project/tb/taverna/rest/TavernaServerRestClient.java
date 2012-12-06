@@ -390,6 +390,8 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
     public List<KeyValuePair> getWorkflowRunOutputValues(URL uuidBaseUrl) throws TavernaClientException {
         URL outputRestUrl;
         String uuidBaseUrlStr = this.getAdaptedSchemeUrl(uuidBaseUrl.toExternalForm());
+        // TODO: Remove!
+        uuidBaseUrlStr = uuidBaseUrlStr.replace("fue-hdc01:8080", "fue.onb.ac.at:80");
         try {
             outputRestUrl = new URL(uuidBaseUrlStr + "/output");
         } catch (MalformedURLException ex) {

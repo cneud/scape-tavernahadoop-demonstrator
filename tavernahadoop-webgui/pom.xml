@@ -42,6 +42,12 @@
             <version>1.0</version>
         </dependency>
         
+        <dependency>
+            <groupId>eu.scape_project.tb</groupId>
+            <artifactId>hadoopjobtracker-client</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
         <!-- servlet-api -->
         <dependency>
             <groupId>org.apache.tomcat</groupId>
@@ -100,6 +106,13 @@
             <artifactId>hibernate-search</artifactId>
             <version>${hibernate.search.version}</version>
         </dependency>
+        
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-c3p0</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+        
         <!-- The Java Persistence API: object/relational mapping facility for 
         managing relational data -->
         <dependency>

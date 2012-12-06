@@ -47,15 +47,32 @@
                 <p><h:outputText value="Taverna workflow run progress:"/></p>
 
                 <h:outputText id="wf_run_status" value="#{progress.selectedWorkflowRun.runstatus}" />
+
                 <p:poll interval="15"   
                         listener="#{progress.selectedWorkflowRun.updateRunstatus}" update="wf_run_status" />  
+                
+                <p:poll interval="5"   
+                        listener="#{progress.updateHdJobs}" update="hdjtable" />  
 
                 <br/>
-                    <p><h:outputText value="Progress of related jobs:"/></p>
-                <p:progressBar styleClass="scapeprogressbar" widgetVar="pbAjax" ajax="true" value="#{progress.progress}" labelTemplate="{value}%">  
-                    <p:ajax event="complete" listener="#{progress.onComplete}" update="wfMessages"  onstart="pbAjax.start()" oncomplete="pbAjax.stop()"/>  
-                </p:progressBar>
-                        <br/>
+                <p><h:outputText value="Related hadoop jobs:"/></p>
+                <p:dataTable id="hdjtable" 
+                             var="hdjobstatus" value="#{progress.hdJobs}" 
+                             emptyMessage="No related hadoop jobs">
+                    <p:column headerText="Job ID">
+                        <h:outputText value="#{hdjobstatus.jobID}" />
+                    </p:column>
+                    <p:column headerText="Job name">
+                        <h:outputText value="#{hdjobstatus.jobName}" />
+                    </p:column>
+                    <p:column headerText="Map progress">
+                        <h:outputText value="#{hdjobstatus.jobMapProgress}" />
+                    </p:column>
+                    <p:column headerText="Reduce progress">
+                        <h:outputText value="#{hdjobstatus.jobReduceProgress}" />
+                    </p:column>
+                </p:dataTable>
+                <br/>
                 <p:commandButton ajax="false" value="Back to overview" action="overview"/>
             </fieldset>
 

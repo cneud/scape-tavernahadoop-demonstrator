@@ -4,6 +4,8 @@
  */
 package eu.scape_project.tb.beans;
 
+import eu.scape_project.tb.hadoop.WebAppHadoopJobTrackerClient;
+import eu.scape_project.tb.hadoopjobtracker.HDJobStatus;
 import eu.scape_project.tb.model.dao.WorkflowRunDao;
 import eu.scape_project.tb.model.entity.WorkflowRun;
 import java.io.Serializable;
@@ -28,17 +30,12 @@ import org.slf4j.LoggerFactory;
 @SessionScoped
 public class ProgressBean implements Serializable {
 
-    
     String wfRunId;
     String wfRunUuid;
     String wfFileName;
-    
     WorkflowRun selectedWorkflowRun;
-    private Integer progress;
     private static Logger logger = LoggerFactory.getLogger(ProgressBean.class.getName());
-    
-    private List jobs;
-    private HashMap jobsProgress;
+    private List<HDJobStatus> hdJobs;
 
     @PostConstruct
     public void init() {
@@ -46,16 +43,8 @@ public class ProgressBean implements Serializable {
         String index = externalContext.getRequestParameterMap().get("wfrid");
         WorkflowRunDao wfrdao = new WorkflowRunDao();
         this.selectedWorkflowRun = wfrdao.findByWorkflowRunIdentifier(index);
-        
-        jobs = new ArrayList<String>();
-        jobs.add("one");
-        jobs.add("two");
-        jobsProgress = new HashMap<String,Integer>();
-        jobsProgress.put("one",50);
-        jobsProgress.put("two",70);
     }
-    
-    
+
     public String getWfRunId() {
         return wfRunId;
     }
@@ -79,27 +68,19 @@ public class ProgressBean implements Serializable {
     public void setWfRunUuid(String wfRunUuid) {
         this.wfRunUuid = wfRunUuid;
     }
-    
 
-    public List getJobs() {
-        return jobs;
+    public List<HDJobStatus> getHdJobs() {
+        return hdJobs;
     }
 
-    public void setJobs(List jobs) {
-        this.jobs = jobs;
+    public void setHdJobs(List<HDJobStatus> hdJobs) {
+        this.hdJobs = hdJobs;
     }
 
-    public HashMap getJobsProgress() {
-        return jobsProgress;
+    public void updateHdJobs() {
+        this.hdJobs = WebAppHadoopJobTrackerClient.getInstance().getHadoopJobs(this.wfRunUuid);
     }
 
-    public void setJobsProgress(HashMap jobsProgress) {
-        this.jobsProgress = jobsProgress;
-    }
-
-    
-    
-    
     /**
      * Listener to set the current workflow.
      */
@@ -116,35 +97,5 @@ public class ProgressBean implements Serializable {
 
     public void setSelectedWorkflowRun(WorkflowRun selectedWorkflowRun) {
         this.selectedWorkflowRun = selectedWorkflowRun;
-    }
-
-    public Integer getProgress() {
-        logger.info("Firing getProgress");
-        if (progress == null) {
-            progress = 0;
-        } else {
-            progress = progress + (int) (Math.random() * 20);
-
-            if (progress > 100) {
-                progress = 100;
-            }
-        }
-
-        return progress;
-    }
-
-    public void setProgress(Integer progress) {
-        logger.info("Firing setProgress");
-        this.progress = progress;
-    }
-
-    public void onComplete() {
-        logger.info("Firing onComplete");
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Workflow run", "Workflow run completed"));
-    }
-
-    public void cancel() {
-        logger.info("Firing cancel");
-        progress = null;
     }
 }

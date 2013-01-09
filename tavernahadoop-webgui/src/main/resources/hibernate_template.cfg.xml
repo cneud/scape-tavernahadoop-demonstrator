@@ -10,9 +10,10 @@
         <property name="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</property>
 
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <!-- ?autoReconnect=true -->
         <property name="hibernate.connection.url">jdbc:mysql://localhost/tbwebdemo</property>
-        <property name="hibernate.connection.username">MYSQLUSER</property>
-        <property name="hibernate.connection.password">MYSQLPASSWORD</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">YOURMYSQLPASSWORT</property>
         <property name="transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property>
 
         <!-- Automatic schema creation (begin) === -->
@@ -23,6 +24,21 @@
 
         <!-- Enable Hibernate's automatic session context management -->
         <property name="current_session_context_class">thread</property>
+        
+        <!--  c3p0 -->
+        <property name="hibernate.c3p0.validate">true</property>
+        <property name="hibernate.connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
+        <!-- Minimum number of JDBC connections in the pool (Hibernate: 1).  -->
+        <property name="hibernate.c3p0.min_size">5</property>
+        <!-- Maximum number of JDBC connections in the pool (Hibernate: 100). -->
+        <property name="hibernate.c3p0.max_size">600</property>
+        <!-- Timeout until an unused connection is removed in seconds (Hibernate: No timeout) -->
+        <property name="hibernate.c3p0.timeout">1800</property>
+        <!-- Cached statements in order to improve performance (Disabled in Hibernate). -->
+        <property name="hibernate.c3p0.max_statements">50</property>
+        <property name="hibernate.c3p0.preferredTestQuery">SELECT 1;</property>
+        <property name="hibernate.c3p0.testConnectionOnCheckout">true</property>
+        <property name="hibernate.c3p0.idle_test_period">3000</property>
 
     </session-factory>
 </hibernate-configuration>

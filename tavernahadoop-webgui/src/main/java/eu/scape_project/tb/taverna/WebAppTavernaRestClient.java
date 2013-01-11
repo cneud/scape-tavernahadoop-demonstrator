@@ -93,7 +93,7 @@ public class WebAppTavernaRestClient implements Serializable {
      * @param kvMap Key value map of workflow input ports
      * @return Success/failure of the workflow run creation
      */
-    public Boolean run(Workflow workflow, WorkflowRun workflowRun, Map<String, String> kvMap) {
+    public Boolean run(Workflow workflow, WorkflowRun workflowRun, Map<String, String> kvMap) throws TavernaClientException {
         Boolean success = false;
         try {
             // 1. POST WORKFLOW
@@ -117,31 +117,23 @@ public class WebAppTavernaRestClient implements Serializable {
             tavernaRestClient.setWorkflowStatus(resourceUrl, TavernaWorkflowStatus.OPERATING);
 
             success = true;
-
-        } catch (TavernaClientException ex) {
-            logger.error("Error", ex);
+       
         } catch (MalformedURLException ex) {
             logger.error("Error", ex);
-        } catch (IOException ex) {
-            logger.error("Error", ex);
-        } finally {
-            return success;
-        }
+        } 
+        return success;
     }
 
-    public TavernaWorkflowStatus getRunStatus(String uuidBaseResourceUrl) {
+    public TavernaWorkflowStatus getRunStatus(String uuidBaseResourceUrl) throws TavernaClientException {
 
         TavernaWorkflowStatus status = TavernaWorkflowStatus.UNDEFINED;
         URL url = null;
         try {
             url = new URL(uuidBaseResourceUrl);
             status = tavernaRestClient.getWorkflowStatus(url);
-        } catch (TavernaClientException ex) {
-            logger.error("HTTP Error", ex);
         } catch (MalformedURLException ex) {
             logger.error("Malformed URL error", ex);
-        } finally {
-            return status;
-        }
+        } 
+        return status;
     }
 }

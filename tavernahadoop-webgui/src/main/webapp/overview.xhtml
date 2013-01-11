@@ -14,7 +14,7 @@
             <h:messages  />
             <p:fileUpload fileUploadListener="#{overview.handleFileUpload}"  
                           mode="advanced"  
-                          update="messages,workflowtable,:workflowform:workflowpanel"
+                          update="@form,:workflowform:workflowpanel" process="@this"
                           auto="true"  
                           sizeLimit="1000000"   
                           allowTypes="/(\.|\/)(t2flow)$/"
@@ -22,7 +22,7 @@
                           >
             </p:fileUpload>
             <p:growl id="messages" showDetail="true" life="5000" />  
-            <p:dataTable id="workflowtable" styleClass="workflowtable" 
+            <p:dataTable id="workflowstable" styleClass="wftabstyle" 
                          style="width:350px" var="workflow" 
                          value="#{workflowTable.workflows}" scrollHeight="400"
                          emptyMessage="No workflows available">
@@ -30,6 +30,9 @@
                     <p:commandLink actionListener="#{overview.setCurrentWorkflow}" value="#{workflow.filename}" update=":workflowform:workflowpanel" >
                         <f:param name="wfid" value="#{workflow.wfid}" />
                     </p:commandLink>
+                    [<p:commandLink onclick="workflowDiagram.show()">
+                        diagram
+                    </p:commandLink>]
                 </p:column>  
             </p:dataTable>  
         </h:form> 
@@ -37,6 +40,10 @@
 
     <ui:define name="content">
 
+        <p:dialog id="modalDialog" header="Workflow Diagram" widgetVar="workflowDiagram" modal="true" height="400" width="700">  
+            <img src="http://www.myexperiment.org/workflows/3323/versions/1/previews/full"/>
+        </p:dialog>  
+        
         <h:form id="workflowform">  
             <h:panelGroup id="workflowpanel">
                 <p:growl id="wfMessages" showDetail="true" life="10000"/>  
@@ -83,12 +90,12 @@
                             </h:outputText>
                         </p:column>  
                         <p:column styleClass="wfrunsstatus" headerText="Run status">  
-                            
-                            <p:commandLink id="wf_run_status" ajax="false" action="#{workflowrun.viewWorkflowRun}" value="#{workflowrun.runstatus}" >
+
+                            <h:commandLink id="wf_run_status" ajax="false" action="#{workflowrun.viewWorkflowRun}" value="#{workflowrun.runstatus}" >
                                 <f:setPropertyActionListener target="#{progress.wfFileName}" value="#{overview.selectedWorkfow.filename}" />
                                 <f:setPropertyActionListener target="#{progress.wfRunUuid}" value="#{workflowrun.uuid}" />
                                 <f:setPropertyActionListener target="#{progress.wfRunId}" value="#{workflowrun.wfrid}" />
-                            </p:commandLink>
+                            </h:commandLink>
                             <p:poll interval="15"   
                                     listener="#{workflowrun.updateRunstatus}" update="wf_run_status" />  
                         </p:column>  

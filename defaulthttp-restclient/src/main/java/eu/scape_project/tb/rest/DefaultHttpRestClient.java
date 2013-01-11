@@ -59,7 +59,6 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
     private String basePath;
     protected URI baseUri;
     private static Logger logger = LoggerFactory.getLogger(DefaultHttpRestClient.class.getName());
-    
     protected HttpContext httpContext;
 
     /**
@@ -84,7 +83,6 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
 //        super(bccm);
 //        init(scheme, host, port, basePath);
 //    }
-    
     protected DefaultHttpRestClient(BasicClientConnectionManager bccm) {
         super(bccm);
     }
@@ -143,15 +141,19 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
      * @param subResource Sub-resource is added to the base path
      * @return HTTP response
      */
-    public HttpResponse executeGet(String subResource, String headerAccept) {
+    public HttpResponse executeGet(String subResource, String headerAccept) throws DefaultHttpClientException {
+        HttpResponse response = null;
         String resource = FileUtility.makePath(this.getBaseUrlStr(), subResource);
         URL resourceUrl = null;
         try {
             resourceUrl = new URL(resource);
+            response = executeGet(resourceUrl, headerAccept);
         } catch (MalformedURLException ex) {
             logger.error("Malformed URL Error while executing HTTP GET request", ex);
-        }
-        return executeGet(resourceUrl, headerAccept);
+        }  catch (IOException e) {
+             clientError("Exception while executing GET", e);
+        } 
+        return response;
     }
 
     /**
@@ -160,7 +162,7 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
      * @param subResource Sub-resource is added to the base path
      * @return HTTP response
      */
-    public HttpResponse executePut(URL resourceUrl, String putContent, ContentType contentType) {
+    public HttpResponse executePut(URL resourceUrl, String putContent, ContentType contentType) throws DefaultHttpClientException {
         HttpPut httpPut = new HttpPut(resourceUrl.toExternalForm());
         HttpResponse response = null;
         try {
@@ -178,7 +180,7 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
                 logger.info("HTTP PUT response content length: " + entity.getContentLength());
             }
         } catch (IOException e) {
-            logger.error("I/O Error while executing HTTP PUT request", e);
+             clientError("Exception while executing PUT", e);
         }
         return response;
     }
@@ -189,15 +191,19 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
      * @param subResource Sub-resource is added to the base path
      * @return HTTP response
      */
-    public HttpResponse executePut(String subResource, String putContent, ContentType contentType) {
+    public HttpResponse executePut(String subResource, String putContent, ContentType contentType) throws DefaultHttpClientException {
+        HttpResponse response = null;
         String resource = FileUtility.makePath(this.getBaseUrlStr(), subResource);
         URL resourceUrl = null;
         try {
             resourceUrl = new URL(resource);
+            response = executePut(resourceUrl, putContent, contentType);
         } catch (MalformedURLException ex) {
             logger.error("Malformed URL Error while executing HTTP PUT request", ex);
-        }
-        return executePut(resourceUrl, putContent, contentType);
+        } catch(IOException e) {
+            clientError("Exception while executing PUT", e);
+        } 
+        return response;
     }
 
     /**
@@ -208,7 +214,7 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
      * @param contentType Content type of the file
      * @return HTTP response
      */
-    public HttpResponse executeFileContentPost(String subResource, File file, ContentType contentType) {
+    public HttpResponse executeFileContentPost(String subResource, File file, ContentType contentType) throws DefaultHttpClientException {
         String resource = FileUtility.makePath(this.getBaseUrlStr(), subResource);
         HttpPost httpPost = new HttpPost(resource);
         HttpResponse response = null;
@@ -221,10 +227,15 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
             if (entity != null) {
                 logger.info("HTTP POST response content length: " + entity.getContentLength());
             }
-        } catch (IOException e) {
-            logger.error("IOException occurred.", e);
+        } catch (Exception e) {
+            clientError(e.getMessage(), e);
         }
         return response;
+    }
+
+    private void clientError(String msg, Exception e) throws DefaultHttpClientException {
+        logger.error(msg, e);
+        throw new DefaultHttpClientException(msg);
     }
 
     /**
@@ -233,7 +244,7 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
      * @param subResource Sub-resource is added to the base path
      * @return HTTP response
      */
-    public HttpResponse executeDelete(URL resourceUrl) {
+    public HttpResponse executeDelete(URL resourceUrl) throws DefaultHttpClientException {
         HttpDelete httpDelete = new HttpDelete(resourceUrl.toExternalForm());
         HttpResponse response = null;
         try {
@@ -245,7 +256,7 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
                 logger.info("HTTP DELETE response content length: " + entity.getContentLength());
             }
         } catch (IOException e) {
-            logger.error("I/O Error while executing HTTP DELETE request");
+            clientError("Exception while executing DELETE", e);
         }
         return response;
     }
@@ -256,7 +267,7 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
      * @param uuid Sub-resource is added to the base path
      * @return HTTP response
      */
-    public HttpResponse executeDelete(String uuid) {
+    public HttpResponse executeDelete(String uuid) throws DefaultHttpClientException {
         String resource = FileUtility.makePath(this.getBaseUrlStr(), "rest/runs", uuid);
         URL resourceUrl = null;
         try {

@@ -4,16 +4,15 @@ scape-tavernahadoop-demonstrator
 Introduction
 ------------
 
-The `scape-tavernahadoop-demonstrator` project consists of the four modules 
-`defaulthttp-restclient`, `tavernaserver-restclient`, `t2flow-read` and 
-`tavernahadoop-webgui` which together demonstrate the orchestration of Hadoop 
-Jobs using the Taverna Server.
+The `scape-tavernahadoop-demonstrator` project consists of the five modules 
+`defaulthttp-restclient`, `tavernaserver-restclient`, `t2flow-read`, 
+`hadoopjobtracker-client` and `tavernahadoop-webgui` which together demonstrate 
+the orchestration of Hadoop Jobs using the Taverna Server.
 
-The main application is the `tavernahadoop-webgui` web application which can be 
-deployed to an Apache Tomcat Web Application Server (tested on version 6.26 and 
-7.0.32).
+The `tavernahadoop-webgui` is the web gui application which can be deployed to 
+an Apache Tomcat Web Application Server (tested on version 6.26 and 7.0.32).
 
-The tavernaserver-restclient is a generic REST client including a client for the 
+The `tavernaserver-restclient` is a generic REST client including a client for the 
 Taverna Server 2.4 which is available for download at 
 http://www.taverna.org.uk/download/server/2-4/. This client is a simple and 
 reduced alternative to the full Taverna Server client available at
@@ -24,12 +23,6 @@ authentication, and a basic Taverna REST client consuming the Taverna Server
 2.4 REST API for submitting, starting, and monitoring Taverna Server Workflow 
 Runs. Taverna Server 2.4 REST API is documented at 
 http://dev.mygrid.org.uk/wiki/display/taverna/REST+API.
-
-Current status
---------------
-
-At the current state, the prototype of the Taverna Server workflow is in place,
-the Hadoop integration is being planned.
 
 Installation requirements
 -------------------------
@@ -52,28 +45,34 @@ https://ccp.cloudera.com/display/CDHDOC/Installing+CDH3+on+a+Single+Linux+Node+i
 Configuration & Deployment of the web application
 -------------------------------------------------
 
-Rename the configuration template files:
+Copy the configuration template files:
 
-    tavernahadoop-webgui/src/main/resources/taverna_template.properties
+    tavernahadoop-webgui/src/main/resources/hadoop_template.properties
     tavernahadoop-webgui/src/main/resources/hibernate_template.cfg.xml
+    tavernahadoop-webgui/src/main/resources/taverna_template.properties
 
 to:
 
+    tavernahadoop-webgui/src/main/resources/hadoop.properties
+	tavernahadoop-webgui/src/main/resources/hibernate.cfg.xml
     tavernahadoop-webgui/src/main/resources/taverna.properties
-    tavernahadoop-webgui/src/main/resources/hibernate.cfg.xml
 
 Configuration is then done in four steps:
 
-1. Adapt the Taverna Server settings for accessing the REST API of the Taverna 
+1. Configure the Hadoop settings:
+
+    `tavernahadoop-webgui/src/main/resources/hadoop.properties`
+
+2. Configure the Hibernate settings for accessing the MySQL server:
+    
+    `tavernahadoop-webgui/src/main/resources/hibernate.cfg.xml`
+
+3. Configure the Taverna Server settings for accessing the REST API of the Taverna 
    Server:
 
     `tavernahadoop-webgui/src/main/resources/taverna.properties`
 
-2. Adapt the Hibernate settings for accessing the MySQL server:
-    
-    `tavernahadoop-webgui/src/main/resources/hibernate.cfg.xml`
-
-3. Copy the `tavernahadoop-webgui/settings.xml` into your local maven repository 
+4. Copy the `tavernahadoop-webgui/settings.xml` into your local maven repository 
    folder:
 
     `cp tavernahadoop-webgui/settings.xml $HOME/.m2/`
@@ -99,10 +98,6 @@ Configuration is then done in four steps:
         <activeProfile>tomcat-deployment-profile</activeProfile>
     </activeProfiles>
 ```
-
-4. Adapt the settings for the Hadoop Job Tracker API:
-
-   `STILL TO BE DEFINED`
 
 In order to deploy the web application, change to the web application module
 directory and run the corresponding maven task:

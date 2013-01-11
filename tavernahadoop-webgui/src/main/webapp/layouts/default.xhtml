@@ -12,27 +12,17 @@
         <link rel="stylesheet" href="${request.contextPath}/styles/default.css" type="text/css" media="screen, projection" /> 
     </h:head>
     <h:body onload="if(pbAjax) pbAjax.start()">
-
-        <p:layout fullPage="true">  
-
-            <p:layoutUnit position="north" size="140" resizable="true" closable="false" collapsible="false">  
-                <div class="header">
-                    <h1 class="title"><h:outputText value="SCAPE Testbeds Web Demonstrator" /></h1>  
-                    <span style="float:right"><img src="images/scape-logo.jpg"/></span>
-                </div>
-            </p:layoutUnit>  
-
-            <p:layoutUnit position="west" size="365" resizable="yes" closable="false" collapsible="false">  
-
+        <div id="header">
+            <h1 class="title"><h:outputText value="SCAPE Testbeds Web Demonstrator" /></h1>  
+            <span style="float:right"><img src="images/scape-logo.jpg"/></span>
+        </div>
+        <div id="contwrap">
+            <div id="nav"  style="float:left">
                 <ui:insert name="navigation"/>
-                
-            </p:layoutUnit>  
-
-            <p:layoutUnit position="center">  
+            </div>
+            <div id="cont" style="float:left">
                 <ui:insert name="content"/>
-            </p:layoutUnit>  
-
-        </p:layout>         
-
+            </div>
+        </div>
     </h:body>
 </html>

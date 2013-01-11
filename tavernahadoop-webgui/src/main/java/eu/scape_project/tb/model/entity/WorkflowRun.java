@@ -17,6 +17,7 @@
 package eu.scape_project.tb.model.entity;
 
 import eu.scape_project.tb.taverna.WebAppTavernaRestClient;
+import eu.scape_project.tb.taverna.rest.TavernaClientException;
 import eu.scape_project.tb.taverna.rest.TavernaRestUtil;
 import eu.scape_project.tb.taverna.rest.TavernaWorkflowStatus;
 import java.io.Serializable;
@@ -132,7 +133,7 @@ public class WorkflowRun implements Serializable {
         this.runstatus = runstatus;
     }
     
-    public void updateRunstatus() {
+    public void updateRunstatus() throws TavernaClientException {
         WebAppTavernaRestClient tavernaRestClient = WebAppTavernaRestClient.getInstance();
         URL url = null;
         try {

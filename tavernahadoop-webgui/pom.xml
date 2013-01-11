@@ -113,6 +113,12 @@
             <version>${hibernate.version}</version>
         </dependency>
         
+        <dependency>
+            <groupId>c3p0</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+        
         <!-- The Java Persistence API: object/relational mapping facility for 
         managing relational data -->
         <dependency>

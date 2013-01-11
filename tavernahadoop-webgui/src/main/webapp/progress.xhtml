@@ -43,13 +43,6 @@
                     <h:outputText value=" of workflow "/>
                     <h:outputText styleClass="strong" id="wfrfilename" value="#{overview.selectedWorkfow.filename}" />
                 </legend>
-
-                <p><h:outputText value="Taverna workflow run progress:"/></p>
-
-                <h:outputText id="wf_run_status" value="#{progress.selectedWorkflowRun.runstatus}" />
-
-                <p:poll interval="15"   
-                        listener="#{progress.selectedWorkflowRun.updateRunstatus}" update="wf_run_status" />  
                 
                 <p:poll interval="5"   
                         listener="#{progress.updateHdJobs}" update="hdjtable" />  
@@ -58,7 +51,7 @@
                 <p><h:outputText value="Related hadoop jobs:"/></p>
                 <p:dataTable id="hdjtable" 
                              var="hdjobstatus" value="#{progress.hdJobs}" 
-                             emptyMessage="No related hadoop jobs">
+                             emptyMessage="Looking up related hadoop jobs ...">
                     <p:column headerText="Job ID">
                         <h:outputText value="#{hdjobstatus.jobID}" />
                     </p:column>

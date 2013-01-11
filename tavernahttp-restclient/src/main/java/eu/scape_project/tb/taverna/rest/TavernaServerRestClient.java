@@ -17,6 +17,7 @@
 package eu.scape_project.tb.taverna.rest;
 
 import eu.scape_project.tb.rest.DefaultHttpAuthRestClient;
+import eu.scape_project.tb.rest.DefaultHttpClientException;
 import eu.scape_project.tb.rest.xml.XPathEvaluator;
 import eu.scape_project.tb.rest.xml.XmlResponseParser;
 import java.io.File;
@@ -109,13 +110,14 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
 
     /**
      * Replace HTTPS port when using Taverna in insecure mode. The Taverna
-     * Server returns HTTPS URLs in insecure mode. The HTTPS port, e.g. 8443,
-     * is then replaced by the HTTP port, e.g. 8080, for follow-up requests 
-     * based on URLs contained in the REST response of the server. 
-     * This allows converting a "secure" HTTPS REST resource URL:
-     * https://${server}:8443/TavernaServer.2.4.1/rest/runs
-     * to an "insecure" HTTP REST resource URL:
+     * Server returns HTTPS URLs in insecure mode. The HTTPS port, e.g. 8443, is
+     * then replaced by the HTTP port, e.g. 8080, for follow-up requests based
+     * on URLs contained in the REST response of the server. This allows
+     * converting a "secure" HTTPS REST resource URL:
+     * https://${server}:8443/TavernaServer.2.4.1/rest/runs to an "insecure"
+     * HTTP REST resource URL:
      * http://${server}:8080/TavernaServer.2.4.1/rest/runs
+     *
      * @return HTTPS port
      */
     public int getHttpsReplacePort() {
@@ -124,13 +126,14 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
 
     /**
      * Replace HTTPS port when using Taverna in insecure mode. The Taverna
-     * Server returns HTTPS URLs in insecure mode. The HTTPS port, e.g. 8443,
-     * is then replaced by the HTTP port, e.g. 8080, for follow-up requests 
-     * based on URLs contained in the REST response of the server. 
-     * This allows converting a "secure" HTTPS REST resource URL:
-     * https://${server}:8443/TavernaServer.2.4.1/rest/runs
-     * to an "insecure" HTTP REST resource URL:
+     * Server returns HTTPS URLs in insecure mode. The HTTPS port, e.g. 8443, is
+     * then replaced by the HTTP port, e.g. 8080, for follow-up requests based
+     * on URLs contained in the REST response of the server. This allows
+     * converting a "secure" HTTPS REST resource URL:
+     * https://${server}:8443/TavernaServer.2.4.1/rest/runs to an "insecure"
+     * HTTP REST resource URL:
      * http://${server}:8080/TavernaServer.2.4.1/rest/runs
+     *
      * @param httpsReplacePort HTTPS port
      */
     public void setHttpsReplacePort(int httpsReplacePort) {
@@ -162,6 +165,8 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
             this.consume(response);
         } catch (MalformedURLException ex) {
             logger.error("Malformed URL Error", ex);
+        } catch (DefaultHttpClientException e) {
+            throw new TavernaClientException("HTTP Client exception");
         }
     }
 
@@ -201,6 +206,8 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
             this.consume(response);
         } catch (MalformedURLException ex) {
             logger.error("Malformed URL Error", ex);
+        } catch (DefaultHttpClientException e) {
+            throw new TavernaClientException("HTTP Client exception");
         }
     }
 
@@ -296,21 +303,25 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      */
     public ArrayList<String> getCurrentTavernaRuns() throws TavernaClientException {
         ArrayList<String> uuids = new ArrayList<String>();
-        HttpResponse response = this.executeGet("runs", "application/xml");
-        int code = response.getStatusLine().getStatusCode();
-        if (code != 200) {
-            throw new TavernaClientException("HTTP status code: " + response.getStatusLine().toString());
-        }
-        XmlResponseParser rp = new XmlResponseParser(response);
-        rp.parseResponse();
-        XPathEvaluator xPathEval = new XPathEvaluator(rp);
-        NodeList items = xPathEval.evaluate("/runList/run");
-        logger.info(Integer.toString(items.getLength()));
-        for (int i = 0; i < items.getLength(); i++) {
-            Node item = items.item(i);
-            String uuid = item.getTextContent();
-            logger.info("UUID: " + uuid);
-            uuids.add(uuid);
+        try {
+            HttpResponse response = this.executeGet("runs", "application/xml");
+            int code = response.getStatusLine().getStatusCode();
+            if (code != 200) {
+                throw new TavernaClientException("HTTP status code: " + response.getStatusLine().toString());
+            }
+            XmlResponseParser rp = new XmlResponseParser(response);
+            rp.parseResponse();
+            XPathEvaluator xPathEval = new XPathEvaluator(rp);
+            NodeList items = xPathEval.evaluate("/runList/run");
+            logger.info(Integer.toString(items.getLength()));
+            for (int i = 0; i < items.getLength(); i++) {
+                Node item = items.item(i);
+                String uuid = item.getTextContent();
+                logger.info("UUID: " + uuid);
+                uuids.add(uuid);
+            }
+        } catch (DefaultHttpClientException e) {
+            throw new TavernaClientException("HTTP Client exception");
         }
         return uuids;
     }
@@ -324,7 +335,13 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      * http://${server}:${port}/tavernaserver/rest/runs/UUID
      */
     public String submitWorkflow(File workflowFile) throws TavernaClientException {
-        HttpResponse response = this.executeFileContentPost("runs", workflowFile, ContentType.create("application/vnd.taverna.t2flow+xml"));
+        
+        HttpResponse response = null;
+        try {
+            response = this.executeFileContentPost("runs", workflowFile, ContentType.create("application/vnd.taverna.t2flow+xml"));
+        } catch(DefaultHttpClientException e) {
+            throw new TavernaClientException("HTTP Client exception: "+e.getMessage());
+        }
         int code = response.getStatusLine().getStatusCode();
         if (code != 201) {
             throw new TavernaClientException("HTTP status code: " + response.getStatusLine().toString());
@@ -349,7 +366,12 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      */
     public void deleteWorkflow(URL uuidBaseUrl) throws TavernaClientException {
         String uuidBaseUrlStr = this.getAdaptedSchemeUrl(uuidBaseUrl.toExternalForm());
-        HttpResponse response = this.executeDelete(uuidBaseUrlStr);
+        HttpResponse response = null;
+        try {
+            response = this.executeDelete(uuidBaseUrlStr);
+        } catch(DefaultHttpClientException e) {
+            throw new TavernaClientException("HTTP Client exception");
+        }
         int code = response.getStatusLine().getStatusCode();
         if (code != 204) {
             throw new TavernaClientException("HTTP status code: " + response.getStatusLine().toString());
@@ -386,12 +408,13 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      * @param uuidBaseUrl UUID base url
      * @return Workflow status
      * @throws HttpException
+     *  TODO: Remove!
      */
     public List<KeyValuePair> getWorkflowRunOutputValues(URL uuidBaseUrl) throws TavernaClientException {
         URL outputRestUrl;
         String uuidBaseUrlStr = this.getAdaptedSchemeUrl(uuidBaseUrl.toExternalForm());
-        // TODO: Remove!
-        uuidBaseUrlStr = uuidBaseUrlStr.replace("fue-hdc01:8080", "fue.onb.ac.at:80");
+        /* TODO: Remove! */
+        uuidBaseUrlStr = uuidBaseUrlStr.replace("fue-hdc01:8080", "fue-l:80");
         try {
             outputRestUrl = new URL(uuidBaseUrlStr + "/output");
         } catch (MalformedURLException ex) {

@@ -41,7 +41,7 @@ public class DefaultHttpRestClientDemo {
      *
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException, NoSuchAlgorithmException, KeyManagementException {
+    public static void main(String[] args) throws IOException, NoSuchAlgorithmException, KeyManagementException, DefaultHttpClientException {
         
         // The examples require a running instance of the Taverna Server 2.4.1
         // http://dev.mygrid.org.uk/wiki/display/taverna/A+Beginner%27s+Installation+Guide+to+Taverna+Server

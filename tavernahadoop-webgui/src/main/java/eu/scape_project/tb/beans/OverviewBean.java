@@ -24,6 +24,7 @@ import eu.scape_project.tb.model.entity.WorkflowRun;
 import eu.scape_project.tb.model.factory.WorkflowFactory;
 import eu.scape_project.tb.rest.util.FileUtility;
 import eu.scape_project.tb.taverna.WebAppTavernaRestClient;
+import eu.scape_project.tb.taverna.rest.TavernaClientException;
 import eu.scape_project.tb.taverna.rest.TavernaWorkflowStatus;
 import java.io.*;
 import java.util.Date;
@@ -45,7 +46,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Sven Schlarb https://github.com/shsdev
  * @version 0.1
- * 
+ *
  * TODO: Workflow run table is not updated when the run is started
  */
 @ManagedBean(name = "overview")
@@ -95,16 +96,16 @@ public class OverviewBean implements Serializable {
         String wfDirParam = c.getProp("taverna.workflow.upload.path");
         File wfDir = new File(wfDirParam);
         if (!wfDir.exists()) {
-            FacesMessage msgMissingUpldPath = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Workflow upload failed", "Workflow upload directory "+wfDirParam+" does not exist.");
+            FacesMessage msgMissingUpldPath = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Workflow upload failed", "Workflow upload directory " + wfDirParam + " does not exist.");
             FacesContext.getCurrentInstance().addMessage("Workflow uploaded successfully", msgMissingUpldPath);
             return;
         }
         if (!wfDir.canWrite()) {
-            FacesMessage msgMissingUpldPath = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Workflow upload failed", "No permission to write to upload directory "+wfDirParam+".");
+            FacesMessage msgMissingUpldPath = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Workflow upload failed", "No permission to write to upload directory " + wfDirParam + ".");
             FacesContext.getCurrentInstance().addMessage("Workflow uploaded successfully", msgMissingUpldPath);
             return;
         }
-        String wfPath =  FileUtility.makePath(wfDirParam + fileName);
+        String wfPath = FileUtility.makePath(wfDirParam + fileName);
         logger.info("Uploading file to: " + wfPath);
         try {
             FileOutputStream fos = new FileOutputStream(wfPath);
@@ -178,12 +179,16 @@ public class OverviewBean implements Serializable {
         for (WorkflowInputPort wfip : this.selectedWorkfow.getWorkflowInputPorts()) {
             kvMap.put(wfip.getPortname(), wfip.getDefaultvalue());
         }
-        tavernaRestClient.run(this.selectedWorkfow, wr, kvMap);
-        wr.setRunstatus(TavernaWorkflowStatus.POLLING);
-        wr.setCreateddate(new Date());
-        this.selectedWorkfow.addWorkflowRun(wr);
-        WorkflowDao wfdao = new WorkflowDao();
-        wfdao.update(selectedWorkfow);
+        try {
+            tavernaRestClient.run(this.selectedWorkfow, wr, kvMap);
+            wr.setRunstatus(TavernaWorkflowStatus.POLLING);
+            wr.setCreateddate(new Date());
+            this.selectedWorkfow.addWorkflowRun(wr);
+            WorkflowDao wfdao = new WorkflowDao();
+            wfdao.update(selectedWorkfow);
+        } catch (TavernaClientException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Unable to run workflow", ex.getMessage()));
+        }
     }
 
     /**
@@ -198,12 +203,16 @@ public class OverviewBean implements Serializable {
         WorkflowRun wr = new WorkflowRun();
         Map<String, String> kvMap = getKeyValueMap();
         WebAppTavernaRestClient tavernaRestClient = WebAppTavernaRestClient.getInstance();
-        tavernaRestClient.run(this.selectedWorkfow, wr, kvMap);
-        wr.setRunstatus(TavernaWorkflowStatus.POLLING);
-        wr.setCreateddate(new Date());
-        this.selectedWorkfow.addWorkflowRun(wr);
-        WorkflowDao wfdao = new WorkflowDao();
-        wfdao.update(selectedWorkfow);
+        try {
+            tavernaRestClient.run(this.selectedWorkfow, wr, kvMap);
+            wr.setRunstatus(TavernaWorkflowStatus.POLLING);
+            wr.setCreateddate(new Date());
+            this.selectedWorkfow.addWorkflowRun(wr);
+            WorkflowDao wfdao = new WorkflowDao();
+            wfdao.update(selectedWorkfow);
+        } catch (TavernaClientException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Unable to run workflow", ex.getMessage()));
+        }
     }
 
     /**

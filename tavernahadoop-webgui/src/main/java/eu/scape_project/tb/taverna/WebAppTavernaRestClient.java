@@ -23,7 +23,6 @@ import eu.scape_project.tb.taverna.rest.TavernaClientException;
 import eu.scape_project.tb.taverna.rest.TavernaServerRestClient;
 import eu.scape_project.tb.taverna.rest.TavernaWorkflowStatus;
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -74,7 +73,7 @@ public class WebAppTavernaRestClient implements Serializable {
         tavernaRestClient.setPassword(config.getProp("taverna.server.password"));
         tavernaRestClient.setHttpsReplacePort(httpsReplacePort);
     }
-    
+
     public TavernaServerRestClient getClient() {
         return tavernaRestClient;
     }
@@ -103,7 +102,7 @@ public class WebAppTavernaRestClient implements Serializable {
             // Set UUID resource URL
             workflowRun.setUuidBaseResourceUrl(uuidRURL);
             logger.info(workflowRun.getUuidBaseResourceUrl());
-            
+
             // 2. Inject UUID in key-value map
             kvMap.put("uuid", workflowRun.getUuid());
 
@@ -112,15 +111,15 @@ public class WebAppTavernaRestClient implements Serializable {
             for (String key : kvMap.keySet()) {
                 tavernaRestClient.setWorkflowInput(resourceUrl, key, kvMap.get(key));
             }
-            
+
             // 4. Run workflow
             tavernaRestClient.setWorkflowStatus(resourceUrl, TavernaWorkflowStatus.OPERATING);
 
             success = true;
-       
+
         } catch (MalformedURLException ex) {
             logger.error("Error", ex);
-        } 
+        }
         return success;
     }
 
@@ -133,7 +132,7 @@ public class WebAppTavernaRestClient implements Serializable {
             status = tavernaRestClient.getWorkflowStatus(url);
         } catch (MalformedURLException ex) {
             logger.error("Malformed URL error", ex);
-        } 
+        }
         return status;
     }
 }

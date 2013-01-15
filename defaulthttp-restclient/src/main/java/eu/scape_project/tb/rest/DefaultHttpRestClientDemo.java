@@ -17,11 +17,23 @@
 package eu.scape_project.tb.rest;
 
 import eu.scape_project.tb.rest.ssl.DefaultConnectionManager;
-import java.io.IOException;
+import eu.scape_project.tb.rest.xml.XPathEvaluator;
+import eu.scape_project.tb.rest.xml.XmlResponseParser;
+import java.io.*;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.entity.ContentType;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Main class of the simple http rest client. This client provides a simple http
@@ -33,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  */
 public class DefaultHttpRestClientDemo {
-
+    
     private static Logger logger = LoggerFactory.getLogger(DefaultHttpRestClientDemo.class.getName());
 
     /**
@@ -42,7 +54,7 @@ public class DefaultHttpRestClientDemo {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException, NoSuchAlgorithmException, KeyManagementException, DefaultHttpClientException {
-        
+
         // The examples require a running instance of the Taverna Server 2.4.1
         // http://dev.mygrid.org.uk/wiki/display/taverna/A+Beginner%27s+Installation+Guide+to+Taverna+Server
         // SECURE/INSECURE mode is configured in
@@ -55,17 +67,19 @@ public class DefaultHttpRestClientDemo {
         // INSECURE
         // Example: Taverna Server REST API (list runs)
         // http://localhost:8080/TavernaServer.2.4.1/rest/runs
-        DefaultHttpAuthRestClient insecureRestClient = new DefaultHttpAuthRestClient("http", "localhost", 8080, "/TavernaServer.2.4.1/rest");
-        insecureRestClient.setUser("taverna");
-        insecureRestClient.setPassword("taverna");
-        insecureRestClient.executeGet("/runs", "application/xml");
-        
+//        DefaultHttpAuthRestClient insecureRestClient = new DefaultHttpAuthRestClient("http", "localhost", 8080, "/TavernaServer.2.4.1/rest");
+//        insecureRestClient.setUser("taverna");
+//        insecureRestClient.setPassword("taverna");
+//        insecureRestClient.executeGet("/runs", "application/xml");
+
         // SECURE
         // Example: Taverna Server REST API (list runs)
         // https://localhost:8443/TavernaServer.2.4.1/rest/runs
-        DefaultHttpsAuthRestClient secureRestClient = new DefaultHttpsAuthRestClient(DefaultConnectionManager.getInstance(), "https", "localhost", 8443, "/TavernaServer.2.4.1/rest");
-        secureRestClient.setUser("taverna");
-        secureRestClient.setPassword("taverna");
-        secureRestClient.executeGet("/runs", "application/xml");
+//        DefaultHttpsAuthRestClient secureRestClient = new DefaultHttpsAuthRestClient(DefaultConnectionManager.getInstance(), "https", "localhost", 8443, "/TavernaServer.2.4.1/rest");
+//        secureRestClient.setUser("taverna");
+//        secureRestClient.setPassword("taverna");
+//        secureRestClient.executeGet("/runs", "application/xml");
+        
+        
     }
 }

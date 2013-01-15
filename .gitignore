@@ -19,6 +19,7 @@
 /tavernahadoop-webgui/src/main/resources/taverna.properties
 /tavernahadoop-webgui/src/main/resources/hadoop.properties
 /tavernahadoop-webgui/src/main/resources/hibernate.cfg.xml
+/tavernahadoop-webgui/src/main/resources/myexperiment.properties
 
 # Netbeans configuration file #
 nbactions.xml

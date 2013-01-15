@@ -16,17 +16,28 @@
  */
 package eu.scape_project.tb.beans;
 
+import eu.scape_project.tb.config.MyExperimentConfig;
 import eu.scape_project.tb.config.TavernaConfig;
 import eu.scape_project.tb.model.dao.WorkflowDao;
 import eu.scape_project.tb.model.entity.Workflow;
 import eu.scape_project.tb.model.entity.WorkflowInputPort;
 import eu.scape_project.tb.model.entity.WorkflowRun;
 import eu.scape_project.tb.model.factory.WorkflowFactory;
+import eu.scape_project.tb.rest.DefaultHttpAuthRestClient;
+import eu.scape_project.tb.rest.DefaultHttpClientException;
 import eu.scape_project.tb.rest.util.FileUtility;
+import eu.scape_project.tb.rest.xml.XPathEvaluator;
+import eu.scape_project.tb.rest.xml.XmlResponseParser;
+import eu.scape_project.tb.taverna.MyExperimentRestClient;
 import eu.scape_project.tb.taverna.WebAppTavernaRestClient;
+import eu.scape_project.tb.taverna.rest.SimpleBasicHttpAuthenticator;
 import eu.scape_project.tb.taverna.rest.TavernaClientException;
 import eu.scape_project.tb.taverna.rest.TavernaWorkflowStatus;
+import eu.scape_project.tb.util.StringUtil;
 import java.io.*;
+import java.net.Authenticator;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,10 +47,13 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Backing bean of the overview page.
@@ -84,47 +98,61 @@ public class OverviewBean implements Serializable {
         this.selectedWorkfow = wfdao.findByWorkflowIdentifier(index);
     }
 
+    private void uploadFile(String fileName, InputStream is) {
+        String wfDirParam = (new TavernaConfig()).getProp("taverna.workflow.upload.path");
+        String wfPath = FileUtility.makePath(wfDirParam + fileName);
+        File wfDir = new File(wfDirParam);
+        if (!wfDir.exists()) {
+            FacesMessage msgMissingUpldPath = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Workflow upload failed", "Workflow upload directory " + wfDirParam + " does not exist.");
+            FacesContext.getCurrentInstance().addMessage("Workflow creation", msgMissingUpldPath);
+            return;
+        }
+        if (!wfDir.canWrite()) {
+            FacesMessage msgMissingUpldPath = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Workflow upload failed", "No permission to write to upload directory " + wfDirParam + ".");
+            FacesContext.getCurrentInstance().addMessage("Workflow creation", msgMissingUpldPath);
+            return;
+        }
+        logger.info("Copying file to: " + wfPath);
+        try {
+            FileOutputStream fos = new FileOutputStream(wfPath);
+            IOUtils.copyLarge(is, fos);
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Workflow creation", "Workflow file " + fileName + " uploaded successfully.");
+            FacesContext.getCurrentInstance().addMessage("Workflow created successfully", msg);
+        } catch (Exception ex) {
+            logger.error("Workflow file creation error.");
+            FacesMessage msgMissingUpldPath = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Workflow upload failed", ex.getMessage());
+            FacesContext.getCurrentInstance().addMessage("Workflow creation", msgMissingUpldPath);
+        } 
+    }
+
+    private void saveWorkflow(Workflow wf) {
+        // Issue warning if uuid input port is not available
+        if (!wf.isUUIDInputPort()) {
+            FacesMessage msgWarnUUID = new FacesMessage(FacesMessage.SEVERITY_WARN, "UUID Input port missing", "It will not be possible to show the progress of any related hadoop/pig/hive jobs");
+            FacesContext.getCurrentInstance().addMessage("UUID Input port", msgWarnUUID);
+        }
+        selectedWorkfow = wf;
+        WorkflowDao wfdao = new WorkflowDao();
+        wfdao.save(wf);
+    }
+
     /**
      * Listener to handle the file upload.
      *
      * @param event File upload event
      */
     public void handleFileUpload(FileUploadEvent event) {
+        FacesContext context = FacesContext.getCurrentInstance();
         UploadedFile f = event.getFile();
         String fileName = f.getFileName();
-        TavernaConfig c = new TavernaConfig();
-        String wfDirParam = c.getProp("taverna.workflow.upload.path");
-        File wfDir = new File(wfDirParam);
-        if (!wfDir.exists()) {
-            FacesMessage msgMissingUpldPath = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Workflow upload failed", "Workflow upload directory " + wfDirParam + " does not exist.");
-            FacesContext.getCurrentInstance().addMessage("Workflow uploaded successfully", msgMissingUpldPath);
-            return;
-        }
-        if (!wfDir.canWrite()) {
-            FacesMessage msgMissingUpldPath = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Workflow upload failed", "No permission to write to upload directory " + wfDirParam + ".");
-            FacesContext.getCurrentInstance().addMessage("Workflow uploaded successfully", msgMissingUpldPath);
-            return;
-        }
+        String wfDirParam = (new TavernaConfig()).getProp("taverna.workflow.upload.path");
         String wfPath = FileUtility.makePath(wfDirParam + fileName);
-        logger.info("Uploading file to: " + wfPath);
+        Workflow wf = WorkflowFactory.createWorkflow(wfPath);
         try {
-            FileOutputStream fos = new FileOutputStream(wfPath);
-            IOUtils.copyLarge(f.getInputstream(), fos);
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Workflow upload", "Workflow file " + event.getFile().getFileName() + " uploaded successfully.");
-            FacesContext.getCurrentInstance().addMessage("Workflow uploaded successfully", msg);
-            Workflow wf = WorkflowFactory.createWorkflow(wfPath);
-            // Issue warning if uuid input port is not available
-            if (!wf.isUUIDInputPort()) {
-                FacesMessage msgWarnUUID = new FacesMessage(FacesMessage.SEVERITY_WARN, "UUID Input port missing", "It will not be possible to show the progress of any related hadoop/pig/hive jobs");
-                FacesContext.getCurrentInstance().addMessage("Workflow uploaded successfully", msgWarnUUID);
-            }
-            selectedWorkfow = wf;
-            WorkflowDao wfdao = new WorkflowDao();
-            wfdao.save(wf);
-        } catch (FileNotFoundException ex) {
-            logger.error("File not found.");
-        } catch (IOException ex) {
-            logger.error("I/O Error.");
+            uploadFile(fileName, f.getInputstream());
+            saveWorkflow(wf);
+        } catch (Exception ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Unable to upload workflow", ex.getMessage()));
         }
     }
 
@@ -239,5 +267,26 @@ public class OverviewBean implements Serializable {
             }
         }
         return kvMap;
+    }
+
+    public void getMyExperimentWorkflow() throws DefaultHttpClientException {
+        FacesContext context = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        String wfNumber = externalContext.getRequestParameterMap().get("uploadform:myexpwfid");
+        logger.info("Workflow number: " + wfNumber);
+        try {
+            MyExperimentRestClient myExpClient = MyExperimentRestClient.getInstance();
+            int wfId = Integer.parseInt(wfNumber);
+            Workflow wf = myExpClient.getMyExperimentWorkflow(wfId);
+            String wfDirParam = (new TavernaConfig()).getProp("taverna.workflow.upload.path");
+            String wfPath = FileUtility.makePath(wfDirParam + wf.getFilename());
+            InputStream wfContentStream = myExpClient.getMyExperimentWorkflowContentStream(wf);
+            uploadFile(wf.getFilename(), wfContentStream);
+            WorkflowFactory.completeWorkflow(wf, wfPath);
+            saveWorkflow(wf);
+        } catch (Exception ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Unable to get workflow from myExperiment", ex.getMessage()));
+        }
+
     }
 }

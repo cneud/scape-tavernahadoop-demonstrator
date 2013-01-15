@@ -63,4 +63,32 @@ public class WorkflowFactory {
         wf.setWorkflowInputPorts(wfInputPorts);
         return wf;
     }
+    
+    
+    /**
+     * Create a workflow object based on an uploaded T2flow file.
+     *
+     * @param  wf Workflow
+     * @param t2flowAbsPath Absolute path to the T2flow file.
+     * @return Workflow object
+     */
+    public static void completeWorkflow(Workflow wf, String t2flowAbsPath) {
+
+        wf.setFilename(t2flowAbsPath.substring(t2flowAbsPath.lastIndexOf(File.separator) + 1));
+        wf.setCreateddate(new Date());
+        T2FlowFile t2flow = new T2FlowFile(t2flowAbsPath);
+        wf.setUUIDInputPort(t2flow.hasUUIDInputPort());
+        uk.org.taverna.scufl2.api.core.Workflow t2Wf = t2flow.getFirstWorkflow();
+        NamedSet<InputWorkflowPort> t2InputPorts = t2Wf.getInputPorts();
+        ArrayList<WorkflowInputPort> wfInputPorts = new ArrayList<WorkflowInputPort>();
+        for (InputWorkflowPort t2InputPort : t2InputPorts) {
+            String t2PortName = t2InputPort.getName();
+            WorkflowInputPort wfip = new WorkflowInputPort();
+            wfip.setPortname(t2PortName);
+            wfInputPorts.add(wfip);
+            logger.info("Workflow input port added: " + t2PortName);
+        }
+        wf.setWorkflowInputPorts(wfInputPorts);
+    }
+    
 }

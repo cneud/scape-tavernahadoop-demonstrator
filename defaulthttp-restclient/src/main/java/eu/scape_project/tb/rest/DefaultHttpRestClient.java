@@ -115,7 +115,38 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
     public HttpResponse executeGet(URL resourceUrl, String headerAccept) {
         HttpGet httpget = new HttpGet(resourceUrl.toExternalForm());
         httpget.addHeader("Accept", headerAccept);
-
+        
+        logger.info("Resource path: " + resourceUrl.toExternalForm());
+        HttpResponse response = null;
+        try {
+            logger.info("executing request " + httpget.getRequestLine());
+            response = this.execute(httpget, httpContext);
+            Header contentTypeHeader = response.getEntity().getContentType();
+            logger.info("content type: " + contentTypeHeader.toString());
+            HttpEntity entity = response.getEntity();
+            logger.info(response.getStatusLine().toString());
+            long contLen = entity.getContentLength();
+            if (entity != null) {
+                logger.info("HTTP GET response content length: " + contLen);
+            }
+        } catch (IOException e) {
+            logger.error("I/O Error while executing HTTP GET request", e);
+        }
+        return response;
+    }
+    
+    /**
+     * Execute GET request. Response entity must be consumed by the caller.
+     *
+     * @param resourceUrl Sub-resource is added to the base path
+     * @return HTTP response
+     */
+    public HttpResponse executeGet(URL resourceUrl, String headerAccept, String headerSession) {
+        HttpGet httpget = new HttpGet(resourceUrl.toExternalForm());
+        httpget.addHeader("Accept", headerAccept);
+        
+        httpget.addHeader("Cookie", headerSession);
+        
         logger.info("Resource path: " + resourceUrl.toExternalForm());
         HttpResponse response = null;
         try {
@@ -148,6 +179,27 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
         try {
             resourceUrl = new URL(resource);
             response = executeGet(resourceUrl, headerAccept);
+        } catch (MalformedURLException ex) {
+            logger.error("Malformed URL Error while executing HTTP GET request", ex);
+        }  catch (IOException e) {
+             clientError("Exception while executing GET", e);
+        } 
+        return response;
+    }
+    
+     /**
+     * Execute GET request. Response entity must be consumed by the caller.
+     *
+     * @param subResource Sub-resource is added to the base path
+     * @return HTTP response
+     */
+    public HttpResponse executeGet(String subResource, String headerAccept, String headerSession) throws DefaultHttpClientException {
+        HttpResponse response = null;
+        String resource = FileUtility.makePath(this.getBaseUrlStr(), subResource);
+        URL resourceUrl = null;
+        try {
+            resourceUrl = new URL(resource);
+            response = executeGet(resourceUrl, headerAccept, headerSession);
         } catch (MalformedURLException ex) {
             logger.error("Malformed URL Error while executing HTTP GET request", ex);
         }  catch (IOException e) {
@@ -203,6 +255,35 @@ public class DefaultHttpRestClient extends DefaultHttpClient {
         } catch(IOException e) {
             clientError("Exception while executing PUT", e);
         } 
+        return response;
+    }
+    
+    /**
+     * Execute POST request. Response entity must be consumed by the caller.
+     *
+     * @param subResource Sub-resource is added to the base path
+     * @param file File that is posted.
+     * @param contentType Content type of the file
+     * @return HTTP response
+     */
+    public HttpResponse executeStringPost(String subResource, String content, ContentType contentType) throws DefaultHttpClientException {
+        String resource = FileUtility.makePath(this.getBaseUrlStr(), subResource);
+        HttpPost httpPost = new HttpPost(resource);
+        HttpResponse response = null;
+        try {
+            StringEntity stringEntity = new StringEntity(content, "UTF-8");
+            BasicHeader contentTypeHeader = new BasicHeader("Content-Type", contentType.getMimeType());
+            stringEntity.setContentType(contentTypeHeader);
+            httpPost.setEntity(stringEntity);
+            response = this.execute(httpPost, httpContext);
+            HttpEntity entity = response.getEntity();
+            logger.info(response.getStatusLine().toString());
+            if (entity != null) {
+                logger.info("HTTP POST response content length: " + entity.getContentLength());
+            }
+        } catch (Exception e) {
+            clientError(e.getMessage(), e);
+        }
         return response;
     }
 

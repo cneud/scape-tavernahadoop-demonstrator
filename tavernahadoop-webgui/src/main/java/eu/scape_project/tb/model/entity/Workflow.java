@@ -42,6 +42,28 @@ public class Workflow implements Serializable {
     private String filename;
     private Date createddate;
     private boolean UUIDInputPort;
+    
+    private String description;
+    
+    private String myExperimentContentUri;
+
+    @Column(name = "description")
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Column(name = "myexpconturi")
+    public String getMyExperimentContentUri() {
+        return myExperimentContentUri;
+    }
+
+    public void setMyExperimentContentUri(String myExperimentContentUri) {
+        this.myExperimentContentUri = myExperimentContentUri;
+    }
 
     /**
      * Empty constructor.

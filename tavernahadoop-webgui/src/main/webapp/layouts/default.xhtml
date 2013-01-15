@@ -12,16 +12,18 @@
         <link rel="stylesheet" href="${request.contextPath}/styles/default.css" type="text/css" media="screen, projection" /> 
     </h:head>
     <h:body>
-        <div id="header">
-            <h1 class="title"><h:outputText value="SCAPE Testbeds Web Demonstrator" /></h1>  
-            <span style="float:right"><img src="images/scape-logo.jpg"/></span>
-        </div>
-        <div id="contwrap">
-            <div id="nav"  style="float:left">
-                <ui:insert name="navigation"/>
+        <div id="wrapper">
+            <div id="header">
+                <h1 class="title"><h:outputText value="SCAPE Testbeds Web Demonstrator" /></h1>  
+                <span style="float:right"><img src="images/scape-logo.jpg"/></span>
             </div>
-            <div id="cont" style="float:left">
-                <ui:insert name="content"/>
+            <div id="contentliquid">
+                <div id="content">
+                    <ui:insert name="content"/>
+                </div>
+            </div>
+            <div id="leftcolumn">
+                <ui:insert name="navigation"/>
             </div>
         </div>
     </h:body>

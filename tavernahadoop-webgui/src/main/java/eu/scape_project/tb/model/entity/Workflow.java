@@ -43,17 +43,17 @@ public class Workflow implements Serializable {
     private Date createddate;
     private boolean UUIDInputPort;
     
-    private String description;
+    private String title;
     
     private String myExperimentContentUri;
 
-    @Column(name = "description")
-    public String getDescription() {
-        return description;
+    @Column(name = "title")
+    public String getTitle() {
+        return title;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     @Column(name = "myexpconturi")

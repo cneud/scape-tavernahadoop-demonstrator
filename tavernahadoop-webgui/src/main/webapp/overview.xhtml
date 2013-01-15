@@ -14,9 +14,9 @@
             <p:message for="myexpwfid" />  
             <h:outputLabel for="myexpwfid" value="myExperiment-Workflow-ID:" /><br /> 
             <p:inputText style="width:250px" id="myexpwfid" 
-                value="#{pprBean.surname}" required="false" label="myexpwfid"/><br />
+                         value="0000" required="false" label="myexpwfid"/><br />
             <p:commandButton style="width:260px;margin-bottom:60px" value="Get workflow" update="@form,:workflowform:workflowpanel" process="@this" id="ajax"  
-             actionListener="#{overview.getMyExperimentWorkflow}" />
+                             actionListener="#{overview.getMyExperimentWorkflow}" />
             <h:messages  />
             <p:fileUpload style="width:260px" widgetVar="uploadwidget" fileUploadListener="#{overview.handleFileUpload}"  
                           mode="advanced"  
@@ -29,16 +29,13 @@
             </p:fileUpload>
             <p:growl id="messages" showDetail="true" life="5000" />  
             <p:dataTable id="workflowstable" styleClass="wftabstyle" 
-                         style="width:350px" var="workflow" 
+                         style="width:400px" var="workflow" 
                          value="#{workflowTable.workflows}" scrollHeight="400"
                          emptyMessage="No workflows available">
                 <p:column headerText="Workflows">  
                     <p:commandLink actionListener="#{overview.setCurrentWorkflow}" value="#{workflow.filename}" update=":workflowform:workflowpanel" >
                         <f:param name="wfid" value="#{workflow.wfid}" />
-                    </p:commandLink><br/>
-                    [<p:commandLink onclick="workflowDiagram.show()">
-                        diagram
-                    </p:commandLink>]
+                    </p:commandLink>
                 </p:column>  
             </p:dataTable>  
         </h:form> 
@@ -46,22 +43,25 @@
 
     <ui:define name="content">
 
-        <p:dialog id="modalDialog" header="Workflow Diagram" widgetVar="workflowDiagram" modal="true" height="400" width="700">  
-            <img src="http://www.myexperiment.org/workflows/3323/versions/1/previews/full"/>
-            <p>
-                <h:outputText value="#{overview.selectedWorkfow.description}"/>
-            </p>
-        </p:dialog>  
-        
+
+
         <h:form id="workflowform">  
             <h:panelGroup id="workflowpanel">
+                <p:dialog id="modalDialog" header="Workflow Diagram" widgetVar="workflowDiagram" modal="true" height="600" width="800">  
+                    <img src="http://www.myexperiment.org/workflows/3323/versions/1/previews/full"/>
+                    <p>
+                        <h:outputText value="#{overview.selectedWorkfow.title}"/>
+                    </p>
+                </p:dialog>  
                 <p:growl id="wfMessages" showDetail="true" life="10000"/>  
 
                 <fieldset style="margin-bottom: 30px">
 
                     <legend>
-                        <h:outputText styleClass="strong" id="wfheading" value="Workflow #{overview.selectedWorkfow.filename}" />, 
-                        submitted <h:outputText id="wfdate" value="#{overview.selectedWorkfow.createddate}" >
+                        <p:commandLink onclick="workflowDiagram.show()">
+                            <h:outputText styleClass="strong" id="wfheading" value="Workflow #{overview.selectedWorkfow.filename}" />
+                        </p:commandLink>, 
+                        created <h:outputText id="wfdate" value="#{overview.selectedWorkfow.createddate}" >
                             <f:convertDateTime pattern="dd.MM.yyyy HH:mm" timeZone="GMT+1"/>
                         </h:outputText>
                     </legend>

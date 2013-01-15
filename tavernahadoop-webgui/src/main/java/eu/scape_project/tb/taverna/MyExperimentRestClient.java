@@ -124,7 +124,6 @@ public class MyExperimentRestClient implements Serializable {
         String fileName = wfId+".t2flow";
         wf.setFilename(fileName);
         
-        
         // get workflow metadata
         if (myExperimentSession != null) {
             String contentUri = null;
@@ -136,12 +135,12 @@ public class MyExperimentRestClient implements Serializable {
             responseParser.parseResponse();
             if (responseParser.isIsParsed()) {
                 XPathEvaluator xPathEval = new XPathEvaluator(responseParser);
-                NodeList nl = xPathEval.evaluate("/workflow/description");
+                NodeList nl = xPathEval.evaluate("/workflow/title");
                 if (nl.getLength() == 1) {
                     Node n = nl.item(0);
-                    String wfDescription = StringUtil.txtToHtml(n.getTextContent());
-                    logger.info("Workflow description:\n" + wfDescription);
-                    wf.setDescription(host);
+                    String wfTitle = StringUtil.txtToHtml(n.getTextContent());
+                    logger.info("Workflow title:\n" + wfTitle);
+                    wf.setTitle(wfTitle);
                 }
                 NodeList uriNl = xPathEval.evaluate("/workflow/content-uri");
                 if (uriNl.getLength() == 1) {

@@ -50,14 +50,16 @@ Copy the configuration template files:
     tavernahadoop-webgui/src/main/resources/hadoop_template.properties
     tavernahadoop-webgui/src/main/resources/hibernate_template.cfg.xml
     tavernahadoop-webgui/src/main/resources/taverna_template.properties
+    tavernahadoop-webgui/src/main/resources/myexperiment_template.properties
 
 to:
 
     tavernahadoop-webgui/src/main/resources/hadoop.properties
-	tavernahadoop-webgui/src/main/resources/hibernate.cfg.xml
+    tavernahadoop-webgui/src/main/resources/hibernate.cfg.xml
     tavernahadoop-webgui/src/main/resources/taverna.properties
+    tavernahadoop-webgui/src/main/resources/myexperiment.properties
 
-Configuration is then done in four steps:
+Configuration is then done in five steps:
 
 1. Configure the Hadoop settings:
 
@@ -72,12 +74,16 @@ Configuration is then done in four steps:
 
     `tavernahadoop-webgui/src/main/resources/taverna.properties`
 
+3. Configure the myExperiment settings for accessing the REST API of myExperiment:
+
+    `tavernahadoop-webgui/src/main/resources/myexperiment.properties`
+
 4. Copy the `tavernahadoop-webgui/settings.xml` into your local maven repository 
    folder:
 
     `cp tavernahadoop-webgui/settings.xml $HOME/.m2/`
 
-   If you already have a settings.xml, make the tomcat deployment profile
+If you already have a settings.xml, make the tomcat deployment profile
 
 ``` xml   
     <profile>
@@ -90,8 +96,8 @@ Configuration is then done in four steps:
     </profile>`
 ```
 
-    available as a child of the "profiles" node and make sure the profile is 
-    activated:
+available as a child of the "profiles" node and make sure the profile is 
+activated:
 
 ``` xml
     <activeProfiles>
@@ -100,7 +106,7 @@ Configuration is then done in four steps:
 ```
 
 In order to deploy the web application, change to the web application module
-directory and run the corresponding maven task:
+directory and run the tomcat:deploy maven task:
 
     cd tavernahadoop-webgui
     mvn tomcat:deploy

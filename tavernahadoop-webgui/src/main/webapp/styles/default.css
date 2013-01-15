@@ -82,7 +82,10 @@ p {
 .ui-growl{
     margin-right:310px;
 }
-.strong {font-weight:bold;}
+.strong {
+    font-weight:bold;
+    color: black;
+}
 .title {
     font-style:italic; color: white;float:left; padding: 20px;
 }

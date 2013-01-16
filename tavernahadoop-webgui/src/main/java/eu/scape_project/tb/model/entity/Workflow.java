@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import javax.persistence.*;
+import org.hibernate.annotations.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +46,21 @@ public class Workflow implements Serializable {
     
     private String title;
     
+    private String description;
+    
     private String myExperimentContentUri;
+    
+    private String myExperimentPreviewUri;
+
+    @Column(name = "myexpprevuri")
+    public String getMyExperimentPreviewUri() {
+        return myExperimentPreviewUri;
+    }
+
+    public void setMyExperimentPreviewUri(String myExperimentPreviewUri) {
+        this.myExperimentPreviewUri = myExperimentPreviewUri;
+    }
+    
 
     @Column(name = "title")
     public String getTitle() {
@@ -54,6 +69,16 @@ public class Workflow implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    @Type(type = "text")
+    @Column(name = "description")
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Column(name = "myexpconturi")

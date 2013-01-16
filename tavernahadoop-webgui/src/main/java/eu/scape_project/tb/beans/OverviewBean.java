@@ -98,6 +98,21 @@ public class OverviewBean implements Serializable {
         this.selectedWorkfow = wfdao.findByWorkflowIdentifier(index);
     }
 
+    /**
+     * Listener to set the current workflow.
+     */
+    public void deleteWorkflow() {
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        String wfid = externalContext.getRequestParameterMap().get("wfid");
+        try {
+            long id = Long.parseLong(wfid);
+            WorkflowDao wfdao = new WorkflowDao();
+            wfdao.deleteByWorkflowIdentifier(id);
+        } catch (NumberFormatException ex) {
+            logger.error("Error parsing workflow id number");
+        }
+    }
+
     private void uploadFile(String fileName, InputStream is) {
         String wfDirParam = (new TavernaConfig()).getProp("taverna.workflow.upload.path");
         String wfPath = FileUtility.makePath(wfDirParam + fileName);
@@ -122,7 +137,7 @@ public class OverviewBean implements Serializable {
             logger.error("Workflow file creation error.");
             FacesMessage msgMissingUpldPath = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Workflow upload failed", ex.getMessage());
             FacesContext.getCurrentInstance().addMessage("Workflow creation", msgMissingUpldPath);
-        } 
+        }
     }
 
     private void saveWorkflow(Workflow wf) {

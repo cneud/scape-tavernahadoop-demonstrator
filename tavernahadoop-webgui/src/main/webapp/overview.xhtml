@@ -32,8 +32,13 @@
                          style="width:400px" var="workflow" 
                          value="#{workflowTable.workflows}" scrollHeight="400"
                          emptyMessage="No workflows available">
-                <p:column headerText="Workflows">  
+                <p:column headerText="Workflow">  
                     <p:commandLink actionListener="#{overview.setCurrentWorkflow}" value="#{workflow.filename}" update=":workflowform:workflowpanel" >
+                        <f:param name="wfid" value="#{workflow.wfid}" />
+                    </p:commandLink>
+                </p:column>  
+                <p:column headerText="Action">  
+                    <p:commandLink actionListener="#{overview.deleteWorkflow}" value="delete" update="@form,:workflowform:workflowpanel"  process="@this">
                         <f:param name="wfid" value="#{workflow.wfid}" />
                     </p:commandLink>
                 </p:column>  

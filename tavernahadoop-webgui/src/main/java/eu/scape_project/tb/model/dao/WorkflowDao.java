@@ -16,12 +16,11 @@
  */
 package eu.scape_project.tb.model.dao;
 
-import eu.scape_project.tb.model.entity.Workflow;
 import eu.scape_project.tb.hibernate.HibernateUtil;
+import eu.scape_project.tb.model.entity.Workflow;
 import java.util.List;
-import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.transform.Transformers;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,5 +80,16 @@ public class WorkflowDao {
     public Workflow findByWorkflowIdentifier(String workflowIdentifier) {
         List list = currentSession.createQuery("from Workflow where wfid=" + workflowIdentifier).list();
         return list.isEmpty() ? null : (Workflow) list.get(0);
+    }
+
+    /**
+     * Get a workflow by identifier.
+     *
+     * @param workflowIdentifier Workflow identifier
+     * @return Workflow object
+     */
+    public void deleteByWorkflowIdentifier(long workflowIdentifier) {
+        Workflow workflow = (Workflow) currentSession.createCriteria(Workflow.class).add(Restrictions.eq("wfid", workflowIdentifier)).uniqueResult();
+        currentSession.delete(workflow);
     }
 }

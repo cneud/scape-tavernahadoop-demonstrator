@@ -31,8 +31,9 @@ Set the hostname and port number of your cluster JobTracker according to the exa
 Dependencies
 ------------
 
-Make sure to use exactly the same libraries as your Hadoop installation uses. Otherwise you might notice problems connecting or retrieving data from your JobTracker.
+Make sure to use exactly the same libraries as your Hadoop installation uses. Otherwise you might notice problems connecting to or retrieving data from your JobTracker.
+The current configuration in the pom.xml file is set for a CDH3u4 installation.
+The library versions of `hadoop core`, `guava`, `jackson-core-asl` and `jackson-mapper-asl` are required to be the same as the libraries used by your Hadoop installation.
 Look up the exact versions for the depending libraries (specified in the pom.xml) at `/usr/lib/hadoop/` and `/usr/lib/hadoop/lib/` on your cluster controller machine.
-The current configuration is set for a CDH3u4 installation.
-Install the required library versions in your local repository using `mvn install:install-file` (please refer to the official maven documentation) and adapt the pom.xml appropriately if needed.
+Pick up the required libraries from `/usr/lib/hadoop/` and `/usr/lib/hadoop/lib/` and install them in your local repository using `mvn install:install-file` (please refer to the official maven documentation) and adapt the dependency versions in the pom.xml appropriately if needed.
 Example: `mvn install:install-file -Dfile=your.jar -DgroupId=yourGroup -DartifactId=yourArtifact -Dversion=yourVersion -Dpackaging=jar`

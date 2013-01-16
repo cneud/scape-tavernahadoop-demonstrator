@@ -13,16 +13,7 @@
     <version>1.0</version>
     <packaging>jar</packaging>
     <name>hadoopjobtracker-client</name>
-    
-    <distributionManagement>
-        <repository>
-            <id>FUE-L.onb.ac.at</id>
-            <name>FUE-L.onb.ac.at-releases</name>
-            <url>http://fue-l:8081/artifactory/ext-release-local</url>
-        </repository>
-    </distributionManagement>
-    
-    
+        
     <dependencies>
         <dependency>
             <groupId>commons-logging</groupId>

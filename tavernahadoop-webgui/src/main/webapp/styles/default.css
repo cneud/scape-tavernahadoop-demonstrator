@@ -105,3 +105,6 @@ label.inputtexts {
     text-align:right;
     font-weight:bold;
 }
+.ui-panel .ui-panel-title {
+    color: black;
+}

@@ -17,22 +17,24 @@
 package eu.scape_project.tb.beans;
 
 import eu.scape_project.tb.faces.FacesUtil;
-import eu.scape_project.tb.model.dao.WorkflowDao;
 import eu.scape_project.tb.model.dao.WorkflowRunDao;
 import eu.scape_project.tb.model.entity.WorkflowRun;
 import eu.scape_project.tb.taverna.WebAppTavernaRestClient;
 import eu.scape_project.tb.taverna.rest.KeyValuePair;
 import eu.scape_project.tb.taverna.rest.TavernaClientException;
+import eu.scape_project.tb.util.StringUtil;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import org.primefaces.event.CloseEvent;
+import org.primefaces.event.ToggleEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +53,8 @@ public class FinishedBean implements Serializable {
     private List<KeyValuePair> outputValues;
     private static Logger logger = LoggerFactory.getLogger(FinishedBean.class.getName());
     private WorkflowRun selectedWorkflowRun;
+    
+    private String tavernalog;
 
     @PostConstruct
     public void initFinishedBean() {
@@ -70,14 +74,23 @@ public class FinishedBean implements Serializable {
                 String urlStr = this.selectedWorkflowRun.getUuidBaseResourceUrl();
                 URL url = new URL(urlStr);
                 outputValues = tavernaRestClient.getClient().getWorkflowRunOutputValues(url);
+                
+                tavernalog = tavernaRestClient.getClient().getWorkflowRunTavernaLog(url);
+                tavernalog = StringUtil.txtToHtml(tavernalog);
             } else {
                 outputValues = emptyList;
             }
-        } catch (TavernaClientException ex) {
-            logger.error("HTTP error", ex);
-        } catch (MalformedURLException ex) {
-            logger.error("Malformed URL error", ex);
+        } catch (Exception ex) {
+            logger.error("error", ex);
         }
+    }
+
+    public String getTavernalog() {
+        return tavernalog;
+    }
+
+    public void setTavernalog(String tavernalog) {
+        this.tavernalog = tavernalog;
     }
 
     public List getOutputValues() {
@@ -97,5 +110,20 @@ public class FinishedBean implements Serializable {
         this.selectedWorkflowRun = selectedWorkflowRun;
     }
     
+    public void handleClose(CloseEvent event) {  
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Panel Closed", "Closed panel id:'" + event.getComponent().getId() + "'");  
+          
+        addMessage(message);  
+    }  
+      
+    public void handleToggle(ToggleEvent event) {  
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, event.getComponent().getId() + " toggled", "Status:" + event.getVisibility().name());  
+          
+        addMessage(message);  
+    }  
+      
+    private void addMessage(FacesMessage message) {  
+        FacesContext.getCurrentInstance().addMessage(null, message);  
+    }  
     
 }

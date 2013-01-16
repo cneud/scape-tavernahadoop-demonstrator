@@ -48,12 +48,31 @@
                         <h:outputText styleClass="strong" id="wfrfilename" value="#{progress.wfFileName}" />
                     </legend>
 
-                    <p><h:outputText value="Taverna workflow run finished: #{finished.outputValues[0].key}"/></p>
+                    <h:outputText value="Taverna workflow run finished."/><br/><br/>
 
                     <p:dataList value="#{finished.outputValues}" var="outval" itemType="disc">  
-                        <b>#{outval.key}</b><br/>
-                        <pre>#{outval.value}</pre>  
+                        <h:outputText style="font-weight:bold" value="#{outval.key}"/><br/>
+                        <pre>
+                        <h:outputText value="#{outval.value}"/>
+                        </pre>
                     </p:dataList>  
+
+                    <p:panel collapsed="true" id="logpanel" style="margin-bottom:20px;width:1200px;background-color:gainsboro" header="Taverna execution log" toggleable="true" closable="true" toggleSpeed="500" closeSpeed="500" widgetVar="logpanel">  
+
+                        <p:ajax event="close" listener="#{finished.handleClose}" update="wfMessages" />  
+                        <p:ajax event="toggle" listener="#{finished.handleToggle}" update="wfMessages" />  
+
+                        <h:outputText value="#{finished.tavernalog}" escape="false" />  
+
+                        <f:facet name="options">  
+                            <p:menu>  
+                                <p:submenu label="Settings">  
+                                    <p:menuitem value="Toggle" url="#" icon="ui-icon-newwin" onclick="logpanel.toggle()"/>  
+                                    <p:menuitem value="Remove" url="#" icon="ui-icon-close" onclick="logpanel.close()"/>  
+                                </p:submenu>  
+                            </p:menu>  
+                        </f:facet>  
+                    </p:panel>  
 
                     <br/>
                     <p:commandButton ajax="false" value="Back to overview" action="overview"/>

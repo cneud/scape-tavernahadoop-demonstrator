@@ -20,9 +20,7 @@ import eu.scape_project.tb.rest.DefaultHttpAuthRestClient;
 import eu.scape_project.tb.rest.DefaultHttpClientException;
 import eu.scape_project.tb.rest.xml.XPathEvaluator;
 import eu.scape_project.tb.rest.xml.XmlResponseParser;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,6 +31,7 @@ import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.conn.BasicManagedEntity;
 import org.apache.http.entity.ContentType;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -335,12 +334,12 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      * http://${server}:${port}/tavernaserver/rest/runs/UUID
      */
     public String submitWorkflow(File workflowFile) throws TavernaClientException {
-        
+
         HttpResponse response = null;
         try {
             response = this.executeFileContentPost("runs", workflowFile, ContentType.create("application/vnd.taverna.t2flow+xml"));
-        } catch(DefaultHttpClientException e) {
-            throw new TavernaClientException("HTTP Client exception: "+e.getMessage());
+        } catch (DefaultHttpClientException e) {
+            throw new TavernaClientException("HTTP Client exception: " + e.getMessage());
         }
         int code = response.getStatusLine().getStatusCode();
         if (code != 201) {
@@ -369,7 +368,7 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
         HttpResponse response = null;
         try {
             response = this.executeDelete(uuidBaseUrlStr);
-        } catch(DefaultHttpClientException e) {
+        } catch (DefaultHttpClientException e) {
             throw new TavernaClientException("HTTP Client exception");
         }
         int code = response.getStatusLine().getStatusCode();
@@ -407,13 +406,14 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
      *
      * @param uuidBaseUrl UUID base url
      * @return Workflow status
-     * @throws HttpException
-     *  TODO: Remove!
+     * @throws HttpException TODO: Remove!
      */
     public List<KeyValuePair> getWorkflowRunOutputValues(URL uuidBaseUrl) throws TavernaClientException {
         URL outputRestUrl;
         String uuidBaseUrlStr = this.getAdaptedSchemeUrl(uuidBaseUrl.toExternalForm());
-        /* TODO: Remove! */
+        /*
+         * TODO: Remove!
+         */
         uuidBaseUrlStr = uuidBaseUrlStr.replace("fue-hdc01:8080", "fue-l:80");
         try {
             outputRestUrl = new URL(uuidBaseUrlStr + "/output");
@@ -448,5 +448,47 @@ public class TavernaServerRestClient extends DefaultHttpAuthRestClient {
         httpSchemeUrl = httpSchemeUrl.replace(":" + httpsReplacePort + "/", ":" + this.getPort() + "/");
         logger.info("Changing https URL " + httpsSchemeUrl + " to http URL " + httpSchemeUrl);
         return httpSchemeUrl;
+    }
+
+    public String getWorkflowRunTavernaLog(URL uuidBaseUrl) throws TavernaClientException, IOException {
+
+        URL outputRestUrl;
+        String uuidBaseUrlStr = this.getAdaptedSchemeUrl(uuidBaseUrl.toExternalForm());
+        /*
+         * TODO: Remove!
+         */
+        //uuidBaseUrlStr = uuidBaseUrlStr.replace("fue-hdc01:8080", "fue-l:80");
+        try {
+            outputRestUrl = new URL(uuidBaseUrlStr + "/wd/logs/detail.log");
+        } catch (MalformedURLException ex) {
+            logger.error("Malformed URL Error", ex);
+            return null;
+        }
+        HttpResponse response = this.executeGet(outputRestUrl, "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        int code = response.getStatusLine().getStatusCode();
+        if (code != 200) {
+            throw new TavernaClientException("HTTP status code: " + response.getStatusLine().toString());
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        
+        try {
+            InputStream is = response.getEntity().getContent();
+
+            InputStreamReader inR = new InputStreamReader(is);
+            BufferedReader buf = new BufferedReader(inR);
+            String line;
+            while ((line = buf.readLine()) != null) {
+                stringBuilder.append(line+"\n");
+            }
+        } catch (Exception ex) {
+            throw new TavernaClientException(ex.getMessage());
+        } finally {
+            EntityUtils.consume(response.getEntity());
+        }
+        return stringBuilder.toString();
+
+
+
+        //http://fue-hdc01:8080/TavernaServer.2.4.1/rest/runs/3a4622ca-d98d-4f05-a142-89a39db31387
     }
 }

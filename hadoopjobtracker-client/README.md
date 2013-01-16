@@ -32,7 +32,7 @@ Dependencies
 ------------
 
 Make sure to use exactly the same libraries as your Hadoop installation uses. Otherwise you might notice problems connecting or retrieving data from your JobTracker.
-Look up the library versions you need at `/usr/lib/hadoop/` and `/usr/lib/hadoop/lib/` on your cluster controller machine.
+Look up the exact versions for the depending libraries (specified in the pom.xml) at `/usr/lib/hadoop/` and `/usr/lib/hadoop/lib/` on your cluster controller machine.
 The current configuration is set for a CDH3u4 installation.
-Install the required library versions in your local repository using `mvn install:install-file` (please refer to the official maven documentation).
+Install the required library versions in your local repository using `mvn install:install-file` (please refer to the official maven documentation) and adapt the pom.xml appropriately if needed.
 Example: `mvn install:install-file -Dfile=your.jar -DgroupId=yourGroup -DartifactId=yourArtifact -Dversion=yourVersion -Dpackaging=jar`

@@ -25,3 +25,6 @@
 nbactions.xml
 /t2flow-read (Kopie)/target/
 /hadoopjobtracker-client/target/
+
+# Specific configuration files #
+pom.xml.ONB

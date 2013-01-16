@@ -18,7 +18,8 @@ package eu.scape_project.tb.model.factory;
 
 import eu.scape_project.tb.model.entity.Workflow;
 import eu.scape_project.tb.model.entity.WorkflowInputPort;
-import eu.scape_project.tb.taverna.t2flow.T2FlowFile;
+import eu.scape_project.tb.taverna.T2FlowFile;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;

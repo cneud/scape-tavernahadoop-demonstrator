@@ -43,14 +43,13 @@
 
     <ui:define name="content">
 
-
-
         <h:form id="workflowform">  
             <h:panelGroup id="workflowpanel">
-                <p:dialog id="modalDialog" header="Workflow Diagram" widgetVar="workflowDiagram" modal="true" height="600" width="800">  
-                    <img src="http://www.myexperiment.org/workflows/3323/versions/1/previews/full"/>
+                <p:dialog id="modalDialog" header="Workflow Diagram" widgetVar="workflowDiagram" modal="true" height="800" width="800">  
+                    <h:outputText style="font-weight:bold" value="#{overview.selectedWorkfow.title}"/>
+                    <h:graphicImage library="images" value="#{overview.selectedWorkfow.myExperimentPreviewUri}" />
                     <p>
-                        <h:outputText value="#{overview.selectedWorkfow.title}"/>
+                        <h:outputText value="#{overview.selectedWorkfow.description}" escape="false"/>
                     </p>
                 </p:dialog>  
                 <p:growl id="wfMessages" showDetail="true" life="10000"/>  

@@ -4,10 +4,10 @@ scape-tavernahadoop-demonstrator
 Introduction
 ------------
 
-The `scape-tavernahadoop-demonstrator` project consists of the five modules 
-`defaulthttp-restclient`, `tavernaserver-restclient`, `t2flow-read`, 
-`hadoopjobtracker-client` and `tavernahadoop-webgui` which together demonstrate 
-the orchestration of Hadoop Jobs using the Taverna Server.
+The `scape-tavernahadoop-demonstrator` project consists of the modules 
+`defaulthttp-restclient`, `tavernaserver-restclient`, `hadoopjobtracker-client` 
+and `tavernahadoop-webgui` which together demonstrate the orchestration of 
+Hadoop Jobs using the Taverna Server.
 
 The `tavernahadoop-webgui` is the web gui application which can be deployed to 
 an Apache Tomcat Web Application Server (tested on version 6.26 and 7.0.32).
@@ -27,9 +27,9 @@ http://dev.mygrid.org.uk/wiki/display/taverna/REST+API.
 Installation requirements
 -------------------------
 
-For building the application, the Java SE Development Kit (JDK) version >=1.6.0 
-and Apache Maven >= 2.2.1 is required. The web application needs a running 
-Taverna Server 2.4 instance, and Hadoop at least running in pseudo-distributed 
+In order to build the application, the Java SE Development Kit (JDK) version >=1.6.0 
+and Apache Maven >= 2.2.1 is required. The web application needs a  
+Taverna Server 2.4 server instance, Hadoop at least running in pseudo-distributed 
 mode and a MySQL Server version >= 5.2. For deployment of the web application 
 a servlet container, e.g. the Apache Tomcat Web Application Server is needed 
 (tested on 6.26 and 7.0.32).

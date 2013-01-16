@@ -14,7 +14,7 @@
  * limitations under the License.
  * under the License.
  */
-package eu.scape_project.tb.taverna.t2flow;
+package eu.scape_project.tb.taverna;
 
 import java.io.File;
 import java.io.IOException;

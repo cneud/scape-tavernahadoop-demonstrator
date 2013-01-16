@@ -17,26 +17,15 @@
 package eu.scape_project.tb.taverna;
 
 import eu.scape_project.tb.config.MyExperimentConfig;
-import eu.scape_project.tb.config.TavernaConfig;
 import eu.scape_project.tb.model.entity.Workflow;
-import eu.scape_project.tb.model.entity.WorkflowRun;
-import eu.scape_project.tb.model.factory.WorkflowFactory;
 import eu.scape_project.tb.rest.DefaultHttpAuthRestClient;
 import eu.scape_project.tb.rest.DefaultHttpClientException;
-import eu.scape_project.tb.rest.util.FileUtility;
 import eu.scape_project.tb.rest.xml.XPathEvaluator;
 import eu.scape_project.tb.rest.xml.XmlResponseParser;
-import eu.scape_project.tb.taverna.rest.SimpleBasicHttpAuthenticator;
-import eu.scape_project.tb.taverna.rest.TavernaClientException;
-import eu.scape_project.tb.taverna.rest.TavernaServerRestClient;
-import eu.scape_project.tb.taverna.rest.TavernaWorkflowStatus;
 import eu.scape_project.tb.util.StringUtil;
-import java.io.*;
-import java.net.Authenticator;
-import java.net.MalformedURLException;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.net.URL;
-import java.net.URLConnection;
-import java.util.Map;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;
@@ -65,6 +54,12 @@ public class MyExperimentRestClient implements Serializable {
     private String password;
     private String myExperimentSession;
 
+    /**
+     * Singleton creator
+     *
+     * @return Singleton instance of this class
+     * @throws DefaultHttpClientException
+     */
     public static MyExperimentRestClient getInstance() throws DefaultHttpClientException {
         if (instance == null) {
             instance = new MyExperimentRestClient();
@@ -73,6 +68,11 @@ public class MyExperimentRestClient implements Serializable {
         return instance;
     }
 
+    /**
+     * Private constructor is called by singleton creator.
+     *
+     * @throws DefaultHttpClientException
+     */
     private MyExperimentRestClient() throws DefaultHttpClientException {
         config = new MyExperimentConfig();
         host = config.getProp("myexperiment.host");
@@ -83,17 +83,34 @@ public class MyExperimentRestClient implements Serializable {
         myExpRestClient.setPassword(password);
     }
 
+    /**
+     * Getter for the http client.
+     * @return http client
+     */
     public DefaultHttpAuthRestClient getClient() {
         return myExpRestClient;
     }
 
+    /**
+     * Getter for the myExperiment session
+     * @return myExperiment session
+     */
     public String getMyExperimentSession() {
         return myExperimentSession;
     }
 
-    public void setNewMyExperimentSession() {
+    /**
+     * Setter for the myExperiment session
+     */
+    public void setNewMyExperimentSession(String myExperimentSession) {
+        this.myExperimentSession = myExperimentSession;
     }
 
+    /**
+     * Intialise myExperiment session
+     *
+     * @return Session handler string
+     */
     public void createNewMyExperimentSession() throws DefaultHttpClientException {
         // get myExperiment session 
         String myExperimentSessionStr = null;
@@ -118,15 +135,18 @@ public class MyExperimentRestClient implements Serializable {
         }
     }
 
+    /**
+     * Get workflow xml description from myExperiment
+     *
+     * @return Workflow object
+     */
     public Workflow getMyExperimentWorkflow(int wfId) throws DefaultHttpClientException {
         Workflow wf = new Workflow();
         wf.setWfid(wfId);
-        String fileName = wfId+".t2flow";
+        String fileName = wfId + ".t2flow";
         wf.setFilename(fileName);
-        
         // get workflow metadata
         if (myExperimentSession != null) {
-            String contentUri = null;
             HttpResponse response = myExpRestClient.executeGet("/workflow.xml?id=" + wfId, "application/xml", myExperimentSession);
             XmlResponseParser responseParser = new XmlResponseParser(response);
             if (responseParser == null) {
@@ -135,22 +155,10 @@ public class MyExperimentRestClient implements Serializable {
             responseParser.parseResponse();
             if (responseParser.isIsParsed()) {
                 XPathEvaluator xPathEval = new XPathEvaluator(responseParser);
-                NodeList nl = xPathEval.evaluate("/workflow/title");
-                if (nl.getLength() == 1) {
-                    Node n = nl.item(0);
-                    String wfTitle = StringUtil.txtToHtml(n.getTextContent());
-                    logger.info("Workflow title:\n" + wfTitle);
-                    wf.setTitle(wfTitle);
-                }
-                NodeList uriNl = xPathEval.evaluate("/workflow/content-uri");
-                if (uriNl.getLength() == 1) {
-                    Node n = uriNl.item(0);
-                    contentUri = n.getTextContent();
-                    logger.info("Workflow content URI: " + contentUri);
-                }
-            }
-            if (contentUri != null) {
-                wf.setMyExperimentContentUri(contentUri);
+                wf.setTitle(getXmlDescrWorkflowProperty(xPathEval, "/workflow/title", false));
+                wf.setDescription(getXmlDescrWorkflowProperty(xPathEval, "/workflow/description", true));
+                wf.setMyExperimentContentUri(getXmlDescrWorkflowProperty(xPathEval, "/workflow/content-uri", false));
+                wf.setMyExperimentPreviewUri(getXmlDescrWorkflowProperty(xPathEval, "/workflow/preview", false));
             }
         } else {
             throw new DefaultHttpClientException("MyExperiment-Session is not initialised!");
@@ -158,6 +166,34 @@ public class MyExperimentRestClient implements Serializable {
         return wf;
     }
 
+    /**
+     * Get xml node text
+     *
+     * @param xPathEval XPath expression evaluator
+     * @param xpath XPath expression
+     * @param htmlConv HTML conversion to be applied or not
+     * @return xml node text
+     */
+    private String getXmlDescrWorkflowProperty(XPathEvaluator xPathEval, String xpath, boolean htmlConv) {
+        NodeList previewNl = xPathEval.evaluate(xpath);
+        String nodeText = null;
+        if (previewNl.getLength() == 1) {
+            Node n = previewNl.item(0);
+            nodeText = n.getTextContent();
+            logger.info("Workflow content URI: " + nodeText);
+            if (htmlConv) {
+                nodeText = StringUtil.txtToHtml(nodeText);
+            }
+        }
+        return nodeText;
+    }
+
+    /**
+     * Get workflow t2flow input stream from content-uri
+     *
+     * @param wf Workflow
+     * @return t2flow input stream
+     */
     public InputStream getMyExperimentWorkflowContentStream(Workflow wf) throws DefaultHttpClientException {
         try {
             if (myExperimentSession != null) {

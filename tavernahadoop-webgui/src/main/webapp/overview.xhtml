@@ -10,13 +10,25 @@
 
     <ui:define name="navigation">
 
+        <p:dialog style="color:black" modal="true" widgetVar="myExpDownlStatusDialog" header="Downloading workflow from myExperiment ..."
+                  draggable="false" closable="false" resizable="false">
+            <p:graphicImage value="/images/ajaxloading.gif" />
+        </p:dialog>
+
+        <p:dialog style="color:black" modal="true" widgetVar="runStatusDialog" header="Starting workflow run ..."
+                  draggable="false" closable="false" resizable="false">
+            <p:graphicImage value="/images/ajaxloading.gif" />
+        </p:dialog>
+
         <h:form id="uploadform" enctype="multipart/form-data">  
             <p:message for="myexpwfid" />  
             <h:outputLabel for="myexpwfid" value="myExperiment-Workflow-ID:" /><br /> 
             <p:inputText style="width:250px" id="myexpwfid" 
                          value="0000" required="false" label="myexpwfid"/><br />
             <p:commandButton style="width:260px;margin-bottom:60px" value="Get workflow" update="@form,:workflowform:workflowpanel" process="@this" id="ajax"  
-                             actionListener="#{overview.getMyExperimentWorkflow}" />
+                             actionListener="#{overview.getMyExperimentWorkflow}" 
+                             onstart="myExpDownlStatusDialog.show();" 
+                             onsuccess="myExpDownlStatusDialog.hide();" />
             <h:messages  />
             <p:fileUpload style="width:260px" widgetVar="uploadwidget" fileUploadListener="#{overview.handleFileUpload}"  
                           mode="advanced"  
@@ -80,9 +92,24 @@
                         </ui:repeat>
                     </h:panelGroup>
                     <br/>
-                    <p:commandButton widgetVar="savebtn" value="Save as default values" id="savebtn" process="@form" actionListener="#{overview.savePortValues}" update=":workflowform:wfMessages" onclick="savebtn.disable()"/>  
-                    <p:commandButton widgetVar="saveandrunbtn" value="Save as default values &amp; run" id="saveandrunbtn" process="@form" actionListener="#{overview.saveValuesAndRunWorkflow}" update=":workflowform:wfMessages,:workflowform:wfrunstable"/>  
-                    <p:commandButton widgetVar="runbtn" value="Run" id="runbtn" process="@form" actionListener="#{overview.runWorkflow}" update=":workflowform:wfMessages,:workflowform:wfrunstable"/>  
+                    <p:commandButton widgetVar="savebtn" value="Save as default values" 
+                                     id="savebtn" process="@form" 
+                                     actionListener="#{overview.savePortValues}" 
+                                     update=":workflowform:wfMessages" 
+                                     onstart="runStatusDialog.show();" 
+                                     onsuccess="runStatusDialog.hide();"/>  
+                    <p:commandButton widgetVar="saveandrunbtn" value="Save as default values &amp; run" 
+                                     id="saveandrunbtn" process="@form" 
+                                     actionListener="#{overview.saveValuesAndRunWorkflow}" 
+                                     update=":workflowform:wfMessages,:workflowform:wfrunstable"
+                                     onstart="runStatusDialog.show();" 
+                                     onsuccess="runStatusDialog.hide();"/>  
+                    <p:commandButton widgetVar="runbtn" value="Run" 
+                                     id="runbtn" process="@form" 
+                                     actionListener="#{overview.runWorkflow}" 
+                                     update=":workflowform:wfMessages,:workflowform:wfrunstable"
+                                     onstart="runStatusDialog.show();" 
+                                     onsuccess="runStatusDialog.hide();"/>  
                 </fieldset>
 
                 <fieldset>

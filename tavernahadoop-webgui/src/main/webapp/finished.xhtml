@@ -51,8 +51,8 @@
                     <h:outputText value="Taverna workflow run finished."/><br/><br/>
 
                     <p:dataList value="#{finished.outputValues}" var="outval" itemType="disc">  
-                        <h:outputText style="font-weight:bold" value="#{outval.key}"/><br/>
-                        <pre>
+                        <h:outputText style="font-weight:bold" value="#{outval.key}"/><br/><br/>
+                        <pre style="margin-left:20px">
                         <h:outputText value="#{outval.value}"/>
                         </pre>
                     </p:dataList>  

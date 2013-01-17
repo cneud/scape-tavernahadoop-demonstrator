@@ -4,7 +4,7 @@
 
 body {
     font-family: Verdana, Arial, Helvetica, sans-serif;
-    font-size: 16px;
+    font-size: 14px;
     color:#333
 }
 
@@ -106,5 +106,8 @@ label.inputtexts {
     font-weight:bold;
 }
 .ui-panel .ui-panel-title {
+    color: black;
+}
+.ui-dialog-title {
     color: black;
 }

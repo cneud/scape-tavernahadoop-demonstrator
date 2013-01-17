@@ -27,14 +27,14 @@ http://dev.mygrid.org.uk/wiki/display/taverna/REST+API.
 Installation requirements
 -------------------------
 
-In order to build the application, the Java SE Development Kit (JDK) version >=1.6.0 
+In order to build the application, Java SE Development Kit (JDK) version >=1.6.0 
 and Apache Maven >= 2.2.1 is required. The web application needs a  
-Taverna Server 2.4 server instance, Hadoop at least running in pseudo-distributed 
-mode and a MySQL Server version >= 5.2. For deployment of the web application 
-a servlet container, e.g. the Apache Tomcat Web Application Server is needed 
-(tested on 6.26 and 7.0.32).
+Taverna Server 2.4 server instance, Hadoop (CDH3u4) - at least running in 
+pseudo-distributed mode - and a MySQL Server version >= 5.2. For web application 
+deployment a servlet container, such as the Apache Tomcat Web Application Server 
+is required (deployment has been tested on versions 6.26 and 7.0.32).
 
-For installing the Taverna Server 2.4 follow the instructions here:
+Regarding the installation of Taverna Server 2.4 follow the instructions here:
 
 http://dev.mygrid.org.uk/wiki/display/taverna/Installation+and+Configuration
 
@@ -146,7 +146,7 @@ Default HTTP REST Client
 ------------------------
 
 This generic REST client (module `defaulthttp-restclient`) is based on Apache's
-`org.apache.http.impl.client.DefaultHttpClient`. It can set up
+`org.apache.http.impl.client.DefaultHttpClient`. It can perform
 GET, PUT, POST, and DELETE requests with Basic HTTP authentication over HTTP 
 or HTTPS.
 

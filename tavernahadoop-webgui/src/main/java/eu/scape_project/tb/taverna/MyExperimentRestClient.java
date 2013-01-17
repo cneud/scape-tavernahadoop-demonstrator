@@ -148,6 +148,10 @@ public class MyExperimentRestClient implements Serializable {
         // get workflow metadata
         if (myExperimentSession != null) {
             HttpResponse response = myExpRestClient.executeGet("/workflow.xml?id=" + wfId, "application/xml", myExperimentSession);
+            int statusCode = response.getStatusLine().getStatusCode();
+            if(statusCode == 404) {
+                throw new DefaultHttpClientException("Workflow "+wfId+" is not available on myExperiment.");
+            }
             XmlResponseParser responseParser = new XmlResponseParser(response);
             if (responseParser == null) {
                 throw new DefaultHttpClientException("Error while initialising response parser");
@@ -204,16 +208,13 @@ public class MyExperimentRestClient implements Serializable {
                         HttpResponse wfResponse = myExpRestClient.executeGet(url, "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", myExperimentSession);
                         return wfResponse.getEntity().getContent();
                     } else {
-                        logger.error("Invalid workflow or content uri is empty");
-                        return null;
+                        throw new DefaultHttpClientException("Invalid workflow or content uri is empty");
                     }
                 } else {
-                    logger.error("Invalid workflow object!");
-                    return null;
+                    throw new DefaultHttpClientException("Invalid workflow object!");
                 }
             } else {
-                logger.error("MyExperiment-Session is not initialised!");
-                return null;
+                throw new DefaultHttpClientException("MyExperiment-Session is not initialised!");
             }
         } catch (Exception ex) {
             throw new DefaultHttpClientException(ex.getMessage());

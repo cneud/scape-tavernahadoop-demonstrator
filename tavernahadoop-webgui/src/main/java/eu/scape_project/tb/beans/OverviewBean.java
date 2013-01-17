@@ -16,28 +16,22 @@
  */
 package eu.scape_project.tb.beans;
 
-import eu.scape_project.tb.config.MyExperimentConfig;
 import eu.scape_project.tb.config.TavernaConfig;
 import eu.scape_project.tb.model.dao.WorkflowDao;
 import eu.scape_project.tb.model.entity.Workflow;
 import eu.scape_project.tb.model.entity.WorkflowInputPort;
 import eu.scape_project.tb.model.entity.WorkflowRun;
 import eu.scape_project.tb.model.factory.WorkflowFactory;
-import eu.scape_project.tb.rest.DefaultHttpAuthRestClient;
 import eu.scape_project.tb.rest.DefaultHttpClientException;
 import eu.scape_project.tb.rest.util.FileUtility;
-import eu.scape_project.tb.rest.xml.XPathEvaluator;
-import eu.scape_project.tb.rest.xml.XmlResponseParser;
 import eu.scape_project.tb.taverna.MyExperimentRestClient;
 import eu.scape_project.tb.taverna.WebAppTavernaRestClient;
-import eu.scape_project.tb.taverna.rest.SimpleBasicHttpAuthenticator;
 import eu.scape_project.tb.taverna.rest.TavernaClientException;
 import eu.scape_project.tb.taverna.rest.TavernaWorkflowStatus;
-import eu.scape_project.tb.util.StringUtil;
-import java.io.*;
-import java.net.Authenticator;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,13 +41,10 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * Backing bean of the overview page.
@@ -284,6 +275,11 @@ public class OverviewBean implements Serializable {
         return kvMap;
     }
 
+    /**
+     * Get myExperiment workflow for a given id
+     *
+     * @throws DefaultHttpClientException
+     */
     public void getMyExperimentWorkflow() throws DefaultHttpClientException {
         FacesContext context = FacesContext.getCurrentInstance();
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();

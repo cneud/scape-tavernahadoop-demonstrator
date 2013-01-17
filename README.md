@@ -65,6 +65,25 @@ Configuration is then done in five steps:
 
     `tavernahadoop-webgui/src/main/resources/hadoop.properties`
 
+    and make sure the dependencies of the Hadoop client are fulfilled:
+
+    `hadoopjobtracker-client/pom.xml`
+
+    It is necessary to use exactly the libraries from your Hadoop installation. 
+    Otherwise there might be problems communicating with the JobTracker.
+    The current configuration in the `pom.xml` file is set for a CDH3u4 installation.
+    The library versions of `hadoop core`, `guava`, `jackson-core-asl` and 
+    `jackson-mapper-asl` are required to be the same as the libraries used by 
+    the Hadoop installation.
+    Look up the exact versions for the depending libraries (specified in the 
+    `hadoopjobtracker-client/pom.xml`) at `/usr/lib/hadoop/` and 
+    `/usr/lib/hadoop/lib/` on your cluster controller machine.
+    Pick up the required libraries from `/usr/lib/hadoop/` and 
+    `/usr/lib/hadoop/lib/` and install them in your local repository using 
+    `mvn install:install-file` (please refer to the official maven documentation) 
+    and adapt the dependency versions in the pom.xml appropriately if needed.
+    Example: `mvn install:install-file -Dfile=your.jar -DgroupId=yourGroup -DartifactId=yourArtifact -Dversion=yourVersion -Dpackaging=jar`
+
 2. Configure the Hibernate settings for accessing the MySQL server:
     
     `tavernahadoop-webgui/src/main/resources/hibernate.cfg.xml`

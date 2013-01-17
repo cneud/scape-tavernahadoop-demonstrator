@@ -211,26 +211,33 @@ module by executing the main class `TavernaServerRestClientDemo`.
 Troubleshooting
 ---------------
 
-1.  HTTP 302 Moved Temporarily/Found
-    At the current state, the TavernaServerRestClient is using the client for 
-    the "insecure" configuration of the Taverna Server.
+1.  HTTP-Error: HTTP 302 Moved Temporarily/Found
+
+    At the current state, the TavernaServerRestClient is configured to use the 
+    client with an "insecure" configuration of the Taverna Server.
+
     See http://dev.mygrid.org.uk/wiki/display/taverna/A+Beginner%27s+Installation+Guide+to+Taverna+Server
     for more information on how to set up a "secure" or "insecure" instance
     of the Taverna Server.
-    In summary, the "secure" or "insecure" mode is configured in
+
+    The "secure" or "insecure" mode is configured in
     `apache-tomcat-${tomcat-version}/webapps/TavernaServer.2.4.1/WEB-INF/web.xml`
     Comment/uncomment one of the context parameters (default is secure mode) to 
     activate either the secure or the insecure profile:
+
 ``` xml
     <param-value>WEB-INF/secure.xml</param-value>
     <!--param-value>WEB-INF/insecure.xml</param-value-->
 ```
+
     If the Taverna Server is configured in "secure" mode, the http request url
     `http://${server}:8080/TavernaServer.2.4.1/rest/runs` is relocated to the 
     https request url `https://${server}:8443/TavernaServer.2.4.1/rest/runs` by
-    the server. This requires an HTTP client with SSL support. In principle,
-    the underlying defaulthttp-restclient supports https requests by using the
-    eu.scape_project.tb.rest.DefaultHttpsAuthRestClient, so this
-    behaviour could easily be changed by using the letting TavernaServerRestClient
-    extend the DefaultHttpsAuthRestClient instead of the DefaultHttpAuthRestClient 
-    class.
+    the server. This requires an HTTP client with SSL support. 
+    
+    The defaulthttp-restclient module supports https requests by using the
+    `eu.scape_project.tb.rest.DefaultHttpsAuthRestClient` instead of the 
+    `eu.scape_project.tb.rest.DefaultHttpAuthRestClient` class. So this behaviour 
+    can be changed by extending `eu.scape_project.tb.rest.DefaultHttpsAuthRestClient` 
+    instead of `eu.scape_project.tb.rest.DefaultHttpAuthRestClient` 
+    in the `eu.scape_project.tb.taverna.rest.TavernaServerRestClient` class.

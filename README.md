@@ -10,7 +10,8 @@ and `tavernahadoop-webgui` which together demonstrate the orchestration of
 Hadoop Jobs using the Taverna Server.
 
 The `tavernahadoop-webgui` is the web gui application which can be deployed to 
-an Apache Tomcat Web Application Server (tested on version 6.26 and 7.0.32).
+an Apache Tomcat Web Application Server  (deployment has been tested on versions 
+6.26 and 7.0.32).
 
 The `tavernaserver-restclient` is a generic REST client including a client for the 
 Taverna Server 2.4 which is available for download at 

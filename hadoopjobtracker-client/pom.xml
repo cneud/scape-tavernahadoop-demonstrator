@@ -21,17 +21,15 @@
             <version>1.1.1</version>
         </dependency>
         <dependency>
-            <groupId>hadoop</groupId>
-            <artifactId>hadoop</artifactId>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-core</artifactId>
             <version>2.0.0-mr1-cdh4.2.0</version>
-            <classifier>core</classifier>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>11.0.2</version>
         </dependency>
-        
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-core-asl</artifactId>
@@ -43,5 +41,13 @@
             <version>1.8.8</version>
         </dependency> 
     </dependencies>
+
+    <repositories>
+	<repository>
+	    <id>cloudera>/id>
+	    <url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
+	</repository>
+    </repositories>
+
 </project>
 

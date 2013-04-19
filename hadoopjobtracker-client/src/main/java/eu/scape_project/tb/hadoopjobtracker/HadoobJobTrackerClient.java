@@ -54,7 +54,7 @@ public class HadoobJobTrackerClient {
         try {
             ClusterStatus currentClusterStatus = myJobClient.getClusterStatus(true);
 
-            String jobTrackerStatus = currentClusterStatus.getJobTrackerState().toString();
+            String jobTrackerStatus = currentClusterStatus.getJobTrackerStatus().toString();
             int availableTaskTrackers = currentClusterStatus.getTaskTrackers();
             int blackTaskTrackers = currentClusterStatus.getBlacklistedTrackers();
             int maxMapTasks = currentClusterStatus.getMaxMapTasks();

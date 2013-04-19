@@ -29,7 +29,8 @@
     
     <dependencies>
         
-<!--        <dependency>
+    <!--       
+    	<dependency>
             <groupId>eu.scape_project.tb</groupId>
             <artifactId>t2flow-read</artifactId>
             <version>1.0</version>
@@ -229,7 +230,7 @@
     
     <properties>
         <jsf2.version>2.1.14</jsf2.version>
-        <primefaces.version>3.5-SNAPSHOT</primefaces.version>
+        <primefaces.version>3.5</primefaces.version>
         <junit.version>4.10</junit.version>
         <servlet-api.version>6.0.29</servlet-api.version>
         <slf4j.version>1.7.2</slf4j.version>

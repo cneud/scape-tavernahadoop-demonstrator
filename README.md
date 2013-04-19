@@ -39,9 +39,9 @@ Regarding the installation of Taverna Server 2.4 follow the instructions here:
 
 http://dev.mygrid.org.uk/wiki/display/taverna/Installation+and+Configuration
 
-And for a minimum hadoop installation in pseudo-distributed mode, see here:
+And for a minimum hadoop CDH4 installation in pseudo-distributed mode, see here:
 
-https://ccp.cloudera.com/display/CDHDOC/Installing+CDH3+on+a+Single+Linux+Node+in+Pseudo-distributed+Mode
+http://www.cloudera.com/content/cloudera-content/cloudera-docs/CDH4/4.2.0/CDH4-Quick-Start/cdh4qs_topic_3_3.html
 
 Configuration & Deployment of the web application
 -------------------------------------------------

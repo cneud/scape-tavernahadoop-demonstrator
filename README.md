@@ -10,7 +10,7 @@ and `tavernahadoop-webgui` which together demonstrate the orchestration of
 Hadoop Jobs using the Taverna Server.
 
 The `tavernahadoop-webgui` is the web gui application which can be deployed to 
-an Apache Tomcat Web Application Server  (deployment has been tested on versions 
+an Apache Tomcat Web Application Server (deployment has been tested on versions
 6.26 and 7.0.32).
 
 The `tavernaserver-restclient` is a generic REST client including a client for the 
@@ -30,7 +30,7 @@ Installation requirements
 
 In order to build the application, Java SE Development Kit (JDK) version >=1.6.0 
 and Apache Maven >= 2.2.1 is required. The web application needs a  
-Taverna Server 2.4 server instance, Hadoop (CDH3u4) - at least running in 
+Taverna Server 2.4 server instance, Hadoop (CDH4) - at least running in
 pseudo-distributed mode - and a MySQL Server version >= 5.2. For web application 
 deployment a servlet container, such as the Apache Tomcat Web Application Server 
 is required (deployment has been tested on versions 6.26 and 7.0.32).
@@ -39,7 +39,7 @@ Regarding the installation of Taverna Server 2.4 follow the instructions here:
 
 http://dev.mygrid.org.uk/wiki/display/taverna/Installation+and+Configuration
 
-And for a minimum hadoop CDH4 installation in pseudo-distributed mode, see here:
+And for a minimum Hadoop CDH4 installation in pseudo-distributed mode, see here:
 
 http://www.cloudera.com/content/cloudera-content/cloudera-docs/CDH4/4.2.0/CDH4-Quick-Start/cdh4qs_topic_3_3.html
 

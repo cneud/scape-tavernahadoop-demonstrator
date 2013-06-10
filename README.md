@@ -212,7 +212,7 @@ module by executing the main class `TavernaServerRestClientDemo`.
 Troubleshooting
 ---------------
 
-1.  HTTP-Error: HTTP 302 Moved Temporarily/Found
+1/  HTTP-Error: HTTP 302 Moved Temporarily/Found
 
     At the current state, the TavernaServerRestClient is configured to use the 
     client with an "insecure" configuration of the Taverna Server.

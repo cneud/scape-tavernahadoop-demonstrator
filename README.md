@@ -226,9 +226,9 @@ Troubleshooting
     Comment/uncomment one of the context parameters (default is secure mode) to 
     activate either the secure or the insecure profile:
 
-``` xml
-<param-value>WEB-INF/secure.xml</param-value>
-<!--param-value>WEB-INF/insecure.xml</param-value-->
+```xml
+    <param-value>WEB-INF/secure.xml</param-value>
+    <!--param-value>WEB-INF/insecure.xml</param-value-->
 ```
 
     If the Taverna Server is configured in "secure" mode, the http request url

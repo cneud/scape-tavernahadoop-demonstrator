@@ -101,13 +101,13 @@ public class TavernaResponseParserTest {
     @Test
     public void testGetRequestsWithXmlResponse() throws MalformedURLException, HttpException {
 
-        TavernaServerRestClient tsrc = new TavernaServerRestClient("http", "localhost", 80, "/TavernaServer.2.4.1/rest");
+        TavernaServerRestClient tsrc = new TavernaServerRestClient("http", "localhost", 80, "/taverna-server/rest");
         tsrc.setUser("taverna");
         tsrc.setPassword("taverna");
 
         // TODO: dirty test
 
-        String urlStr = "http://fue.onb.ac.at/TavernaServer.2.4.1/rest/runs/cc99dfa1-445d-4a20-93cc-f17b24b40131";
+        String urlStr = "http://localhost:8080/taverna-server/rest/runs/cc99dfa1-445d-4a20-93cc-f17b24b40131";
 
         //String urlStr = tsrc.getBaseUrlStr()+"/runs";
         URL url = new URL(urlStr);

@@ -96,9 +96,9 @@ public class FileUtilityTest extends TestSuite {
         logger.info("Result path for one, /two: "+result);
         assertTrue("Incorrect path composition",result.equals(expected));
         
-        result = FileUtility.makePath("http://fue-hdc01:8080/TavernaServer.2.4.1/rest", "runs");
-        expected = "http://fue-hdc01:8080/TavernaServer.2.4.1/rest/runs";
-        logger.info("Result for http://fue-hdc01:8080/TavernaServer.2.4.1/rest,runs: "+result);
+        result = FileUtility.makePath("https://localhost:8080/taverna-server/rest", "runs");
+        expected = "https://localhost:8443/taverna-server/rest/runs";
+        logger.info("Result for https://localhost:8443/taverna-server/rest,runs: "+result);
         assertTrue("Incorrect path composition",result.equals(expected));
     }
 
